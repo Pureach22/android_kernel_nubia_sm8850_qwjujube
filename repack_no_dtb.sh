@@ -1,7 +1,7 @@
 #!/bin/bash
 # repack_no_dtb.sh - Package pure kernel Image without DTB and sign it
 
-cd "/home/adrianojr59/Vídeos/NX809J_Android16_kernel"
+cd "$(dirname "$(readlink -f "$0")")"
 
 KERNEL_IMAGE="kernel_platform/common/arch/arm64/boot/Image"
 FINAL_IMG="dev_reverse_no_dtb.img"

@@ -40,12 +40,13 @@ kernel_platform/common/include/linux/pinctrl/qcom-pinctrl.h (modificado)
 
 ### Comando de Compilação (referência)
 ```bash
-PATH="/home/adrianojr59/Vídeos/NX809J_Android16_kernel/clang-r536225/bin:$PATH" \
+# Execute a partir da raiz do repositório
+PATH="$(pwd)/clang-r536225/bin:$PATH" \
 KBUILD_MODPOST_WARN=1 make -C vendor/qcom/opensource/<TECHPACK> \
-  KERNEL_SRC=/home/adrianojr59/Vídeos/NX809J_Android16_kernel/kernel_platform/common \
+  KERNEL_SRC="$(pwd)/kernel_platform/common" \
   ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
-  M=/home/adrianojr59/Vídeos/NX809J_Android16_kernel/vendor/qcom/opensource/<TECHPACK> \
-  AUDIO_ROOT=/home/adrianojr59/Vídeos/NX809J_Android16_kernel/vendor/qcom/opensource/<TECHPACK> \
+  M="$(pwd)/vendor/qcom/opensource/<TECHPACK>" \
+  AUDIO_ROOT="$(pwd)/vendor/qcom/opensource/<TECHPACK>" \
   -j$(nproc)
 ```
 

@@ -1,12 +1,24 @@
 #!/bin/bash
 # super_build.sh - Compile the official ZTE kernel tree (in-tree)
 
-cd "/home/adrianojr59/Vídeos/NX809J_Android16_kernel"
+cd "$(dirname "$(readlink -f "$0")")"
 
-# Tools paths
-CLANG_DIR="/home/adrianojr59/Vídeos/NX809J_Android16_kernel/clang-r536225"
-PREBUILTS_DIR="/home/adrianojr59/Downloads/KernelNX809J/infinity_build/prebuilts/kernel-build-tools/linux-x86/bin"
-export PATH="$CLANG_DIR/bin:$PREBUILTS_DIR:$PATH"
+# Tools paths (can be overridden via environment variables)
+CLANG_DIR="${CLANG_DIR:-$(pwd)/clang-r536225}"
+PREBUILTS_DIR="${PREBUILTS_DIR:-/home/adrianojr59/Downloads/KernelNX809J/infinity_build/prebuilts/kernel-build-tools/linux-x86/bin}"
+
+if [ ! -d "$CLANG_DIR" ]; then
+    echo "❌ Error: Clang compiler not found at $CLANG_DIR"
+    echo "Please download the Android Clang compiler (revision r536225) and extract it to the root of this repository,"
+    echo "or set the CLANG_DIR environment variable to its location (e.g. export CLANG_DIR=/path/to/clang)."
+    exit 1
+fi
+
+if [ -d "$PREBUILTS_DIR" ]; then
+    export PATH="$CLANG_DIR/bin:$PREBUILTS_DIR:$PATH"
+else
+    export PATH="$CLANG_DIR/bin:$PATH"
+fi
 
 # Architecture config
 export ARCH=arm64

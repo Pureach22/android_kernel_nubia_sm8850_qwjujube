@@ -25,7 +25,7 @@ Principais descobertas e ações realizadas:
 
 ## 4. Auditoria de Assinaturas e KCFI
 Para garantir que o driver customizado seja aceito e carregado pelo kernel sem pânico de KCFI (Kernel Control Flow Integrity) ou rejeição de versão (símbolos CRC inválidos):
-* Criamos o script [patch_tpd.py](file:///home/adrianojr59/Vídeos/NX809J_Android16_kernel/vendor/zte/zte_tpd/patch_tpd.py).
+* Criamos o script [patch_tpd.py](patch_tpd.py).
 * O script extrai a tabela completa de CRCs e os hashes KCFI oficiais de `official_zte_tpd.ko`.
 * Aplica essas assinaturas cirurgicamente no módulo compilado `zte_tpd.ko`, alinhando os hashes das funções de callback (SPI, interrupção, sysfs) com os valores esperados pelo loader do GKI.
 

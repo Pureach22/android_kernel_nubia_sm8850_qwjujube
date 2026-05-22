@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-TPD_DIR = "/home/adrianojr59/Vídeos/NX809J_Android16_kernel/vendor/zte/zte_tpd"
+TPD_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def main():
     c_files = [os.path.join(TPD_DIR, f) for f in os.listdir(TPD_DIR) if f.endswith(".c")]

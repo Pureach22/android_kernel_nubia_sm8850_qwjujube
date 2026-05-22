@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-TPD_DIR = "/home/adrianojr59/Vídeos/NX809J_Android16_kernel/vendor/zte/zte_tpd"
+TPD_DIR = os.path.dirname(os.path.abspath(__file__))
 files_to_fix = [
     "syna_dev_process_touch_report.c",
     "syna_dev_resume.c",

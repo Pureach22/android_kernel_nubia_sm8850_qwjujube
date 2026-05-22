@@ -7,7 +7,7 @@ Este guia explica como compilar, empacotar e inicializar o kernel customizado co
 ## 🚀 1. Como Compilar e Inicializar o Kernel
 
 ### Passo A: Compilar o Kernel principal e Techpacks
-Temos o script unificado [super_build.sh](file:///home/adrianojr59/Vídeos/NX809J_Android16_kernel/super_build.sh) que configura o ambiente, aplica a defconfig da plataforma (`nx809j_defconfig`), insere as flags de segurança (CFI Permissive, KernelSU-Next) e compila os binários com a toolchain Clang apropriada.
+Temos o script unificado [super_build.sh](super_build.sh) que configura o ambiente, aplica a defconfig da plataforma (`nx809j_defconfig`), insere as flags de segurança (CFI Permissive, KernelSU-Next) e compila os binários com a toolchain Clang apropriada.
 
 Execute no terminal:
 ```bash
@@ -18,7 +18,7 @@ Execute no terminal:
 ---
 
 ### Passo B: Empacotar e Assinar a Imagem de Boot (DTB + AVB)
-Os drivers dinâmicos Qualcomm exigem a junção física dos Device Trees (`dtb.img`) no cabeçalho do kernel. O script [repack_perfect_sign.sh](file:///home/adrianojr59/Vídeos/NX809J_Android16_kernel/repack_perfect_sign.sh) cuida do empacotamento sem ramdisk interno (tamanho exato de 64MB) e faz a assinatura criptográfica obrigatória via AVB para evitar bloqueio do bootloader.
+Os drivers dinâmicos Qualcomm exigem a junção física dos Device Trees (`dtb.img`) no cabeçalho do kernel. O script [repack_perfect_sign.sh](repack_perfect_sign.sh) cuida do empacotamento sem ramdisk interno (tamanho exato de 64MB) e faz a assinatura criptográfica obrigatória via AVB para evitar bloqueio do bootloader.
 
 Execute:
 ```bash
@@ -52,7 +52,7 @@ Execute:
 
 ## 🛠️ 2. Próximos Passos do Projeto
 
-Agora que alcançamos a compatibilidade de paridade binária estável (onde o kernel customizado carrega e roda o sistema normalmente), podemos iniciar as tarefas específicas de desenvolvimento descritas em [NEXT_STEPS.md](file:///home/adrianojr59/Vídeos/NX809J_Android16_kernel/NEXT_STEPS.md):
+Agora que alcançamos a compatibilidade de paridade binária estável (onde o kernel customizado carrega e roda o sistema normalmente), podemos iniciar as tarefas específicas de desenvolvimento descritas em [NEXT_STEPS.md](NEXT_STEPS.md):
 
 ### 1. Implantar e Testar os Módulos Reconstruídos (.ko)
 Como o carregamento via RAM usa as partições físicas e monta `/vendor_dlkm` do sistema original, os módulos ativos no momento são os originais da ZTE. Para colocar em execução as nossas reconstruções (com código aberto refeito via Ghidra):

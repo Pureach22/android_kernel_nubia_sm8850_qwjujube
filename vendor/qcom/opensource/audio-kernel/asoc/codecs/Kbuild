@@ -245,7 +245,7 @@ INCS +=		$(COMMON_INC) \
 		$(UAPI_INC)
 
 
-EXTRA_CFLAGS += $(INCS) -I/home/adrianojr59/Vídeos/NX809J_Android16_kernel/vendor/qcom/opensource/mm-drivers/msm_ext_display/include
+EXTRA_CFLAGS += $(INCS) -I$(srctree)/../../vendor/qcom/opensource/mm-drivers/msm_ext_display/include
 
 
 CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \

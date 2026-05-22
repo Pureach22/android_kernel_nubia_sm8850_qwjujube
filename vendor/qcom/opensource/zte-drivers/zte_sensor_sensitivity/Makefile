@@ -1,4 +1,4 @@
-KERNEL_SRC ?= /home/adrianojr59/Vídeos/NX809J_Android16_kernel/kernel_platform/common
+KERNEL_SRC ?= $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../../../../kernel_platform/common)
 
 all:
 	$(MAKE) -C $(KERNEL_SRC) M=$(shell pwd) ARCH=arm64 \

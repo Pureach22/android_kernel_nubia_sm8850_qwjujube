@@ -1,7 +1,7 @@
 #!/bin/bash
 # repack_perfect_sign.sh - Repack and sign for RedMagic 11 Pro (NX809J)
 
-cd "/home/adrianojr59/Vídeos/NX809J_Android16_kernel"
+cd "$(dirname "$(readlink -f "$0")")"
 
 KERNEL_IMAGE="kernel_platform/common/arch/arm64/boot/Image"
 DTB_IMAGE="dtb.img"
