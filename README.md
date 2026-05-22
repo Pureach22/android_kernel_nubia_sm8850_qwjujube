@@ -4,6 +4,24 @@ Este guia explica como compilar, empacotar e inicializar o kernel customizado co
 
 ---
 
+## 📋 Pré-requisitos
+
+Para que a compilação e o empacotamento funcionem corretamente, você deve providenciar os seguintes componentes (que estão configurados no `.gitignore` para manter o repositório limpo):
+
+1. **Toolchain Clang (r536225)**:
+   - Baixe a versão do Clang do AOSP (revision `r536225`).
+   - Extraia a toolchain na raiz deste repositório em uma pasta chamada `clang-r536225/` (de modo que o binário principal fique em `clang-r536225/bin/clang`).
+   - Alternativamente, você pode definir a variável de ambiente `CLANG_DIR` apontando para o seu diretório do Clang antes de compilar.
+
+2. **Device Tree Blob (`dtb.img`)**:
+   - Extraia o arquivo `dtb.img` oficial a partir da partição/imagem de boot (`boot.img`) de estoque da ZTE (versão userdebug correspondente).
+   - Coloque o arquivo `dtb.img` diretamente na raiz deste repositório. Ele é necessário para concatenar os Device Trees à imagem do kernel durante o empacotamento.
+
+3. **Dependências do Host**:
+   - Certifique-se de ter instalado os pacotes essenciais de compilação do Linux (`build-essential`, `libssl-dev`, `bison`, `flex`, `libelf-dev`, `python3`, etc.).
+
+---
+
 ## 🚀 1. Como Compilar e Inicializar o Kernel
 
 ### Passo A: Compilar o Kernel principal e Techpacks
