@@ -42,7 +42,7 @@ Para habilitar o acesso e os comandos de gravação do Fastboot no RedMagic 11 P
 Para habilitar o Fastboot, primeiro você precisa substituir a partição do gerenciador de boot (`abl`) oficial pela versão customizada. Como o Fastboot é bloqueado/desabilitado por padrão nas ROMs de estoque, **você ainda não tem acesso ao Fastboot**. Portanto, este processo deve ser feito exclusivamente em **Modo EDL**:
 1. Inicialize seu dispositivo no modo EDL (Emergency Download Mode) e abra a ferramenta **ZTE Family Toolbox** (ZTE Toolbox).
 2. Faça o backup/dump das suas partições oficiais **`abl_a`** e **`abl_b`** usando a ferramenta (mantenha esses backups salvos!).
-3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`) utilizando o ZTE Family Toolbox.
+3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`) selecionando a **Opção 12 (Gravar Partição / Write Partition)** no ZTE Family Toolbox.
 4. > [!IMPORTANT]
    > **ZTE Toolbox Opção 19**: Imediatamente após gravar a ABL desbloqueada pelo ZTE Family Toolbox, você **DEVE** executar a **Opção 19** no ZTE Family Toolbox para limpar os flags e logs temporários de boot do aparelho. Se você pular este passo, o dispositivo entrará em **Dumper Mode** (tela de Crash Dump) na inicialização seguinte e não dará boot.
 5. > [!WARNING]

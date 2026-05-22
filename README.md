@@ -45,7 +45,7 @@ To enable Fastboot flashing and commands on the RedMagic 11 Pro (NX809J) and oth
 To enable Fastboot, you must first swap your device's stock Bootloader image (`abl`) with the custom version. Since Fastboot is locked/disabled by default on stock ROMs, **you do not have Fastboot access yet**. You must write the file in **EDL Mode**:
 1. Boot your device into EDL Mode (Emergency Download Mode) and open the **ZTE Family Toolbox** (ZTE Toolbox).
 2. Use the toolbox to backup/dump your official **`abl_a`** and **`abl_b`** partitions (keep these backups safe!).
-3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`) using the ZTE Family Toolbox.
+3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`) by selecting **Option 12 (Write Partition)** in the ZTE Family Toolbox.
 4. > [!IMPORTANT]
    > **ZTE Toolbox Option 19**: Immediately after writing the unlocked ABL via the ZTE Family Toolbox, you **MUST** run **Option 19** in the ZTE Family Toolbox to clear the device boot/temp flags. If you skip this, the device will trigger a boot lockout and boot into **Dumper Mode** (Crash Dump screen) on the next boot.
 5. > [!WARNING]
