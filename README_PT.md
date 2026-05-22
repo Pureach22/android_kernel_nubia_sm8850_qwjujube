@@ -45,6 +45,8 @@ Para desbloquear o bootloader, primeiro você precisa substituir a partição do
 3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`) utilizando o ZTE Family Toolbox.
 4. > [!IMPORTANT]
    > **ZTE Toolbox Opção 19**: Imediatamente após gravar a ABL desbloqueada pelo ZTE Family Toolbox, você **DEVE** executar a **Opção 19** no ZTE Family Toolbox para limpar os flags e logs temporários de boot do aparelho. Se você pular este passo, o dispositivo entrará em **Dumper Mode** (tela de Crash Dump) na inicialização seguinte e não dará boot.
+5. > [!WARNING]
+   > **NÃO utilize a Opção 18 (Corrigir Digital/Fingerprint)** no ZTE Family Toolbox! Apesar de ser rotulada como correção do leitor de digitais, o uso da Opção 18 corrompe as configurações de inicialização, forçando o aparelho a cair novamente na tela de **Dumper Mode** (Crash Dump). Utilize apenas a Opção 19 para limpar os flags e evite totalmente a Opção 18.
 
 ### 3. Desativar a Verificação do vbmeta e Desbloquear o Bootloader
 Após gravar com sucesso a ABL desbloqueada e limpar os flags com a Opção 19, reinicie o aparelho. Agora o aparelho permitirá o acesso e comandos de gravação no **Modo Fastboot**:

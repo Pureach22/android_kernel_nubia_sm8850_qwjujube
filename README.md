@@ -48,6 +48,8 @@ To unlock the bootloader, you must first swap your device's stock Bootloader ima
 3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`) using the ZTE Family Toolbox.
 4. > [!IMPORTANT]
    > **ZTE Toolbox Option 19**: Immediately after writing the unlocked ABL via the ZTE Family Toolbox, you **MUST** run **Option 19** in the ZTE Family Toolbox to clear the device boot/temp flags. If you skip this, the device will trigger a boot lockout and boot into **Dumper Mode** (Crash Dump screen) on the next boot.
+5. > [!WARNING]
+   > **DO NOT use Option 18 (Fingerprint Fix)** in the ZTE Family Toolbox! Even though it is labeled to fix the fingerprint reader, executing Option 18 will corrupt the boot configuration, triggering a boot lockout and causing the device to boot loop back into **Dumper Mode**. Only use Option 19 to clear flags and avoid Option 18 entirely.
 
 ### 3. Disable vbmeta Verification & Unlock Bootloader
 Once `abl_unlock.elf` is successfully written and the boot state is cleared, reboot the device. It will now allow you to enter and run commands in **Fastboot Mode**:
