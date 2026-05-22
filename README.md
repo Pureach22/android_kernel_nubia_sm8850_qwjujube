@@ -45,14 +45,14 @@ To enable Fastboot flashing and commands on the RedMagic 11 Pro (NX809J) and oth
 To enable Fastboot, you must first swap your device's stock Bootloader image (`abl`) with the custom version. Since Fastboot is locked/disabled by default on stock ROMs, **you do not have Fastboot access yet**. You must write the file in **EDL Mode**:
 1. Boot your device into EDL Mode (Emergency Download Mode) and open the **ZTE Family Toolbox** (ZTE Toolbox).
 2. Use the toolbox to backup/dump your official **`abl_a`** and **`abl_b`** partitions (keep these backups safe!).
-3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`) by selecting **Option 12 (Write Partition)** in the ZTE Family Toolbox.
+3. Write the custom unlocked ABL image provided in this repository ($\color{red}{\text{abl\_unlock.elf}}$) to both slots (`abl_a` and `abl_b`) by selecting **Option 12 (Write Partition)** in the ZTE Family Toolbox.
 4. > [!IMPORTANT]
    > **ZTE Toolbox Option 19**: Immediately after writing the unlocked ABL via the ZTE Family Toolbox, you **MUST** run **Option 19** in the ZTE Family Toolbox to clear the device boot/temp flags. If you skip this, the device will trigger a boot lockout and boot into **Dumper Mode** (Crash Dump screen) on the next boot.
 5. > [!WARNING]
    > **DO NOT use Option 18 (Fingerprint Fix)** in the ZTE Family Toolbox! Even though it is labeled to fix the fingerprint reader, executing Option 18 will corrupt the boot configuration, triggering a boot lockout and causing the device to boot loop back into **Dumper Mode**. Only use Option 19 to clear flags and avoid Option 18 entirely.
 
 ### 3. Disable vbmeta Verification
-Once `abl_unlock.elf` is successfully written and the boot state is cleared, reboot the device. It will now allow you to enter and run commands in **Fastboot Mode**:
+Once $\color{red}{\text{abl\_unlock.elf}}$ is successfully written and the boot state is cleared, reboot the device. It will now allow you to enter and run commands in **Fastboot Mode**:
 1. Reboot the device into Fastboot Mode.
 2. You **MUST** flash the stock `vbmeta` and `vbmeta_system` images with verification disabled to prevent boot loops or AVB verification issues:
    ```bash
