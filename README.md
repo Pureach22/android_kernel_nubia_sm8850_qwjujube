@@ -41,38 +41,31 @@ To unlock the bootloader of the RedMagic 11 Pro (NX809J) and other ZTE/Nubia dev
   brew install android-platform-tools
   ```
 
-### 2. Extract and Flash Unlocked ABL
-To unlock the bootloader, you must swap your device's Bootloader image (`abl`) with the custom unlocked version:
-1. Boot your device into EDL Mode and open the **ZTE Family Toolbox** (ZTE Toolbox).
-2. Backup/dump your official **`abl_a`** and **`abl_b`** partitions.
-3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`).
-   * *Alternatively, if you already have fastboot access:*
-     ```bash
-     fastboot flash abl_a abl_unlock.elf
-     fastboot flash abl_b abl_unlock.elf
-     ```
+### 2. Flash Unlocked ABL via EDL Mode
+To unlock the bootloader, you must first swap your device's stock Bootloader image (`abl`) with the custom unlocked version. Since the bootloader is locked, **you do not have fastboot write access yet**. You must write the file in **EDL Mode**:
+1. Boot your device into EDL Mode (Emergency Download Mode) and open the **ZTE Family Toolbox** (ZTE Toolbox).
+2. Use the toolbox to backup/dump your official **`abl_a`** and **`abl_b`** partitions (keep these backups safe!).
+3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`) using the ZTE Family Toolbox.
 4. > [!IMPORTANT]
-   > **ZTE Toolbox Option 19**: After flashing/writing the unlocked ABL via the ZTE Toolbox, you **MUST** execute **Option 19** in the ZTE Family Toolbox to clear the device boot flags. If you skip this, the device will trigger a boot lockout and boot into **Dumper Mode** (Crash Dump screen) on the next boot.
+   > **ZTE Toolbox Option 19**: Immediately after writing the unlocked ABL via the ZTE Family Toolbox, you **MUST** run **Option 19** in the ZTE Family Toolbox to clear the device boot/temp flags. If you skip this, the device will trigger a boot lockout and boot into **Dumper Mode** (Crash Dump screen) on the next boot.
 
-
-### 3. Disable vbmeta Verification
-After flashing the unlocked ABL, you **MUST** flash the stock `vbmeta` and `vbmeta_system` images with verification disabled to prevent boot loops or AVB verification issues:
-
-```bash
-fastboot --disable-verity flash vbmeta_a vbmeta.img
-fastboot --disable-verity flash vbmeta_b vbmeta.img
-fastboot --disable-verity --disable-verification flash vbmeta_system_a vbmeta_system.img
-fastboot --disable-verity --disable-verification flash vbmeta_system_b vbmeta_system.img
-```
-
-> [!CAUTION]
-> **DO NOT** use the `--disable-verification` flag when flashing `vbmeta_a` or `vbmeta_b` (only use `--disable-verity`). If you use `--disable-verification` on `vbmeta`, your device will get stuck in the bootloader and will not boot up, requiring a full recovery in **EDL Mode** to fix!
-
-4. Finally, unlock the bootloader:
+### 3. Disable vbmeta Verification & Unlock Bootloader
+Once `abl_unlock.elf` is successfully written and the boot state is cleared, reboot the device. It will now allow you to enter and run commands in **Fastboot Mode**:
+1. Reboot the device into Fastboot Mode.
+2. You **MUST** flash the stock `vbmeta` and `vbmeta_system` images with verification disabled to prevent boot loops or AVB verification issues:
+   ```bash
+   fastboot --disable-verity flash vbmeta_a vbmeta.img
+   fastboot --disable-verity flash vbmeta_b vbmeta.img
+   fastboot --disable-verity --disable-verification flash vbmeta_system_a vbmeta_system.img
+   fastboot --disable-verity --disable-verification flash vbmeta_system_b vbmeta_system.img
+   ```
+   > [!CAUTION]
+   > **DO NOT** use the `--disable-verification` flag when flashing `vbmeta_a` or `vbmeta_b` (only use `--disable-verity`). If you use `--disable-verification` on `vbmeta`, your device will get stuck in the bootloader and will not boot up, requiring a full recovery in **EDL Mode** to fix!
+3. Finally, unlock the bootloader by running:
    ```bash
    fastboot flashing unlock
    ```
-   Confirm on the device screen using the volume keys and power button.
+   Confirm the unlock on the device screen using the volume keys and power button.
 
 ---
 

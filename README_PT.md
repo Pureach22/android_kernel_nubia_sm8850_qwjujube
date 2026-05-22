@@ -38,34 +38,27 @@ Para desbloquear o bootloader do RedMagic 11 Pro (NX809J) e outros dispositivos 
   brew install android-platform-tools
   ```
 
-### 2. Extrair e Gravar a ABL Desbloqueada
-Para desbloquear o bootloader, você precisa substituir a partição do gerenciador de boot (`abl`) pela versão customizada e desbloqueada:
-1. Inicialize seu dispositivo no modo EDL e abra a ferramenta **ZTE Family Toolbox** (ZTE Toolbox).
-2. Faça o backup/dump das suas partições oficiais **`abl_a`** e **`abl_b`**.
-3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`).
-   * *Alternativamente, se você já possui acesso ao fastboot:*
-     ```bash
-     fastboot flash abl_a abl_unlock.elf
-     fastboot flash abl_b abl_unlock.elf
-     ```
+### 2. Gravar a ABL Desbloqueada via Modo EDL
+Para desbloquear o bootloader, primeiro você precisa substituir a partição do gerenciador de boot (`abl`) oficial pela versão desbloqueada. Como o bootloader está bloqueado, **você ainda não tem permissão para gravar via fastboot**. Portanto, este processo deve ser feito exclusivamente em **Modo EDL**:
+1. Inicialize seu dispositivo no modo EDL (Emergency Download Mode) e abra a ferramenta **ZTE Family Toolbox** (ZTE Toolbox).
+2. Faça o backup/dump das suas partições oficiais **`abl_a`** e **`abl_b`** usando a ferramenta (mantenha esses backups salvos!).
+3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`) utilizando o ZTE Family Toolbox.
 4. > [!IMPORTANT]
-   > **ZTE Toolbox Opção 19**: Após gravar a ABL desbloqueada via ZTE Toolbox, você **DEVE** executar a **Opção 19** no ZTE Family Toolbox para limpar os flags de boot do aparelho. Se você pular este passo, o dispositivo entrará em **Dumper Mode** (tela de Crash Dump) na próxima inicialização e não dará boot.
+   > **ZTE Toolbox Opção 19**: Imediatamente após gravar a ABL desbloqueada pelo ZTE Family Toolbox, você **DEVE** executar a **Opção 19** no ZTE Family Toolbox para limpar os flags e logs temporários de boot do aparelho. Se você pular este passo, o dispositivo entrará em **Dumper Mode** (tela de Crash Dump) na inicialização seguinte e não dará boot.
 
-
-### 3. Desativar a Verificação do vbmeta
-Após gravar o ABL desbloqueado, você **DEVE** gravar as imagens de `vbmeta` e `vbmeta_system` de estoque desativando as proteções de integridade para evitar bootloops ou falhas de verificação do AVB:
-
-```bash
-fastboot --disable-verity flash vbmeta_a vbmeta.img
-fastboot --disable-verity flash vbmeta_b vbmeta.img
-fastboot --disable-verity --disable-verification flash vbmeta_system_a vbmeta_system.img
-fastboot --disable-verity --disable-verification flash vbmeta_system_b vbmeta_system.img
-```
-
-> [!CAUTION]
-> **NUNCA** use a flag `--disable-verification` ao gravar `vbmeta_a` ou `vbmeta_b` (use apenas `--disable-verity`). Se você utilizar `--disable-verification` no `vbmeta` principal, o seu dispositivo ficará travado no bootloader (stuck at bootloader) e não inicializará, exigindo uma recuperação completa via **Modo EDL**!
-
-4. Por fim, execute o comando de desbloqueio:
+### 3. Desativar a Verificação do vbmeta e Desbloquear o Bootloader
+Após gravar com sucesso a ABL desbloqueada e limpar os flags com a Opção 19, reinicie o aparelho. Agora o aparelho permitirá o acesso e comandos de gravação no **Modo Fastboot**:
+1. Inicialize o dispositivo no modo Fastboot.
+2. Você **DEVE** gravar as imagens de `vbmeta` e `vbmeta_system` de estoque desativando as proteções de integridade para evitar bootloops ou falhas de verificação do AVB:
+   ```bash
+   fastboot --disable-verity flash vbmeta_a vbmeta.img
+   fastboot --disable-verity flash vbmeta_b vbmeta.img
+   fastboot --disable-verity --disable-verification flash vbmeta_system_a vbmeta_system.img
+   fastboot --disable-verity --disable-verification flash vbmeta_system_b vbmeta_system.img
+   ```
+   > [!CAUTION]
+   > **NUNCA** use a flag `--disable-verification` ao gravar `vbmeta_a` ou `vbmeta_b` (use apenas `--disable-verity`). Se você utilizar `--disable-verification` no `vbmeta` principal, o seu dispositivo ficará travado no bootloader (stuck at bootloader) e não inicializará, exigindo uma recuperação completa via **Modo EDL**!
+3. Por fim, execute o comando de desbloqueio de fato:
    ```bash
    fastboot flashing unlock
    ```
