@@ -25,9 +25,9 @@ To ensure compilation and packaging work correctly, you must supply the followin
 
 ---
 
-## 🔓 Bootloader Unlocking & Fastboot Guide
+## 🔓 Fastboot Enablement Guide
 
-To unlock the bootloader of the RedMagic 11 Pro (NX809J) and other ZTE/Nubia devices, follow these steps:
+To enable Fastboot flashing and commands on the RedMagic 11 Pro (NX809J) and other ZTE/Nubia devices, follow these steps:
 
 ### 1. Install Fastboot & ADB
 * **Windows**: Download the official [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools) and add them to your system's PATH.
@@ -42,7 +42,7 @@ To unlock the bootloader of the RedMagic 11 Pro (NX809J) and other ZTE/Nubia dev
   ```
 
 ### 2. Flash Unlocked ABL via EDL Mode
-To unlock the bootloader, you must first swap your device's stock Bootloader image (`abl`) with the custom unlocked version. Since the bootloader is locked, **you do not have fastboot write access yet**. You must write the file in **EDL Mode**:
+To enable Fastboot, you must first swap your device's stock Bootloader image (`abl`) with the custom version. Since Fastboot is locked/disabled by default on stock ROMs, **you do not have Fastboot access yet**. You must write the file in **EDL Mode**:
 1. Boot your device into EDL Mode (Emergency Download Mode) and open the **ZTE Family Toolbox** (ZTE Toolbox).
 2. Use the toolbox to backup/dump your official **`abl_a`** and **`abl_b`** partitions (keep these backups safe!).
 3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`) using the ZTE Family Toolbox.
@@ -51,7 +51,7 @@ To unlock the bootloader, you must first swap your device's stock Bootloader ima
 5. > [!WARNING]
    > **DO NOT use Option 18 (Fingerprint Fix)** in the ZTE Family Toolbox! Even though it is labeled to fix the fingerprint reader, executing Option 18 will corrupt the boot configuration, triggering a boot lockout and causing the device to boot loop back into **Dumper Mode**. Only use Option 19 to clear flags and avoid Option 18 entirely.
 
-### 3. Disable vbmeta Verification & Unlock Bootloader
+### 3. Disable vbmeta Verification
 Once `abl_unlock.elf` is successfully written and the boot state is cleared, reboot the device. It will now allow you to enter and run commands in **Fastboot Mode**:
 1. Reboot the device into Fastboot Mode.
 2. You **MUST** flash the stock `vbmeta` and `vbmeta_system` images with verification disabled to prevent boot loops or AVB verification issues:
@@ -63,7 +63,7 @@ Once `abl_unlock.elf` is successfully written and the boot state is cleared, reb
    ```
    > [!CAUTION]
    > **DO NOT** use the `--disable-verification` flag when flashing `vbmeta_a` or `vbmeta_b` (only use `--disable-verity`). If you use `--disable-verification` on `vbmeta`, your device will get stuck in the bootloader and will not boot up, requiring a full recovery in **EDL Mode** to fix!
-3. Finally, unlock the bootloader by running:
+3. Finally, unlock the bootloader (if desired) by running:
    ```bash
    fastboot flashing unlock
    ```

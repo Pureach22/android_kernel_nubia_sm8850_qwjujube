@@ -22,9 +22,9 @@ Para que a compilação e o empacotamento funcionem corretamente, você deve pro
 
 ---
 
-## 🔓 Guia de Desbloqueio de Bootloader e Fastboot
+## 🔓 Guia de Habilitação do Fastboot
 
-Para desbloquear o bootloader do RedMagic 11 Pro (NX809J) e outros dispositivos ZTE/Nubia, siga estes passos:
+Para habilitar o acesso e os comandos de gravação do Fastboot no RedMagic 11 Pro (NX809J) e outros dispositivos ZTE/Nubia, siga estes passos:
 
 ### 1. Instalar o Fastboot e o ADB
 * **Windows**: Baixe o [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools) oficial e adicione-o ao PATH do seu sistema.
@@ -39,7 +39,7 @@ Para desbloquear o bootloader do RedMagic 11 Pro (NX809J) e outros dispositivos 
   ```
 
 ### 2. Gravar a ABL Desbloqueada via Modo EDL
-Para desbloquear o bootloader, primeiro você precisa substituir a partição do gerenciador de boot (`abl`) oficial pela versão desbloqueada. Como o bootloader está bloqueado, **você ainda não tem permissão para gravar via fastboot**. Portanto, este processo deve ser feito exclusivamente em **Modo EDL**:
+Para habilitar o Fastboot, primeiro você precisa substituir a partição do gerenciador de boot (`abl`) oficial pela versão customizada. Como o Fastboot é bloqueado/desabilitado por padrão nas ROMs de estoque, **você ainda não tem acesso ao Fastboot**. Portanto, este processo deve ser feito exclusivamente em **Modo EDL**:
 1. Inicialize seu dispositivo no modo EDL (Emergency Download Mode) e abra a ferramenta **ZTE Family Toolbox** (ZTE Toolbox).
 2. Faça o backup/dump das suas partições oficiais **`abl_a`** e **`abl_b`** usando a ferramenta (mantenha esses backups salvos!).
 3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`) utilizando o ZTE Family Toolbox.
@@ -48,7 +48,7 @@ Para desbloquear o bootloader, primeiro você precisa substituir a partição do
 5. > [!WARNING]
    > **NÃO utilize a Opção 18 (Corrigir Digital/Fingerprint)** no ZTE Family Toolbox! Apesar de ser rotulada como correção do leitor de digitais, o uso da Opção 18 corrompe as configurações de inicialização, forçando o aparelho a cair novamente na tela de **Dumper Mode** (Crash Dump). Utilize apenas a Opção 19 para limpar os flags e evite totalmente a Opção 18.
 
-### 3. Desativar a Verificação do vbmeta e Desbloquear o Bootloader
+### 3. Desativar a Verificação do vbmeta
 Após gravar com sucesso a ABL desbloqueada e limpar os flags com a Opção 19, reinicie o aparelho. Agora o aparelho permitirá o acesso e comandos de gravação no **Modo Fastboot**:
 1. Inicialize o dispositivo no modo Fastboot.
 2. Você **DEVE** gravar as imagens de `vbmeta` e `vbmeta_system` de estoque desativando as proteções de integridade para evitar bootloops ou falhas de verificação do AVB:
@@ -60,7 +60,7 @@ Após gravar com sucesso a ABL desbloqueada e limpar os flags com a Opção 19, 
    ```
    > [!CAUTION]
    > **NUNCA** use a flag `--disable-verification` ao gravar `vbmeta_a` ou `vbmeta_b` (use apenas `--disable-verity`). Se você utilizar `--disable-verification` no `vbmeta` principal, o seu dispositivo ficará travado no bootloader (stuck at bootloader) e não inicializará, exigindo uma recuperação completa via **Modo EDL**!
-3. Por fim, execute o comando de desbloqueio de fato:
+3. Por fim, caso queira efetuar o desbloqueio do bootloader, execute:
    ```bash
    fastboot flashing unlock
    ```
