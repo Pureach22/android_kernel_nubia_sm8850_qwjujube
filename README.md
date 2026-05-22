@@ -25,6 +25,57 @@ To ensure compilation and packaging work correctly, you must supply the followin
 
 ---
 
+## 🔓 Bootloader Unlocking & Fastboot Guide
+
+To unlock the bootloader of the RedMagic 11 Pro (NX809J) and other ZTE/Nubia devices, follow these steps:
+
+### 1. Install Fastboot & ADB
+* **Windows**: Download the official [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools) and add them to your system's PATH.
+* **Linux (Ubuntu/Debian)**: Install via apt:
+  ```bash
+  sudo apt update
+  sudo apt install android-tools-adb android-tools-fastboot
+  ```
+* **macOS**: Install via Homebrew:
+  ```bash
+  brew install android-platform-tools
+  ```
+
+### 2. Extract and Flash Unlocked ABL
+To unlock the bootloader, you must swap your device's Bootloader image (`abl`) with the custom unlocked version:
+1. Boot your device into EDL Mode and open the **ZTE Family Toolbox** (ZTE Toolbox).
+2. Backup/dump your official **`abl_a`** and **`abl_b`** partitions.
+3. Write the custom unlocked ABL image provided in this repository (**`abl_unlock.elf`**) to both slots (`abl_a` and `abl_b`).
+   * *Alternatively, if you already have fastboot access:*
+     ```bash
+     fastboot flash abl_a abl_unlock.elf
+     fastboot flash abl_b abl_unlock.elf
+     ```
+4. > [!IMPORTANT]
+   > **ZTE Toolbox Option 19**: After flashing/writing the unlocked ABL via the ZTE Toolbox, you **MUST** execute **Option 19** in the ZTE Family Toolbox to clear the device boot flags. If you skip this, the device will trigger a boot lockout and boot into **Dumper Mode** (Crash Dump screen) on the next boot.
+
+
+### 3. Disable vbmeta Verification
+After flashing the unlocked ABL, you **MUST** flash the stock `vbmeta` and `vbmeta_system` images with verification disabled to prevent boot loops or AVB verification issues:
+
+```bash
+fastboot --disable-verity flash vbmeta_a vbmeta.img
+fastboot --disable-verity flash vbmeta_b vbmeta.img
+fastboot --disable-verity --disable-verification flash vbmeta_system_a vbmeta_system.img
+fastboot --disable-verity --disable-verification flash vbmeta_system_b vbmeta_system.img
+```
+
+> [!CAUTION]
+> **DO NOT** use the `--disable-verification` flag when flashing `vbmeta_a` or `vbmeta_b` (only use `--disable-verity`). If you use `--disable-verification` on `vbmeta`, your device will get stuck in the bootloader and will not boot up, requiring a full recovery in **EDL Mode** to fix!
+
+4. Finally, unlock the bootloader:
+   ```bash
+   fastboot flashing unlock
+   ```
+   Confirm on the device screen using the volume keys and power button.
+
+---
+
 ## 🚀 1. How to Compile and Boot the Kernel
 
 ### Step A: Compile the Main Kernel and Techpacks

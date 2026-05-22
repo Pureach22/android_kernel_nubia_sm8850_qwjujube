@@ -22,6 +22,57 @@ Para que a compilação e o empacotamento funcionem corretamente, você deve pro
 
 ---
 
+## 🔓 Guia de Desbloqueio de Bootloader e Fastboot
+
+Para desbloquear o bootloader do RedMagic 11 Pro (NX809J) e outros dispositivos ZTE/Nubia, siga estes passos:
+
+### 1. Instalar o Fastboot e o ADB
+* **Windows**: Baixe o [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools) oficial e adicione-o ao PATH do seu sistema.
+* **Linux (Ubuntu/Debian)**: Instale via apt:
+  ```bash
+  sudo apt update
+  sudo apt install android-tools-adb android-tools-fastboot
+  ```
+* **macOS**: Instale via Homebrew:
+  ```bash
+  brew install android-platform-tools
+  ```
+
+### 2. Extrair e Gravar a ABL Desbloqueada
+Para desbloquear o bootloader, você precisa substituir a partição do gerenciador de boot (`abl`) pela versão customizada e desbloqueada:
+1. Inicialize seu dispositivo no modo EDL e abra a ferramenta **ZTE Family Toolbox** (ZTE Toolbox).
+2. Faça o backup/dump das suas partições oficiais **`abl_a`** e **`abl_b`**.
+3. Grave o arquivo de ABL desbloqueada fornecido neste repositório (**`abl_unlock.elf`**) em ambos os slots (`abl_a` e `abl_b`).
+   * *Alternativamente, se você já possui acesso ao fastboot:*
+     ```bash
+     fastboot flash abl_a abl_unlock.elf
+     fastboot flash abl_b abl_unlock.elf
+     ```
+4. > [!IMPORTANT]
+   > **ZTE Toolbox Opção 19**: Após gravar a ABL desbloqueada via ZTE Toolbox, você **DEVE** executar a **Opção 19** no ZTE Family Toolbox para limpar os flags de boot do aparelho. Se você pular este passo, o dispositivo entrará em **Dumper Mode** (tela de Crash Dump) na próxima inicialização e não dará boot.
+
+
+### 3. Desativar a Verificação do vbmeta
+Após gravar o ABL desbloqueado, você **DEVE** gravar as imagens de `vbmeta` e `vbmeta_system` de estoque desativando as proteções de integridade para evitar bootloops ou falhas de verificação do AVB:
+
+```bash
+fastboot --disable-verity flash vbmeta_a vbmeta.img
+fastboot --disable-verity flash vbmeta_b vbmeta.img
+fastboot --disable-verity --disable-verification flash vbmeta_system_a vbmeta_system.img
+fastboot --disable-verity --disable-verification flash vbmeta_system_b vbmeta_system.img
+```
+
+> [!CAUTION]
+> **NUNCA** use a flag `--disable-verification` ao gravar `vbmeta_a` ou `vbmeta_b` (use apenas `--disable-verity`). Se você utilizar `--disable-verification` no `vbmeta` principal, o seu dispositivo ficará travado no bootloader (stuck at bootloader) e não inicializará, exigindo uma recuperação completa via **Modo EDL**!
+
+4. Por fim, execute o comando de desbloqueio:
+   ```bash
+   fastboot flashing unlock
+   ```
+   Confirme o desbloqueio na tela do aparelho usando os botões de volume e o botão Power.
+
+---
+
 ## 🚀 1. Como Compilar e Inicializar o Kernel
 
 ### Passo A: Compilar o Kernel principal e Techpacks
