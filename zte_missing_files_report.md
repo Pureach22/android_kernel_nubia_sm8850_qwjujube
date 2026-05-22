@@ -4,7 +4,7 @@
 **Device:** RedMagic 11 Pro (NX809J)  
 **SoC:** Qualcomm Snapdragon 8 Gen 5 (SM8850, codename `canoe` / board `qwjujube`)  
 **Kernel Version:** 6.12.23-android16  
-**Contact Email:** [adrianojr59@gmail.com](mailto:adrianojr59@gmail.com)  
+**Contact Email:** [idealcreativesuporte@idealcreative.com.br](mailto:idealcreativesuporte@idealcreative.com.br)  
 **Date:** 2026-05-19  
 
 ---

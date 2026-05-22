@@ -96,5 +96,7 @@ Since booting via RAM uses the physical partitions and mounts `/vendor_dlkm` fro
 
 ## 📬 Contact & Support
 
-If you have questions, need support, or want to collaborate on this reverse engineering project, you can reach out via email:
-📧 **idealcreativesuporte@idealcreative.com.br**
+If you have questions, need support, or want to collaborate on this reverse engineering project, you can reach out via:
+* 📧 **Email:** [idealcreativesuporte@idealcreative.com.br](mailto:idealcreativesuporte@idealcreative.com.br)
+* 💬 **Telegram Group:** [Join Group](https://web.telegram.org/a/#-1003471835008_307)
+* 🌐 **XDA Thread:** [RedMagic 11 Pro Unlock & Guide](https://xdaforums.com/t/red-magic-11-pro-guide-bootloader-unlock-free-also-support-rm10-pad3pro-z70u-z80u-unlock-zte-family-toolbox.4780930/)
