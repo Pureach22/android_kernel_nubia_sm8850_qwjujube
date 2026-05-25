@@ -49,12 +49,12 @@ if [ ! -f "$FINAL_IMG" ]; then
     exit 1
 fi
 
-# 4. Sign using AVB (64MB, ALGORITHM NONE)
-echo "🔑 Applying AVB signature (64MB, ALGORITHM NONE)..."
+# 4. Sign using AVB (96MB, ALGORITHM NONE)
+echo "🔑 Applying AVB signature (96MB, ALGORITHM NONE)..."
 python3 avbtool add_hash_footer \
     --image "$FINAL_IMG" \
     --partition_name boot \
-    --partition_size 67108864 \
+    --partition_size 100663296 \
     --algorithm NONE \
     --prop com.android.build.boot.security_patch:2026-09-05
 
