@@ -918,9 +918,17 @@ static int wrap_zte_touch_probe(struct platform_device *pdev) {
     return zte_touch_probe((__int64)pdev, 0, 0);
 }
 static void wrap_zte_touch_remove(struct platform_device *pdev) {
+    if (pdev && pdev->name && strcmp(pdev->name, "zte_touch") == 0) {
+        printk("wrap_zte_touch_remove: ignoring virtual device 'zte_touch' to prevent double-remove\n");
+        return;
+    }
     zte_touch_remove((__int64)pdev, 0, 0);
 }
 static void wrap_zte_touch_shutdown(struct platform_device *pdev) {
+    if (pdev && pdev->name && strcmp(pdev->name, "zte_touch") == 0) {
+        printk("wrap_zte_touch_shutdown: ignoring virtual device 'zte_touch' to prevent double-shutdown\n");
+        return;
+    }
     zte_touch_shutdown((__int64)pdev, 0, 0);
 }
 

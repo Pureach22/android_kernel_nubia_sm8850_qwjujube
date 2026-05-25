@@ -1,14 +1,9 @@
-void zte_touch_pdev_unregister()
+void zte_touch_pdev_unregister(void)
 {
-  __int64 v0; // x19
-  void (__fastcall *v1)(__int64); // x8
-
-  v0 = tpd_cdev;
-  if ( !*(_QWORD *)(tpd_cdev + 3096) )
+  __int64 v0 = tpd_cdev;
+  if ( v0 && *(_QWORD *)(v0 + 3096) )
   {
-    v1 = (void (__fastcall *)(__int64))off_338;
-    /* CFI check removed */
-    v1(16);
-    platform_device_unregister(*(_QWORD *)(v0 + 3096));
+    platform_device_unregister(*(struct platform_device **)(v0 + 3096));
+    *(_QWORD *)(v0 + 3096) = 0;
   }
 }

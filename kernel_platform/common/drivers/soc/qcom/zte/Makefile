@@ -10,4 +10,4 @@ obj-y += zte_ramdisk_reboot/
 obj-y += zte_led/
 obj-y += zte_fingerprint/
 obj-y += zte_charger_policy/
-obj-y += zte_tpd/
+obj-m += zte_tpd/

@@ -37,12 +37,10 @@ __int64 __fastcall zte_touch_deinit(__int64 a1, __int64 a2, __int64 a3)
     kobject_put(*(_QWORD *)(v14 + 2712));
     v14 = tpd_cdev;
   }
-  if ( !*(_QWORD *)(v14 + 3096) )
+  if ( v14 && *(_QWORD *)(v14 + 3096) )
   {
-    v15 = (void (__fastcall *)(__int64))off_338;
-    /* CFI check removed */
-    v15(16);
-    platform_device_unregister(*(_QWORD *)(v14 + 3096));
+    platform_device_unregister(*(struct platform_device **)(v14 + 3096));
+    *(_QWORD *)(v14 + 3096) = 0;
   }
   zte_touch_deinit_ztp_release = 1;
   return 0;

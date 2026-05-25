@@ -600,8 +600,6 @@ EXPORT_SYMBOL(sysstats_unregister_kgsl_stats_cb);
 #endif
 
 /* Boot Mode */
-int zte_get_boot_mode(void) { return 0; }
-
 u8 get_ss_panic_buf_byte(void) { return 0; }
 
 /* QTEE SHM Bridge Parity */
