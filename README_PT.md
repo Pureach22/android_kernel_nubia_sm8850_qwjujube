@@ -112,11 +112,63 @@ Execute:
    ```
    Você verá a string indicando a sua compilação customizada com suporte ao **KernelSU-Next** ativo.
 
+## 📦 2. Arquitetura de Drivers ZTE (obj-y vs obj-m)
+
+No arquivo [drivers/soc/qcom/zte/Makefile](file:///home/adrianojr59/Vídeos/NX809J_Android16_kernel/kernel_platform/common/drivers/soc/qcom/zte/Makefile), os drivers estão configurados assim:
+
+```makefile
+obj-y += zte_misc/
+obj-y += zte_power_supply/
+obj-y += zte_imem_info/
+obj-y += zte_stats_info/
+obj-y += zte_sensor_sensitivity/
+obj-y += zte_ir/
+obj-y += zte_reboot_ext/
+obj-y += zte_ramdisk_reboot/
+obj-y += zte_led/
+obj-y += zte_fingerprint/
+obj-y += zte_charger_policy/
+obj-m += zte_tpd/
+```
+
+### O que significa `y` ou `m`?
+
+*   **`obj-y` (Built-in / Estaticamente Embutido):**
+    O código do driver é compilado diretamente para o binário executável principal do kernel (`vmlinux` / `Image`).
+    *   **Como carrega:** É carregado na memória RAM como parte do processo de inicialização do kernel nas fases bem iniciais (early init).
+    *   **Vantagens:** Não necessita de arquivos externos `.ko` no armazenamento. Inicia instantaneamente e ignora assinaturas ou restrições de verificação tardia de carregamento de módulos.
+
+*   **`obj-m` (Modular / Módulo Carregável):**
+    O código do driver é compilado como um binário dinâmico independente com extensão `.ko` (Kernel Object) (ex: `zte_tpd.ko`).
+    *   **Como carrega:** O kernel principal inicia sem esse código. O sistema operacional (Android) o carrega em tempo de execução usando comandos como `insmod` ou `modprobe` (geralmente a partir de `/vendor_dlkm/lib/modules/` ou via scripts do KernelSU no `post-fs-data`).
+    *   **Vantagens:** Permite a substituição dinâmica do driver sem recompilar o kernel inteiro, resolve colisões de símbolos no build time e economiza espaço estático no kernel central.
+
 ---
 
-## 🛠️ 2. Próximos Passos do Projeto
+### Quais drivers são compilados open-source vs. dependências proprietárias do Smartphone?
 
-Agora que alcançamos a compatibilidade de paridade binária estável (onde o kernel customizado carrega e roda o sistema normalmente), podemos iniciar as tarefas específicas de desenvolvimento descritas em [NEXT_STEPS.md](NEXT_STEPS.md):
+Como este projeto foi desenhado para testes via `fastboot boot` (executando um kernel customizado temporariamente em RAM enquanto monta as partições físicas do próprio telefone), a pilha de drivers se divide em duas categorias:
+
+#### 1. Drivers Compilados a partir do Código Aberto nesta Árvore:
+*   **Touchscreen (`zte_tpd.ko`):** Reconstruído dinamicamente como módulo modular (`obj-m`), otimizado com alocação dinâmica oficial de plataforma e agendamentos unbound para evitar pânicos de CPU e watchdog.
+*   **Drivers Centrais ZTE:** Todos os 11 drivers listados sob `obj-y` (`zte_misc`, `zte_led`, `zte_fingerprint`, `zte_charger_policy`, etc.) são compilados e embutidos diretamente no executável `Image` estático.
+*   **KernelSU-Next:** Integrado e embutido nativamente no kernel estático.
+*   **Stubs de Compatibilidade (`zte_parity.c`):** Mantém a paridade de ABI expondo stubs para os símbolos exigidos pelos módulos proprietários da Qualcomm.
+
+#### 2. Drivers Preexistentes que Dependem do Aparelho (Dependências da ROM):
+Ao inicializar via RAM, o Android monta as partições físicas oficiais `/vendor` e `/vendor_dlkm` gravadas no armazenamento flash do celular.
+Portanto, o dispositivo continua carregando os drivers Qualcomm de fábrica originais diretamente destas partições:
+*   **Câmera e Display:** `camera.ko`, `msm_drm.ko`, `msm_video.ko`.
+*   **Áudio e Energia:** Módulos de codec de áudio (`wcd939x_dlkm.ko`), feedback tátil (haptics) e gerenciamento de bateria da SoC.
+*   **Conectividade:** Drivers de modem móvel (`dataipa.ko`) e driver de Wi-Fi (`qca_cld3_peach_v2.ko`).
+
+*Nota: Graças ao fato de mantermos paridade binária e de ABI perfeita no nosso kernel customizado (preservando configurações ativas como CONFIG_SCHED_CLASS_EXT e CONFIG_DEBUG_INFO_BTF), esses módulos proprietários da ROM oficial carregam e rodam sem problemas ou crash dumps.*
+
+---
+
+## 🛠️ 3. Próximos Passos do Projeto
+
+Now that we have achieved stable binary parity compatibility (where the custom kernel loads and runs the system normally), we can begin the specific development tasks described in [NEXT_STEPS.md](NEXT_STEPS.md):
 
 ### 1. Implantar e Testar os Módulos Reconstruídos (.ko)
 Como o carregamento via RAM usa as partições físicas e monta `/vendor_dlkm` do sistema original, os módulos ativos no momento são os originais da ZTE. Para colocar em execução as nossas reconstruções (com código aberto refeito via Ghidra):

@@ -117,7 +117,61 @@ Run:
 
 ---
 
-## 🛠️ 2. Project Next Steps
+## 📦 2. ZTE Drivers Architecture (obj-y vs obj-m)
+
+In the [drivers/soc/qcom/zte/Makefile](file:///home/adrianojr59/Vídeos/NX809J_Android16_kernel/kernel_platform/common/drivers/soc/qcom/zte/Makefile), the drivers are configured as follows:
+
+```makefile
+obj-y += zte_misc/
+obj-y += zte_power_supply/
+obj-y += zte_imem_info/
+obj-y += zte_stats_info/
+obj-y += zte_sensor_sensitivity/
+obj-y += zte_ir/
+obj-y += zte_reboot_ext/
+obj-y += zte_ramdisk_reboot/
+obj-y += zte_led/
+obj-y += zte_fingerprint/
+obj-y += zte_charger_policy/
+obj-m += zte_tpd/
+```
+
+### What does `y` and `m` mean?
+
+*   **`obj-y` (Built-in / Statically Linked):**
+    The driver code is compiled directly into the main kernel executable binary (`vmlinux` / `Image`).
+    *   **How it loads:** It is loaded into RAM as part of the kernel boot process at the very early init stages.
+    *   **Advantages:** It does not require any external `.ko` file to be loaded from the storage. It starts instantly and bypasses userspace loading signatures or late binding restrictions.
+
+*   **`obj-m` (Modular / Loadable Kernel Module):**
+    The driver code is compiled as an independent dynamic binary with a `.ko` (Kernel Object) extension (e.g., `zte_tpd.ko`).
+    *   **How it loads:** The main kernel starts without this code. The operating system (Android) loads it at runtime using commands like `insmod` or `modprobe` (typically from `/vendor_dlkm/lib/modules/` or via a KernelSU boot script during `post-fs-data`).
+    *   **Advantages:** Highly flexible; allows dynamic replacement, resolving of duplicate symbol collisions during build time, and hot-plug loading.
+
+---
+
+### Which drivers are fully open-source compiled vs. prebuilt phone dependencies?
+
+Because this project is built for testing via `fastboot boot` (running a custom kernel temporarily in RAM while mounting the phone's physical partitions), the driver stack is split into two categories:
+
+#### 1. Drivers Compiled from Open-Source in this Tree:
+*   **Touchscreen (`zte_tpd.ko`):** Rebuilt dynamically as a modular driver (`obj-m`), optimized with our custom dynamic platform allocations and unbound workqueue fixes to prevent suspend watchdog bites.
+*   **Core ZTE System Drivers:** All 11 drivers under `obj-y` (`zte_misc`, `zte_led`, `zte_fingerprint`, `zte_charger_policy`, etc.) are built-in directly to the compiled `Image`.
+*   **KernelSU-Next:** Integrated and compiled statically inside the core kernel.
+*   **Compatibility Stubs (`zte_parity.c`):** Establishes ABI parity, satisfying internal symbol links required by the closed-source parts.
+
+#### 2. Prebuilt Drivers Loaded from the Smartphone (ROM dependencies):
+When booting from RAM, Android mounts the phone's official physical `/vendor` and `/vendor_dlkm` partitions.
+Therefore, the device loads the original Qualcomm closed-source modules from these partitions:
+*   **Camera & Display:** `camera.ko`, `msm_drm.ko`, `msm_video.ko`.
+*   **Audio & Power:** Audio codec drivers (`wcd939x_dlkm.ko`), haptics, and charge controller.
+*   **Connectivity:** Mobile data modem drivers (`dataipa.ko`) and Wi-Fi host driver (`qca_cld3_peach_v2.ko`).
+
+*Note: Because our custom kernel maintains perfect ABI parity with the stock ROM (e.g. keeping CONFIG_SCHED_CLASS_EXT and CONFIG_DEBUG_INFO_BTF options active), the prebuilt vendor modules load and run flawlessly without causing crash dumps.*
+
+---
+
+## 🛠️ 3. Project Next Steps
 
 Now that we have achieved stable binary parity compatibility (where the custom kernel loads and runs the system normally), we can begin the specific development tasks described in [NEXT_STEPS.md](NEXT_STEPS.md):
 
