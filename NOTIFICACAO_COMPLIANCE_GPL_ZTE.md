@@ -25,8 +25,8 @@
 *Aguardo seu retorno no prazo legal de resposta sobre a disponibilização dos fontes.*
 
 *Atenciosamente,*  
-*[Seu Nome / Nome do Canal ou Repositório]*  
-*Contato: [Seu E-mail]*  
+*Coding-BR / Ideal Creative*  
+*Contato: idealcreativesuporte@idealcreative.com.br*  
 
 ---
 

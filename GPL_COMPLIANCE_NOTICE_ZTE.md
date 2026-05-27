@@ -25,8 +25,8 @@
 *We look forward to your response and a prompt resolution to this compliance matter.*
 
 *Sincerely,*  
-*[Your Name / Repository Name]*  
-*Contact Email: [Your Email]*  
+*Coding-BR / Ideal Creative*  
+*Contact Email: idealcreativesuporte@idealcreative.com.br*  
 
 ---
 
