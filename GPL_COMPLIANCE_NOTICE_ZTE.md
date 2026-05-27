@@ -110,11 +110,11 @@ This SCMI timeout prevents CPUSS telemetry from probing, which stalls the remote
 ---
 
 ### 8. Industry Precedents and Market Standards (OEM Compliance)
-To prevent any ambiguity regarding the obligation to release the full source code for kernel-space drivers (including in-house or custom-tailored drivers for touchscreens, power management, and battery policies), we highlight that other leading manufacturers who distribute Android devices powered by the Linux kernel regularly publish their complete kernel-space sources in public repositories:
-* **Xiaomi (MiCode):** Publishes on GitHub the full source code for touch screen drivers (Goodix, Synaptics, Focaltech), charge controllers, and battery management of their flagship devices without omissions or stubs.
-* **OnePlus / OPPO / Realme (OnePlusOSS):** Deliver full compilable kernel trees, including complete source code for proprietary charging policies (e.g., Warp/VOOC charging) and touch panel drivers.
-* **Samsung (Samsung Open Source):** Releases through its official portal (`opensource.samsung.com`) all custom drivers and configs for both Exynos and Qualcomm chips for strict GPL compliance.
-* **Motorola / Lenovo (MotorolaMobilityLLC):** Publishes fully compilable, functional kernel source trees on GitHub containing all necessary platform modules.
+To prevent any ambiguity regarding the obligation to release the full source code for kernel-space drivers (including in-house or custom-tailored drivers for touchscreens, power management, and battery policies), we highlight that other leading manufacturers who distribute Android devices powered by the Linux kernel regularly publish their complete kernel-space sources in their official public repositories, containing exactly the types of files that ZTE has omitted:
+* **Xiaomi (GitHub organization `MiCode`):** Publishes in public repositories (such as `Xiaomi_Kernel_OpenSource`) the full source code for touchscreen ICs under `drivers/input/touchscreen/` (comprising low-level Goodix, Synaptics, and Focaltech implementations), as well as complete charge controllers and voltage regulators under `drivers/power/supply/` for all their flagships (without stubs or precompiled objects).
+* **OnePlus / OPPO / Realme (GitHub organization `OnePlusOSS`):** Deliver complete, production-grade kernel trees that compile out of the box. This includes the full source code for their proprietary charging technologies (VOOC/SuperVOOC/Warp Charge) under the `drivers/power/oplus_chg/` directory, and touchscreen drivers under `drivers/input/touchscreen/`.
+* **Samsung (Official `opensource.samsung.com` portal):** Strictly publishes all proprietary kernel-space driver code (including third-party touch IC firmware wrappers and battery managers) alongside exact factory compilation configuration files (`defconfig`).
+* **Motorola / Lenovo (GitHub organization `MotorolaMobilityLLC`):** Releases 100% functional, bootable kernel source trees on GitHub, including all platform drivers and board-specific config files.
 
 ZTE's omission of these critical kernel-space drivers and configuration fragments places the RedMagic 11 Pro in direct non-compliance with both industry standards and the legally binding terms of the GPLv2.
 
