@@ -47,7 +47,7 @@ Esses drivers realizam pontes de comunicação seguras e alocações básicas de
 | Status | Módulo | Caminho do Source compilado | Destino no Aparelho (`/vendor_dlkm/lib/modules/`) | Sintoma / Notas |
 | :---: | :--- | :--- | :--- | :--- |
 | `[x]` | `zte_tpd.ko` | `vendor/zte/zte_tpd/zte_tpd.ko` | `zte_tpd.ko` | **Estável.** Tela física operacional a 180Hz. |
-| `[ ]` | `msm-mmrm.ko` | `vendor/qcom/opensource/mmrm-driver/msm-mmrm.ko` | `msm-mmrm.ko` | |
+| `[x]` | `msm-mmrm.ko` | `vendor/qcom/opensource/mmrm-driver/msm-mmrm.ko` | `msm-mmrm.ko` | **Estável.** Assinado como 'Antigravity MMRM Custom'. |
 | `[ ]` | `synx_driver.ko` | `vendor/qcom/opensource/synx-kernel/synx_driver.ko` | `synx_driver.ko` | |
 | `[ ]` | `smcinvoke_dlkm.ko`| `vendor/qcom/opensource/securemsm-kernel/smcinvoke_dlkm.ko` | `smcinvoke_dlkm.ko` | |
 | `[ ]` | `qseecom_dlkm.ko` | `vendor/qcom/opensource/securemsm-kernel/qseecom_dlkm.ko` | `qseecom_dlkm.ko` | |
@@ -61,7 +61,7 @@ Contêm o controle principal da GPU Adreno e saídas do painel de display.
 
 | Status | Módulo | Caminho do Source compilado | Destino no Aparelho | Sintoma / Notas |
 | :---: | :--- | :--- | :--- | :--- |
-| `[ ]` | `msm_kgsl.ko` | `vendor/qcom/opensource/graphics-kernel/msm_kgsl.ko` | `msm_kgsl.ko` | **Crítico para Overclock.** |
+| `[x]` | `msm_kgsl.ko` | `vendor/qcom/opensource/graphics-kernel/msm_kgsl.ko` | `msm_kgsl.ko` | **Estável com Overclock (1.2GHz).** Assinado como 'Antigravity KGSL Custom'. |
 | `[ ]` | `msm_drm.ko` | `vendor/qcom/opensource/display-drivers/msm/msm_drm.ko` | `msm_drm.ko` | Módulo de display principal (39MB) |
 
 ---
@@ -96,3 +96,15 @@ Contém os controladores de barramento digital Soundwire e codecs de alto-falant
 | `[ ]` | `wcd939x_dlkm.ko` | `vendor/qcom/opensource/audio-kernel/asoc/codecs/wcd939x/wcd939x_dlkm.ko` | `wcd939x_dlkm.ko` | |
 | `[ ]` | `lpass_cdc_dlkm.ko` | `vendor/qcom/opensource/audio-kernel/asoc/codecs/lpass-cdc/lpass_cdc_dlkm.ko` | `lpass_cdc_dlkm.ko` | |
 | `[ ]` | `aw882xx_dlkm.ko` | `vendor/qcom/opensource/audio-kernel/dsp/aw882xx/aw882xx_dlkm.ko` | `aw882xx_dlkm.ko` | Amplificadores SmartPA |
+
+---
+
+## 📈 Resultados Recentes do Desenvolvimento e Testes (Maio 2026)
+
+*   **Módulo MMRM (`msm-mmrm.ko`)**:
+    *   **Descrição**: Implementada assinatura visual `"Qualcomm Multi-Media Resource Manager (MMRM) Driver - Antigravity MMRM Custom"`.
+    *   **Resultado**: Compilado out-of-tree com Clang r536225, patcheado com `patch_tpd.py` e validado via montagem no KernelSU. Carregamento e dependências 100% funcionais.
+*   **Módulo GPU (`msm_kgsl.ko`)**:
+    *   **Descrição**: Implementada assinatura visual `"Adreno 3D Graphics driver - Antigravity KGSL Custom"`.
+    *   **Resultado**: Overclock para GPU Adreno 840v2 a **1.2 GHz** ativo e estável. Hashes MD5 comprovam o carregamento correto do nosso driver customizado.
+

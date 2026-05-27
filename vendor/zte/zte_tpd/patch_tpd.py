@@ -3,6 +3,27 @@ import struct
 import sys
 import os
 
+def is_common_arm64_instruction(val):
+    # ret
+    if val == 0xd65f03c0:
+        return True
+    # nop
+    if val == 0xd503201f:
+        return True
+    # paciasp / autiasp / bti
+    if val in (0xd503233f, 0xd50323bf) or (0xd503241f <= val <= 0xd503247f):
+        return True
+    # b (0x14000000 to 0x17ffffff)
+    if 0x14000000 <= val <= 0x17ffffff:
+        return True
+    # bl (0x94000000 to 0x97ffffff)
+    if 0x94000000 <= val <= 0x97ffffff:
+        return True
+    # br
+    if 0xd61f0000 <= val <= 0xd61f03e0:
+        return True
+    return False
+
 def parse_elf_sections_and_syms(filename):
     with open(filename, 'rb') as f:
         data = f.read()
@@ -149,9 +170,12 @@ def patch_custom_ko(custom_ko, official_crcs, kcfi_hashes):
                                 hash_file_offset = func_file_offset - 4
                                 current_hash = struct.unpack('<I', data[hash_file_offset : hash_file_offset + 4])[0]
                                 if current_hash != target_hash:
-                                    print(f"Patching KCFI hash for '{sym['name']}': {hex(current_hash)} -> {hex(target_hash)}")
-                                    f.seek(hash_file_offset)
-                                    f.write(struct.pack('<I', target_hash))
+                                    if is_common_arm64_instruction(current_hash):
+                                        print(f"Skipping patch for '{sym['name']}' because current prefix is an instruction: {hex(current_hash)}")
+                                    else:
+                                        print(f"Patching KCFI hash for '{sym['name']}': {hex(current_hash)} -> {hex(target_hash)}")
+                                        f.seek(hash_file_offset)
+                                        f.write(struct.pack('<I', target_hash))
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:

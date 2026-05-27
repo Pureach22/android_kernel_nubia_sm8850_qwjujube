@@ -181,5 +181,6 @@ static void __exit msm_mmrm_exit(void)
 module_init(msm_mmrm_init);
 module_exit(msm_mmrm_exit);
 
-MODULE_DESCRIPTION("Qualcomm Multi-Media Resource Manager (MMRM) Driver");
+MODULE_DESCRIPTION("Qualcomm Multi-Media Resource Manager (MMRM) Driver - Antigravity MMRM Custom");
+MODULE_VERSION("Antigravity-MMRM-v1.2");
 MODULE_LICENSE("GPL v2");

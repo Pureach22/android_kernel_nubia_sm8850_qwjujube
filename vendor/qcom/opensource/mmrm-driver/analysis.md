@@ -45,3 +45,13 @@ Para garantir a portabilidade e evitar erros de compilação sem depender de stu
    * `BUILD.bazel`: Configuração Bazel/Kleaf mapeando os alvos para todas as variantes do target `canoe` (`canoe_gki_mmrm_driver`, `canoe_perf_mmrm_driver`, etc.).
    * `Android.mk`, `Makefile`, `Kbuild`, `Kconfig`: Arquivos clássicos de compilação do Android e Linux integrados.
    * `config/waipiommrm.conf`: Mock de configuração para satisfazer dependências do techpack de câmera.
+
+---
+
+## 3. Validação Dinâmica via KernelSU Overlay
+* **Status:** Concluído com sucesso.
+* **Procedimento:** O módulo `msm-mmrm.ko` compilado a partir do código reconstruído foi injetado via bind-mount usando o KernelSU-Next na partição `vendor_dlkm`.
+* **Resultados:**
+  * O driver de gerenciamento de recursos MMRM inicializou perfeitamente.
+  * O módulo foi carregado com sucesso na RAM e está ativo, com 3 referências registradas em tempo de execução: `camera`, `msm_eva` e `msm_video` (confirmado via `lsmod`).
+  * Não foram observados panics de desalinhamento de struct ou crash de watchdog.

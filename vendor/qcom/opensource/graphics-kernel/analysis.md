@@ -39,3 +39,15 @@ No arquivo `kgsl.c`, o driver utiliza as seguintes chamadas da API `mem_buf` par
 
 * **`mem_buf_dma_buf_copy_vmperm`**: Usado para copiar a lista de permissões da VM associada ao dma-buf importado. O KGSL valida se o ID da VM de destino (`vmid`) confere com a permissão exigida (`VMID_CP_PIXEL`).
 * **`mem_buf_dma_buf_exclusive_owner`**: Garante que buffers em modo protegido (`SECURE`) não possuam outros donos de hardware concorrentes ou acessos indevidos da HLOS (Linux).
+
+---
+
+## 4. Validação Dinâmica via KernelSU Overlay
+* **Status:** Concluído com sucesso.
+* **Procedimento:** O módulo `msm_kgsl.ko` compilado a partir do código reconstruído foi injetado via bind-mount usando o KernelSU-Next na partição `vendor_dlkm`.
+* **Resultados:**
+  * O driver de GPU inicializou corretamente sem travar ou causar Kernel Panic.
+  * O firmware da GPU (`gen80200_zap.mbn` e `gen80200_aqe.fw`) carregou com sucesso.
+  * A tabela de frequências de overclock de 1200MHz (`max_gpuclk` = 1.2 GHz) foi exibida e validada através de `/sys/class/kgsl/kgsl-3d0/freq_table_mhz` e `/sys/class/kgsl/kgsl-3d0/max_gpuclk`.
+  * Os contadores de energia (`num_pwrlevels` = 18) e estatísticas de uso da GPU (`gpu_clock_stats`) funcionaram sem anomalias de ABI ou desalinhamento.
+

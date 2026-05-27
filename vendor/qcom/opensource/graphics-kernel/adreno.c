@@ -4392,7 +4392,8 @@ MODULE_PARM_DESC(slice_mask_override, "Override GPU slice mask");
 module_init(kgsl_3d_init);
 module_exit(kgsl_3d_exit);
 
-MODULE_DESCRIPTION("3D Graphics driver");
+MODULE_DESCRIPTION("Adreno 3D Graphics driver - Antigravity KGSL Custom");
+MODULE_VERSION("Antigravity-KGSL-v1.2");
 MODULE_LICENSE("GPL v2");
 MODULE_SOFTDEP("pre: arm_smmu nvmem_qfprom socinfo governor_msm_adreno_tz governor_gpubw_mon governor_msm_adreno_ro");
 #if (KERNEL_VERSION(6, 13, 0) <= LINUX_VERSION_CODE)
