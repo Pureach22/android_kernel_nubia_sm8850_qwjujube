@@ -7,6 +7,21 @@ This guide explains how to compile, pack, and boot the custom kernel with **Kern
 
 ---
 
+## 🔴 CURRENT BLOCKER: Boot Hang on RedMagic Logo
+
+> [!WARNING]
+> **Build #8** boots past early-init but **hangs indefinitely on the RedMagic logo screen**.
+> The root cause has been identified as an **SCMI timeout** on `arm-scmi.1.auto` that prevents the ADSP/CDSP remoteproc, keymint, and vold from starting — which blocks `/data` decryption (FBE).
+>
+> **Community help is needed!** If you have experience with Qualcomm SCMI, GKI KCFI, or Android FBE boot flow, please check the diagnostic documents below.
+
+| Document | Language | Description |
+|----------|----------|-------------|
+| **[BOOT_HANG_DIAGNOSTIC_PT.md](BOOT_HANG_DIAGNOSTIC_PT.md)** | 🇧🇷 Português | Diagnóstico completo do hang de boot com dados de ramoops, comparação stock vs custom, e guia de investigação |
+| **[BOOT_HANG_DIAGNOSTIC_EN.md](BOOT_HANG_DIAGNOSTIC_EN.md)** | 🇺🇸 English | Full boot hang diagnostic with ramoops data, stock vs custom comparison, and investigation guide |
+
+---
+
 ## 📋 Prerequisites
 
 To ensure compilation and packaging work correctly, you must supply the following components (which are configured in `.gitignore` to keep the repository clean):
