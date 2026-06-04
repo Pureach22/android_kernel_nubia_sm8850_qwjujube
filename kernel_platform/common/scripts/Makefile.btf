@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 pahole-ver := $(CONFIG_PAHOLE_VERSION)
-pahole-flags-y :=
+pahole-flags-y := --skip_encoding_btf_vars
 
 ifeq ($(call test-le, $(pahole-ver), 125),y)
 

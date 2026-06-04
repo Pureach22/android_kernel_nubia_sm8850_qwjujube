@@ -62,6 +62,7 @@ echo "⚙️ Appending custom configuration overrides..."
     echo 'CONFIG_MODVERSIONS=y'
     echo 'CONFIG_BASIC_MODVERSIONS=y'
     echo 'CONFIG_EXTENDED_MODVERSIONS=y'
+    echo 'CONFIG_MODULE_FORCE_LOAD=y'
 } >> $KERNEL_DIR/.config
 
 # Process config overrides

@@ -1,8 +1,8 @@
 import re
 
 def clean_ramoops():
-    input_path = '/home/adrianojr59/Vídeos/NX809J_Android16_kernel/console-ramoops-0.txt'
-    output_path = '/home/adrianojr59/Vídeos/NX809J_Android16_kernel/ramoops_clean.txt'
+    input_path = '/home/adrianojr59/Vídeos/NX809J_Android16_kernel/scratch/ramoops.log'
+    output_path = '/home/adrianojr59/Vídeos/NX809J_Android16_kernel/scratch/ramoops_clean.txt'
     
     with open(input_path, 'rb') as f:
         data = f.read()

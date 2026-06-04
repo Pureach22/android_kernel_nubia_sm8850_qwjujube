@@ -17,7 +17,7 @@ __int64 __fastcall syna_spi_alloc_mem(unsigned int a1, unsigned int a2, __int64 
 
   if ( syna_spi_alloc_mem_xfer_count >= a1 )
   {
-    memset((void *)xfer, 0, 136 * a1);
+    memset((void *)xfer, 0, sizeof(struct spi_transfer) * a1);
 LABEL_12:
     if ( buf_size >= a2 )
       return 0;
@@ -103,12 +103,12 @@ LABEL_40:
     xfer = 0;
     goto LABEL_41;
   }
-  if ( (int)(136 * a1) <= 0 )
+  if ( (int)(sizeof(struct spi_transfer) * a1) <= 0 )
   {
     v15 = unk_38286;
     goto LABEL_40;
   }
-  xfer = devm_kmalloc(v7, 136LL * a1, 3520);
+  xfer = devm_kmalloc(v7, sizeof(struct spi_transfer) * a1, 3520);
   if ( xfer )
   {
     syna_spi_alloc_mem_xfer_count = a1;

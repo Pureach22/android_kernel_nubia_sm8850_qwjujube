@@ -1,3 +1,8 @@
+__attribute__((weak)) __int64 zte_get_boot_mode(void)
+{
+  return 0;
+}
+
 __int64 __fastcall syna_dev_probe(__int64 a1, __int64 a2, __int64 a3)
 {
   __int64 v4; // x0
