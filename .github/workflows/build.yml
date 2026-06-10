@@ -1,0 +1,65 @@
+name: Compile RedMagic 11 Pro Kernel (NX809J)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential flex libelf-dev libssl-dev rsync python3 python3-pip git wget
+
+      - name: Download Clang Compiler (r536225)
+        run: |
+          echo "Downloading Android Clang r536225..."
+          git clone --depth 1 --sparse --filter=blob:none https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-bin
+          cd clang-bin
+          git sparse-checkout set clang-r536225
+          mv clang-r536225 ..
+          cd ..
+          rm -rf clang-bin
+
+      - name: Compile Kernel
+        run: |
+          chmod +x super_build.sh
+          ./super_build.sh
+
+      - name: Patch Touchscreen Driver (zte_tpd.ko)
+        run: |
+          if [ -f vendor/zte/zte_tpd/zte_tpd.ko ]; then
+            echo "Patching touchscreen driver..."
+            python3 vendor/zte/zte_tpd/patch_tpd.py stock_rom_modules/modules/zte_tpd.ko vendor/zte/zte_tpd/zte_tpd.ko
+          else
+            echo "❌ Error: zte_tpd.ko not found after build!"
+            exit 1
+          fi
+
+      - name: Repack and Sign Boot Image
+        run: |
+          chmod +x repack_perfect_sign.sh
+          ./repack_perfect_sign.sh
+
+      - name: Upload Boot Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev_reverse_perfect
+          path: dev_reverse_perfect.img
+
+      - name: Upload Patched Touchscreen Module
+        uses: actions/upload-artifact@v4
+        with:
+          name: zte_tpd_patched
+          path: vendor/zte/zte_tpd/zte_tpd.ko

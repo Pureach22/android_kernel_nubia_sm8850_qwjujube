@@ -4,6 +4,7 @@
 # Arquivos gerados por compilação do Kernel
 *.o
 *.ko
+!/stock_rom_modules/modules/zte_tpd.ko
 *.cmd
 *.mod
 *.mod.c
