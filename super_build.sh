@@ -57,6 +57,8 @@ echo "⚙️ Appending custom configuration overrides..."
     echo 'CONFIG_DEBUG_INFO_DWARF5=y'
     echo 'CONFIG_DEBUG_INFO_BTF=y'
     echo 'CONFIG_DEBUG_INFO_BTF_MODULES=y'
+    echo 'CONFIG_DEBUG_INFO_COMPRESSED_NONE=y'
+    echo '# CONFIG_DEBUG_INFO_COMPRESSED_ZSTD is not set'
     echo 'CONFIG_SCHED_CLASS_EXT=y'
     echo 'CONFIG_EXT_GROUP_SCHED=y'
     echo 'CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,ipe,bpf"'
