@@ -56,6 +56,7 @@ echo "⚙️ Appending custom configuration overrides..."
     echo '# CONFIG_DEBUG_INFO_NONE is not set'
     echo 'CONFIG_DEBUG_INFO_DWARF4=y'
     echo '# CONFIG_DEBUG_INFO_DWARF5 is not set'
+    echo '# CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is not set'
     echo 'CONFIG_DEBUG_INFO_BTF=y'
     echo 'CONFIG_DEBUG_INFO_BTF_MODULES=y'
     echo 'CONFIG_DEBUG_INFO_COMPRESSED_NONE=y'
