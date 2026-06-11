@@ -211,5 +211,5 @@ Como o carregamento via RAM usa as partições físicas e monta `/vendor_dlkm` d
 
 Se você tiver dúvidas, precisar de suporte ou quiser colaborar neste projeto de engenharia reversa, entre em contato através de:
 * 📧 **E-mail:** [idealcreativesuporte@idealcreative.com.br](mailto:idealcreativesuporte@idealcreative.com.br)
-* 💬 **Grupo do Telegram:** [Entrar no Grupo](https://web.telegram.org/a/#-1003471835008_307) (Ou contato direto: [@idealcreative](https://t.me/idealcreative))
+* 💬 **Grupo do Telegram:** [Entrar no Grupo](https://t.me/redmagic11PR0) (Ou contato direto: [@idealcreative](https://t.me/idealcreative))
 * 🌐 **Tópico no XDA:** [Guia de Unlock e Ferramentas do RedMagic 11 Pro](https://xdaforums.com/t/red-magic-11-pro-guide-bootloader-unlock-free-also-support-rm10-pad3pro-z70u-z80u-unlock-zte-family-toolbox.4780930/)

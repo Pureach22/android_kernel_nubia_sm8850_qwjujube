@@ -62,6 +62,52 @@ if [ $? -eq 0 ]; then
     echo "✨ SUCCESS!"
     echo "📂 Perfect boot image generated: $FINAL_IMG"
     echo "🚀 Ready for testing via: fastboot boot $FINAL_IMG"
+    
+    # Check for zte_tpd.ko and generate flashable Magisk/KernelSU module zip
+    TPD_KO=""
+    if [ -f "vendor/zte/zte_tpd/zte_tpd.ko" ]; then
+        TPD_KO="vendor/zte/zte_tpd/zte_tpd.ko"
+    elif [ -f "kernel_platform/common/drivers/soc/qcom/zte/zte_tpd/zte_tpd.ko" ]; then
+        TPD_KO="kernel_platform/common/drivers/soc/qcom/zte/zte_tpd/zte_tpd.ko"
+    fi
+    
+    if [ ! -z "$TPD_KO" ]; then
+        echo "📦 Packaging custom touch driver into Magisk/KernelSU flashable zip..."
+        rm -rf "ksu_module_temp" && mkdir -p "ksu_module_temp/vendor_dlkm/lib/modules"
+        cp "$TPD_KO" "ksu_module_temp/vendor_dlkm/lib/modules/"
+        cp module.prop "ksu_module_temp/"
+        
+        # Create post-fs-data.sh
+        cat <<'EOF' > ksu_module_temp/post-fs-data.sh
+#!/system/bin/sh
+MODDIR="${0%/*}"
+KO_SRC="${MODDIR}/vendor_dlkm/lib/modules/zte_tpd.ko"
+KO_DST="/vendor_dlkm/lib/modules/zte_tpd.ko"
+
+if [ -f "${KO_SRC}" ] && [ -f "${KO_DST}" ]; then
+    mount --bind "${KO_SRC}" "${KO_DST}"
+    log -t "zte_custom_drivers" "Bind mounted custom zte_tpd.ko successfully"
+else
+    log -t "zte_custom_drivers" "ERROR: zte_tpd.ko source or destination not found"
+fi
+EOF
+        chmod +x ksu_module_temp/post-fs-data.sh
+        
+        # Create update-binary placeholder
+        mkdir -p ksu_module_temp/META-INF/com/google/android
+        cat <<'EOF' > ksu_module_temp/META-INF/com/google/android/update-binary
+#!/system/bin/sh
+# MAGISK
+EOF
+        touch ksu_module_temp/META-INF/com/google/android/updater-script
+        
+        # Zip it
+        (cd ksu_module_temp && zip -q -r ../zte_custom_drivers.zip .)
+        rm -rf "ksu_module_temp"
+        echo "✅ Generated flashable module: zte_custom_drivers.zip"
+    else
+        echo "⚠️ Note: zte_tpd.ko not found, skipping Magisk/KernelSU module packaging."
+    fi
 else
     echo "❌ Error signing the image."
     exit 1
