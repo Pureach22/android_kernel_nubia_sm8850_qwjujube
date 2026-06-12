@@ -29,6 +29,29 @@ export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
 export CLANG_TRIPLE=aarch64-linux-gnu-
 export CC=clang
 
+# Rust toolchain detection (required for CONFIG_RUST=y in defconfig)
+# The nx809j_defconfig was generated with Rust 1.82.0 (CONFIG_RUSTC_VERSION=108200).
+# Without Rust, olddefconfig disables RUST in cascade, altering struct layouts that
+# stock .ko modules (qti_battery_charger, etc.) depend on → kernel crash.
+if command -v rustc &>/dev/null; then
+    export RUSTC="$(command -v rustc)"
+    # rust-src component: needed for kernel Rust compilation
+    RUST_SYSROOT="$(rustc --print sysroot 2>/dev/null)"
+    if [ -d "$RUST_SYSROOT/lib/rustlib/src/rust/library" ]; then
+        export RUST_LIB_SRC="$RUST_SYSROOT/lib/rustlib/src/rust/library"
+    fi
+    echo "🦀 Rust detected: $(rustc --version)"
+else
+    echo "⚠️  WARNING: rustc not found. Building without Rust support."
+    echo "   This will differ from the defconfig and may cause stock .ko modules to crash."
+fi
+
+# BINDGEN detection (required for Rust kernel bindings)
+if command -v bindgen &>/dev/null; then
+    export BINDGEN="$(command -v bindgen)"
+    echo "🔗 bindgen detected: $(bindgen --version 2>/dev/null | head -1)"
+fi
+
 # ZTE/Vendor variables
 export ZTE_BOARD_NAME=qwjujube
 
@@ -40,7 +63,7 @@ echo "🔧 Using Clang: $CLANG_DIR"
 
 # 1. Defconfig (Base configuration)
 echo "📝 Applying nx809j_defconfig..."
-make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 RUSTC=missing nx809j_defconfig
+make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 nx809j_defconfig
 
 # Apply config overrides directly to the common/.config file
 echo "⚙️ Appending custom configuration overrides..."
@@ -72,7 +95,7 @@ echo "⚙️ Appending custom configuration overrides..."
 
 # Process config overrides
 echo "🔄 Updating defconfig with overrides..."
-make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 RUSTC=missing olddefconfig
+make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 olddefconfig
 
 if [ ! -f "$KERNEL_DIR/.config" ]; then
     echo "❌ Error: failed to generate .config"
@@ -81,7 +104,7 @@ fi
 
 # 2. Build kernel, modules, and DTBs
 echo "🛠️ Compiling Kernel, Modules, and DTBs (in-tree)..."
-make -C $KERNEL_DIR -j$(nproc) LLVM=1 LLVM_IAS=1 RUSTC=missing KBUILD_MODPOST_WARN=1 Image vmlinux modules dtbs
+make -C $KERNEL_DIR -j$(nproc) LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 Image vmlinux modules dtbs
 
 echo "✅ Compilation finished!"
 echo "📦 Kernel Image built at: $KERNEL_DIR/arch/arm64/boot/Image"
