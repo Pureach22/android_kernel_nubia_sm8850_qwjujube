@@ -40,7 +40,7 @@ echo "🔧 Using Clang: $CLANG_DIR"
 
 # 1. Defconfig (Base configuration)
 echo "📝 Applying nx809j_defconfig..."
-make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 nx809j_defconfig
+make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 RUSTC=missing nx809j_defconfig
 
 # Apply config overrides directly to the common/.config file
 echo "⚙️ Appending custom configuration overrides..."
@@ -72,7 +72,7 @@ echo "⚙️ Appending custom configuration overrides..."
 
 # Process config overrides
 echo "🔄 Updating defconfig with overrides..."
-make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 olddefconfig
+make -C $KERNEL_DIR LLVM=1 LLVM_IAS=1 RUSTC=missing olddefconfig
 
 if [ ! -f "$KERNEL_DIR/.config" ]; then
     echo "❌ Error: failed to generate .config"
@@ -81,7 +81,7 @@ fi
 
 # 2. Build kernel, modules, and DTBs
 echo "🛠️ Compiling Kernel, Modules, and DTBs (in-tree)..."
-make -C $KERNEL_DIR -j$(nproc) LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 Image vmlinux modules dtbs
+make -C $KERNEL_DIR -j$(nproc) LLVM=1 LLVM_IAS=1 RUSTC=missing KBUILD_MODPOST_WARN=1 Image vmlinux modules dtbs
 
 echo "✅ Compilation finished!"
 echo "📦 Kernel Image built at: $KERNEL_DIR/arch/arm64/boot/Image"

@@ -51,7 +51,7 @@ jobs:
           export CLANG_TRIPLE=aarch64-linux-gnu-
           export CC=clang
           export RUSTC=missing
-          make -C kernel_platform/common M=drivers/soc/qcom/zte/zte_tpd LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 modules
+          make -C kernel_platform/common M=drivers/soc/qcom/zte/zte_tpd LLVM=1 LLVM_IAS=1 RUSTC=missing KBUILD_MODPOST_WARN=1 modules
           cp kernel_platform/common/drivers/soc/qcom/zte/zte_tpd/zte_tpd.ko vendor/zte/zte_tpd/zte_tpd.ko
 
       - name: Patch Touchscreen Driver (zte_tpd.ko)
