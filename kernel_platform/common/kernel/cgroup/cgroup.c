@@ -4554,6 +4554,9 @@ void cgroup_file_notify(struct cgroup_file *cfile)
 {
 	unsigned long flags;
 
+	if (!cfile || (unsigned long)cfile < PAGE_SIZE)
+		return;
+
 	spin_lock_irqsave(&cgroup_file_kn_lock, flags);
 	if (cfile->kn) {
 		unsigned long last = cfile->notified_at;

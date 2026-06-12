@@ -209,8 +209,15 @@ static int klist_dec_and_del(struct klist_node *n)
 static void klist_put(struct klist_node *n, bool kill)
 {
 	struct klist *k = knode_klist(n);
-	void (*put)(struct klist_node *) = k->put;
+	void (*put)(struct klist_node *) = NULL;
 
+	if (unlikely(!k)) {
+		pr_err("klist_put: node %pK has NULL klist (already released?)\n", n);
+		dump_stack();
+		return;
+	}
+
+	put = k->put;
 	spin_lock(&k->k_lock);
 	if (kill)
 		knode_kill(n);

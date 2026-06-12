@@ -65,7 +65,9 @@ echo "⚙️ Appending custom configuration overrides..."
     echo 'CONFIG_MODVERSIONS=y'
     echo 'CONFIG_BASIC_MODVERSIONS=y'
     echo 'CONFIG_EXTENDED_MODVERSIONS=y'
-    echo 'CONFIG_MODULE_FORCE_LOAD=y'
+    # CONFIG_MODULE_FORCE_LOAD removed: causes crashes when KSU hooks modify
+    # struct layouts, making stock .ko modules access wrong offsets
+    echo '# CONFIG_MODULE_FORCE_LOAD is not set'
 } >> $KERNEL_DIR/.config
 
 # Process config overrides
