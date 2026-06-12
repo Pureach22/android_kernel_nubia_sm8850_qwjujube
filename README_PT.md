@@ -110,6 +110,13 @@ Execute:
 ---
 
 ### Passo C: Inicializar na Memória RAM (Boot Temporário)
+
+> [!IMPORTANT]
+> **Compatibilidade do Compilador e AnyKernel:**
+> Para rodar este kernel atual, o dispositivo **deve possuir previamente** um kernel funcional compilado com o **Clang 20** instalado.
+> Portanto, antes de tentar fazer a inicialização temporária na memória RAM (`fastboot boot`), é necessário subir a imagem de boot no smartphone usando o **AnyKernel** para que os patches como o **SUSFS** e o **Linux Droidspaces** sejam devidamente ativados.
+> Caso contrário, a inicialização temporária não será estável ou compatível para o desenvolvimento, uma vez que o kernel de fábrica original utiliza uma versão anterior do Clang.
+
 > [!WARNING]
 > **NUNCA execute `fastboot flash boot` ou grave esta imagem permanentemente no dispositivo durante a fase de testes.** O boot deve ser feito sempre temporariamente na RAM. Se o sistema travar ou apresentar falhas, um simples pressionar do botão Power por 10 segundos restaura o boot oficial original.
 

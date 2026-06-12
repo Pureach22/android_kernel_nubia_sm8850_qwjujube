@@ -113,6 +113,13 @@ Run:
 ---
 
 ### Step C: Boot in RAM (Temporary Boot)
+
+> [!IMPORTANT]
+> **Compiler and AnyKernel Compatibility:**
+> To run this current kernel, the device **must already have** a working kernel compiled with **Clang 20** installed.
+> Therefore, before attempting to perform a temporary boot in RAM (`fastboot boot`), you need to flash the boot image on the smartphone using **AnyKernel** so that the necessary patches like **SUSFS** and **Linux Droidspaces** are properly enabled.
+> Otherwise, the temporary boot will not be stable or compatible for development, since the original stock kernel uses an older Clang version.
+
 > [!WARNING]
 > **NEVER run `fastboot flash boot` or flash this image permanently to your device during the testing phase.** The boot must always be loaded temporarily in RAM. If the system hangs or presents issues, simply holding the Power button for 10 seconds will restore the original official boot.
 
