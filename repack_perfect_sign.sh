@@ -108,6 +108,32 @@ EOF
     else
         echo "⚠️ Note: zte_tpd.ko not found, skipping Magisk/KernelSU module packaging."
     fi
+
+    # Check for adreno_overclock.ko and generate flashable Magisk/KernelSU module zip
+    OC_KO="vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/adreno_overclock.ko"
+    if [ -f "$OC_KO" ]; then
+        echo "📦 Packaging Adreno Overclock module into Magisk/KernelSU flashable zip..."
+        rm -rf "ksu_oc_temp" && mkdir -p "ksu_oc_temp"
+        cp "$OC_KO" "ksu_oc_temp/"
+        cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/module.prop "ksu_oc_temp/"
+        cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/post-fs-data.sh "ksu_oc_temp/"
+        cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/service.sh "ksu_oc_temp/"
+        
+        # Create update-binary placeholder
+        mkdir -p ksu_oc_temp/META-INF/com/google/android
+        cat <<'EOF' > ksu_oc_temp/META-INF/com/google/android/update-binary
+#!/system/bin/sh
+# MAGISK
+EOF
+        touch ksu_oc_temp/META-INF/com/google/android/updater-script
+        
+        # Zip it
+        (cd ksu_oc_temp && zip -q -r ../rm11pro_gpu_oc_1230.zip .)
+        rm -rf "ksu_oc_temp"
+        echo "✅ Generated flashable overclock module: rm11pro_gpu_oc_1230.zip"
+    else
+        echo "⚠️ Note: adreno_overclock.ko not found, skipping Overclock Magisk/KernelSU module packaging."
+    fi
 else
     echo "❌ Error signing the image."
     exit 1

@@ -68,6 +68,19 @@ jobs:
           make -C kernel_platform/common M=drivers/soc/qcom/zte/zte_tpd LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 modules
           cp kernel_platform/common/drivers/soc/qcom/zte/zte_tpd/zte_tpd.ko vendor/zte/zte_tpd/zte_tpd.ko
 
+      - name: Compile Adreno Overclock Module
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          export CLANG_DIR="$(pwd)/clang-r547379"
+          export PATH="$CLANG_DIR/bin:$PATH"
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+          export CLANG_TRIPLE=aarch64-linux-gnu-
+          export CC=clang
+          make -C kernel_platform/common M=../../vendor/qcom/opensource/zte-drivers/zte_adreno_overclock LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 modules
+
       - name: Patch Touchscreen Driver (zte_tpd.ko)
         run: |
           if [ -f vendor/zte/zte_tpd/zte_tpd.ko ]; then
@@ -95,6 +108,12 @@ jobs:
           name: zte_tpd_patched
           path: vendor/zte/zte_tpd/zte_tpd.ko
 
+      - name: Upload Adreno Overclock Module
+        uses: actions/upload-artifact@v4
+        with:
+          name: adreno_overclock_ko
+          path: vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/adreno_overclock.ko
+
       - name: Upload Build Map and Config
         uses: actions/upload-artifact@v4
         with:
@@ -109,6 +128,12 @@ jobs:
           name: zte_custom_drivers_zip
           path: zte_custom_drivers.zip
 
+      - name: Upload Overclock Magisk Module Zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: rm11pro_gpu_oc_1230_zip
+          path: rm11pro_gpu_oc_1230.zip
+
 
       - name: Create GitHub Release
         env:
@@ -119,8 +144,10 @@ jobs:
           gh release create "$TAG_NAME" \
             dev_reverse_perfect.img \
             vendor/zte/zte_tpd/zte_tpd.ko \
+            vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/adreno_overclock.ko \
             zte_custom_drivers.zip \
+            rm11pro_gpu_oc_1230.zip \
             kernel_platform/common/System.map \
             kernel_platform/common/.config \
             --title "Build Run #${{ github.run_number }} (NX809J)" \
-            --notes "Automated build compiled on $(date). Contains signed kernel image, patched touchscreen module, System.map, .config, and Magisk/KernelSU flashable module."
+            --notes "Automated build compiled on $(date). Contains signed kernel image, patched touchscreen module, compiled adreno_overclock.ko module, System.map, .config, and Magisk/KernelSU flashable modules."
