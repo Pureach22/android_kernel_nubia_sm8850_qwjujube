@@ -81,11 +81,20 @@ jobs:
           name: zte_tpd_patched
           path: vendor/zte/zte_tpd/zte_tpd.ko
 
+      - name: Upload Build Map and Config
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_map_config
+          path: |
+            kernel_platform/common/System.map
+            kernel_platform/common/.config
+
       - name: Upload Magisk Module Zip
         uses: actions/upload-artifact@v4
         with:
           name: zte_custom_drivers_zip
           path: zte_custom_drivers.zip
+
 
       - name: Create GitHub Release
         env:
@@ -97,6 +106,9 @@ jobs:
             dev_reverse_perfect.img \
             vendor/zte/zte_tpd/zte_tpd.ko \
             zte_custom_drivers.zip \
+            kernel_platform/common/System.map \
+            kernel_platform/common/.config \
             --title "Build Run #${{ github.run_number }} (NX809J)" \
-            --notes "Automated build compiled on $(date). Contains signed kernel image, patched touchscreen module, and Magisk/KernelSU flashable module."
+            --notes "Automated build compiled on $(date). Contains signed kernel image, patched touchscreen module, System.map, .config, and Magisk/KernelSU flashable module."
+
 
