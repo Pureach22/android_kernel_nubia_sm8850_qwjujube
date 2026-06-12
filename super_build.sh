@@ -47,7 +47,7 @@ echo "⚙️ Appending custom configuration overrides..."
 {
     echo 'CONFIG_LOCALVERSION_AUTO=n'
     echo 'CONFIG_CFI_CLANG=y'
-    echo '# CONFIG_CFI_PERMISSIVE is not set'
+    echo 'CONFIG_CFI_PERMISSIVE=y'
     echo 'CONFIG_KSU=y'
     echo '# CONFIG_ARM64_BTI_KERNEL is not set'
     echo 'CONFIG_UNWIND_TABLES=y'
