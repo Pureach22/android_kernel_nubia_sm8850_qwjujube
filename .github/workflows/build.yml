@@ -22,7 +22,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y bc bison build-essential flex libelf-dev libssl-dev rsync python3 python3-pip git wget libdw-dev zip
+          sudo apt-get install -y bc bison build-essential flex libelf-dev libssl-dev rsync python3 python3-pip git wget libdw-dev zip dwarves
 
       - name: Download Clang Compiler (r547379)
         run: |
