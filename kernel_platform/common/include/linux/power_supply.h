@@ -257,6 +257,8 @@ struct power_supply_config {
 struct power_supply_desc {
 	const char *name;
 	enum power_supply_type type;
+	u8 charge_behaviours;
+	u32 usb_types;
 	const enum power_supply_property *properties;
 	size_t num_properties;
 
@@ -290,10 +292,6 @@ struct power_supply_desc {
 	bool no_thermal;
 	/* For APM emulation, think legacy userspace. */
 	int use_for_apm;
-
-	/* Move these here to preserve binary layout compatibility with stock drivers */
-	u8 charge_behaviours;
-	u32 usb_types;
 
 	ANDROID_KABI_RESERVE(1);
 };

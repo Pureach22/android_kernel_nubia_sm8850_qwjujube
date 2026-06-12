@@ -24,13 +24,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y bc bison build-essential flex libelf-dev libssl-dev rsync python3 python3-pip git wget libdw-dev zip
 
-      - name: Download Clang Compiler (r536225)
+      - name: Download Clang Compiler (r547379)
         run: |
-          echo "Downloading Android Clang r536225..."
-          git clone -b llvm-r536225 --depth 1 --sparse --filter=blob:none https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-bin
+          echo "Downloading Android Clang r547379..."
+          git clone -b llvm-r547379-release --depth 1 --sparse --filter=blob:none https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-bin
           cd clang-bin
-          git sparse-checkout set clang-r536225
-          mv clang-r536225 ..
+          git sparse-checkout set clang-r547379
+          mv clang-r547379 ..
           cd ..
           rm -rf clang-bin
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Compile Touchscreen Driver Module
         run: |
-          export CLANG_DIR="$(pwd)/clang-r536225"
+          export CLANG_DIR="$(pwd)/clang-r547379"
           export PATH="$CLANG_DIR/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64

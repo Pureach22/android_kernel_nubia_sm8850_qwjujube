@@ -5,12 +5,12 @@ set -e
 cd "$(dirname "$(readlink -f "$0")")"
 
 # Tools paths (can be overridden via environment variables)
-CLANG_DIR="${CLANG_DIR:-$(pwd)/clang-r536225}"
+CLANG_DIR="${CLANG_DIR:-$(pwd)/clang-r547379}"
 PREBUILTS_DIR="${PREBUILTS_DIR:-/home/adrianojr59/Downloads/KernelNX809J/infinity_build/prebuilts/kernel-build-tools/linux-x86/bin}"
 
 if [ ! -d "$CLANG_DIR" ]; then
     echo "❌ Error: Clang compiler not found at $CLANG_DIR"
-    echo "Please download the Android Clang compiler (revision r536225) and extract it to the root of this repository,"
+    echo "Please download the Android Clang compiler (revision r547379) and extract it to the root of this repository,"
     echo "or set the CLANG_DIR environment variable to its location (e.g. export CLANG_DIR=/path/to/clang)."
     exit 1
 fi
@@ -47,7 +47,7 @@ echo "⚙️ Appending custom configuration overrides..."
 {
     echo 'CONFIG_LOCALVERSION_AUTO=n'
     echo 'CONFIG_CFI_CLANG=y'
-    echo 'CONFIG_CFI_PERMISSIVE=y'
+    echo '# CONFIG_CFI_PERMISSIVE is not set'
     echo 'CONFIG_KSU=y'
     echo '# CONFIG_ARM64_BTI_KERNEL is not set'
     echo 'CONFIG_UNWIND_TABLES=y'
