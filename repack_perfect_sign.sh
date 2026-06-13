@@ -140,6 +140,9 @@ EOF
         cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/module.prop "ksu_oc_temp/"
         cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/post-fs-data.sh "ksu_oc_temp/"
         cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/service.sh "ksu_oc_temp/"
+        if [ -f "vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/analysis.md" ]; then
+            cp vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/ksu_module/analysis.md "ksu_oc_temp/"
+        fi
         
         # Create update-binary placeholder
         mkdir -p ksu_oc_temp/META-INF/com/google/android
