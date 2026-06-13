@@ -23,7 +23,7 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 #endif
 
-#define hfi_pk_printf(_str, __fmt, ...) pr_err(_str ": " __fmt, ##__VA_ARGS__)
+#define hfi_pk_printf(_str, __fmt, ...) printk(KERN_ERR _str ": " __fmt, ##__VA_ARGS__)
 
 /* 24 bits long */
 #define HFI_HEADER_SIZE_MAX                                   0x00FFFFFF

@@ -1,248 +1,113 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
-/*
- * Copyright (c) 2012-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
- */
 #ifndef __KGSL_IOMMU_H
 #define __KGSL_IOMMU_H
 
+#include <linux/iommu.h>
+#include <linux/regulator/consumer.h>
 #include <linux/adreno-smmu-priv.h>
-#include <linux/io-pgtable.h>
-#include <linux/qcom-iommu-util.h>
-#include <linux/qcom-io-pgtable.h>
+#include "kgsl_mmu.h"
 
-/*
- * These defines control the address range for allocations that
- * are mapped into all pagetables.
- */
-#define KGSL_IOMMU_GLOBAL_MEM_SIZE	(90 * SZ_1M)
-#define KGSL_IOMMU_GLOBAL_MEM_BASE32	0xf8000000
-#define KGSL_IOMMU_GLOBAL_MEM_BASE64	\
-	(KGSL_MEMSTORE_TOKEN_ADDRESS - KGSL_IOMMU_GLOBAL_MEM_SIZE)
+#define KGSL_IOMMU_NAME_SIZE 32
+#define KGSL_IOMMU_REG_SIZE 16
+#define KGSL_IOMMU_CONTEXT_SIZE 2
+#define KGSL_IOMMU_PAGEFAULT_TYPES 32
+#define KGSL_IOMMU_MAX_PF_PROCS 2
 
-/*
- * This is a dummy token address that we use to identify memstore when the user
- * wants to map it. mmap() uses a unsigned long for the offset so we need a 32
- * bit value that works with all sized apps. We chose a value that was purposely
- * unmapped so if you increase the global memory size make sure it doesn't
- * conflict
- */
+#define KGSL_IOMMU_ASID_START_BIT 48
 
-#define KGSL_MEMSTORE_TOKEN_ADDRESS	(KGSL_IOMMU_SECURE_BASE32 - SZ_4K)
+#define KGSL_IOMMU_VA_BASE64 0x4000000000ULL
+#define KGSL_IOMMU_VA_END64   0x8000000000ULL
 
-#define KGSL_IOMMU_GLOBAL_MEM_BASE(__mmu)	\
-	(test_bit(KGSL_MMU_64BIT, &(__mmu)->features) ? \
-		KGSL_IOMMU_GLOBAL_MEM_BASE64 : KGSL_IOMMU_GLOBAL_MEM_BASE32)
+#define KGSL_IOMMU_SVM_BASE64 0x1000000000ULL
+#define KGSL_IOMMU_SVM_END64   0x4000000000ULL
 
-#define KGSL_IOMMU_SVM_BASE32(__mmu)	\
-	(ADRENO_DEVICE(KGSL_MMU_DEVICE(__mmu))->uche_gmem_base + \
-		ADRENO_DEVICE(KGSL_MMU_DEVICE(__mmu))->gpucore->gmem_size)
+#define KGSL_IOMMU_SVM_BASE32(mmu) 0x400000ULL
+#define KGSL_IOMMU_SVM_END32(mmu)   0xea5ff000ULL
 
-#define KGSL_IOMMU_SVM_END32(__mmu) \
-	(test_bit(KGSL_MMU_64BIT, &(__mmu)->features) ? \
-		(test_bit(KGSL_MMU_IOPGTABLE, &(__mmu)->features) ? \
-		 KGSL_MEMSTORE_TOKEN_ADDRESS : \
-		 KGSL_IOMMU_GLOBAL_MEM_BASE64) : \
-	(0xC0000000 - SZ_16M))
+#define KGSL_IOMMU_GLOBAL_MEM_BASE(mmu) 0x8000000000ULL
 
-/*
- * Limit secure size to 256MB for 32bit kernels.
- */
-#define KGSL_IOMMU_SECURE_SIZE32 SZ_256M
-#define KGSL_IOMMU_SECURE_BASE32	\
-	(KGSL_IOMMU_SECURE_BASE64 - KGSL_IOMMU_SECURE_SIZE32)
-#define KGSL_IOMMU_SECURE_END32 KGSL_IOMMU_SECURE_BASE64
+#define KGSL_IOMMU_SECURE_BASE32 0x400000
+#define KGSL_IOMMU_SECURE_BASE(mmu) 0x400000ULL
 
-#define KGSL_IOMMU_SECURE_BASE64	0x100000000ULL
-#define KGSL_IOMMU_SECURE_END64	\
-	(KGSL_IOMMU_SECURE_BASE64 + KGSL_IOMMU_SECURE_SIZE64)
+/* SCTLR bits */
+#define KGSL_IOMMU_SCTLR_CFIE_SHIFT 1
+#define KGSL_IOMMU_SCTLR_CFCFG_SHIFT 7
+#define KGSL_IOMMU_SCTLR_HUPCF_SHIFT 8
 
-#define KGSL_IOMMU_MAX_SECURE_SIZE 0xFFFFF000
+/* ACTLR bits */
+#define KGSL_IOMMU_ACTLR_PRR_ENABLE BIT(5)
 
-#define KGSL_IOMMU_SECURE_SIZE64	\
-	(KGSL_IOMMU_MAX_SECURE_SIZE - KGSL_IOMMU_SECURE_SIZE32)
+/* PRR registers */
+#define KGSL_IOMMU_PRR_CFG_LADDR 0x6000
+#define KGSL_IOMMU_PRR_CFG_UADDR 0x6004
 
-#define KGSL_IOMMU_SECURE_BASE(_mmu) (test_bit(KGSL_MMU_64BIT, \
-			&(_mmu)->features) ? KGSL_IOMMU_SECURE_BASE64 : \
-			KGSL_IOMMU_SECURE_BASE32)
-#define KGSL_IOMMU_SECURE_END(_mmu) (test_bit(KGSL_MMU_64BIT, \
-			&(_mmu)->features) ? KGSL_IOMMU_SECURE_END64 : \
-			KGSL_IOMMU_SECURE_END32)
-#define KGSL_IOMMU_SECURE_SIZE(_mmu) (test_bit(KGSL_MMU_64BIT, \
-			&(_mmu)->features) ? KGSL_IOMMU_MAX_SECURE_SIZE : \
-			KGSL_IOMMU_SECURE_SIZE32)
+/* Global memory size */
+#define KGSL_IOMMU_GLOBAL_MEM_SIZE SZ_1M
 
-/* The CPU supports 39 bit addresses */
-#define KGSL_IOMMU_SVM_BASE64		0x1000000000ULL
-#define KGSL_IOMMU_SVM_END64		0x4000000000ULL
-#define KGSL_IOMMU_VA_BASE64		0x4000000000ULL
-#define KGSL_IOMMU_VA_END64		0x8000000000ULL
+/* FSR bits */
+#define KGSL_IOMMU_FSR_TRANSLATION_FORMAT_MASK BIT(30)
 
-#define CP_APERTURE_REG			0
-#define CP_SMMU_APERTURE_ID		0x1B
+/* Memstore tokens */
+#define KGSL_MEMSTORE_TOKEN_ADDRESS 0xFFFFFFFFFFFFFFFFULL
 
-/* Global SMMU register offsets */
-#define KGSL_IOMMU_PRR_CFG_LADDR	0x6008
-#define KGSL_IOMMU_PRR_CFG_UADDR	0x600c
-
-/* Register offsets */
-#define KGSL_IOMMU_CTX_SCTLR		0x0000
-#define KGSL_IOMMU_CTX_ACTLR		0x0004
-#define KGSL_IOMMU_CTX_TTBR0		0x0020
-#define KGSL_IOMMU_CTX_TCR_LPAE		0x0030
-#define KGSL_IOMMU_CTX_CONTEXTIDR	0x0034
-#define KGSL_IOMMU_CTX_FSR		0x0058
-#define KGSL_IOMMU_CTX_TLBIALL		0x0618
-#define KGSL_IOMMU_CTX_RESUME		0x0008
-#define KGSL_IOMMU_CTX_FSYNR0		0x0068
-#define KGSL_IOMMU_CTX_FSYNR1		0x006c
-#define KGSL_IOMMU_CTX_TLBSYNC		0x07f0
-#define KGSL_IOMMU_CTX_TLBSTATUS	0x07f4
-
-/* TLBSTATUS register fields */
-#define KGSL_IOMMU_CTX_TLBSTATUS_SACTIVE BIT(0)
-
-/* SCTLR fields */
-#define KGSL_IOMMU_SCTLR_HUPCF_SHIFT		8
-#define KGSL_IOMMU_SCTLR_CFCFG_SHIFT		7
-#define KGSL_IOMMU_SCTLR_CFIE_SHIFT		6
-
-#define KGSL_IOMMU_ACTLR_PRR_ENABLE		BIT(5)
-
-/* TCR LPAE fields */
-#define KGSL_IOMMU_TCR_LPAE_EPD0		BIT(23)
-#define KGSL_IOMMU_TCR_LPAE_EPD1		BIT(7)
-
-/* FSR fields */
-#define KGSL_IOMMU_FSR_SS_SHIFT		30
-#define KGSL_IOMMU_FSR_TRANSLATION_FORMAT_MASK  GENMASK(10, 9)
-
-/* ASID field in TTBR register */
-#define KGSL_IOMMU_ASID_START_BIT	48
-
-/* offset at which a nop command is placed in setstate */
-#define KGSL_IOMMU_SETSTATE_NOP_OFFSET	1024
-
-#define KGSL_IOMMU_PAGEFAULT_TYPES (ilog2(IOMMU_FAULT_TRANSACTION_STALLED) + 1)
-
-/*
- * struct kgsl_iommu_context - Structure holding data about an iommu context
- * bank
- * @pdev: pointer to the iommu context's platform device
- * @name: context name
- * @id: The id of the context, used for deciding how it is used.
- * @cb_num: The hardware context bank number, used for calculating register
- *		offsets.
- * @kgsldev: The kgsl device that uses this context.
- * @stalled_on_fault: Flag when set indicates that this iommu device is stalled
- * on a page fault
- */
-struct kgsl_iommu_context {
-	struct platform_device *pdev;
-	const char *name;
-	int cb_num;
-	struct kgsl_device *kgsldev;
-	bool stalled_on_fault;
-	/** ratelimit: Ratelimit state for the context */
-	struct ratelimit_state ratelimit;
-	struct iommu_domain *domain;
-	struct adreno_smmu_priv adreno_smmu;
+struct kgsl_iommu_reg {
+	char name[KGSL_IOMMU_NAME_SIZE];
+	u32 offset;
+	u32 val;
 };
 
-/*
- * struct kgsl_iommu_pf_proc - Structure to hold data on pagefaulting processes
- */
-struct kgsl_iommu_pf_proc {
-	/** @comm: Task name of the pagefaulting process */
-	char comm[TASK_COMM_LEN];
-	/** @pf_count: Total count of pagefaults from this process */
+struct kgsl_iommu_context {
+	const char *name;
+	u32 id;
+	u32 cb_num;
+	u32 asid;
+	u32 _pad1;
+	u64 pt_base;
 	u32 pf_count;
-	/** @pf_type_counts: Count of pagefaults of each type from this process */
+	u32 _pad2;
+	struct ratelimit_state ratelimit;
+	u32 pf_type_counts[KGSL_IOMMU_PAGEFAULT_TYPES];
+	struct iommu_domain *domain;
+	struct kgsl_device *kgsldev;
+	struct platform_device *pdev;
+	struct adreno_smmu_priv adreno_smmu;
+	bool stalled_on_fault;
+};
+
+struct kgsl_iommu_pf_proc {
+	pid_t pid;
+	char comm[16];
+	u32 pf_count;
 	u32 pf_type_counts[KGSL_IOMMU_PAGEFAULT_TYPES];
 };
 
-#define KGSL_IOMMU_MAX_PF_PROCS 10
-
-/*
- * struct kgsl_iommu - Structure holding iommu data for kgsl driver
- * @regbase: Virtual address of the IOMMU register base
- * @regstart: Physical address of the iommu registers
- * @regsize: Length of the iommu register region.
- * @setstate: Scratch GPU memory for IOMMU operations
- * @clk_enable_count: The ref count of clock enable calls
- * @clks: Array of pointers to IOMMU clocks
- * @smmu_info: smmu info used in a5xx preemption
- */
 struct kgsl_iommu {
-	/** @user_context: Container for the user iommu context */
+	char name[KGSL_IOMMU_NAME_SIZE];
+	struct device_node *node;
+	struct kgsl_iommu_reg *reg_list;
+	u32 reg_count;
+	struct regulator *cx_regulator;
+	u32 pf_type_counts[KGSL_IOMMU_PAGEFAULT_TYPES];
 	struct kgsl_iommu_context user_context;
-	/** @secure_context: Container for the secure iommu context */
 	struct kgsl_iommu_context secure_context;
-	/** @lpac_context: Container for the LPAC iommu context */
 	struct kgsl_iommu_context lpac_context;
 	void __iomem *regbase;
+	phys_addr_t regstart;
+	size_t regsize;
 	struct kgsl_memdesc *setstate;
 	atomic_t clk_enable_count;
 	struct clk_bulk_data *clks;
 	int num_clks;
 	struct kgsl_memdesc *smmu_info;
-	/** @pdev: Pointer to the platform device for the IOMMU device */
-	struct platform_device *pdev;
-	/**
-	 * @ppt_active: Set when the first per process pagetable is created.
-	 * This is used to warn when global buffers are created that might not
-	 * be mapped in all contexts
-	 */
-	bool ppt_active;
-	/** @cb0_offset: Offset of context bank 0 from iommu register base */
-	u32 cb0_offset;
-	/** @pagesize: Size of each context bank register space */
-	u32 pagesize;
-	/** @cx_regulator: CX regulator handle in case the IOMMU needs it */
-	struct regulator *cx_regulator;
-	/** @pf_type_counts: Keep track of pagefaults */
-	u32 pf_type_counts[KGSL_IOMMU_PAGEFAULT_TYPES];
-	/**
-	 * @pf_procs: Array to keep track of per process pagefault count sorted by the number
-	 * of pagefaults
-	 */
 	struct kgsl_iommu_pf_proc pf_procs[KGSL_IOMMU_MAX_PF_PROCS];
-	/** @pf_stats_lock: A R/W lock to protect pagefault statistics */
+	u32 cb0_offset;
+	u32 pagesize;
+	struct platform_device *pdev;
 	rwlock_t pf_stats_lock;
 };
 
-/*
- * struct kgsl_iommu_pt - Iommu pagetable structure private to kgsl driver
- * @base: Container of the base kgsl pagetable
- * @ttbr0: register value to set when using this pagetable
- * @pgtbl_ops: Pagetable operations for mapping/unmapping buffers
- * @info: Pagetable info used to allocate pagetable operations
- */
-struct kgsl_iommu_pt {
-	struct kgsl_pagetable base;
-	u64 ttbr0;
-
-	struct io_pgtable_ops *pgtbl_ops;
-	struct qcom_io_pgtable_info info;
-};
-
-/**
- * kgsl_set_smmu_aperture - set SMMU Aperture for user context
- * @device: A GPU device handle
- *
- * Return: 0 on success or negative on failure.
- */
-int kgsl_set_smmu_aperture(struct kgsl_device *device,
-		struct kgsl_iommu_context *context);
-
-/**
- * kgsl_set_smmu_lpac_aperture - set SMMU Aperture for LPAC context
- * @device: Pointer to the KGSL device
- * @context: Pointer to the LPAC iommu context
- *
- * Return: 0 on success or negative on failure.
- */
-int kgsl_set_smmu_lpac_aperture(struct kgsl_device *device,
-		struct kgsl_iommu_context *context);
+static inline u64 KGSL_IOMMU_SECURE_SIZE(struct kgsl_mmu *mmu)
+{
+	return (u64)2048 * SZ_4K;
+}
 
 #endif

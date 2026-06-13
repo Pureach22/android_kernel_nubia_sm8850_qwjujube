@@ -28,10 +28,6 @@
 #include "kgsl_pool.h"
 #include "kgsl_util.h"
 
-int qcom_scm_kgsl_init_regs(u32 gpu_req);
-int qcom_scm_pas_shutdown_retry(u32 peripheral);
-
-
 bool kgsl_genpd_is_enabled(struct device *dev)
 {
 	struct generic_pm_domain *genpd;

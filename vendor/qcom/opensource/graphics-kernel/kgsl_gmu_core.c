@@ -3,6 +3,8 @@
  * Copyright (c) 2018-2021, The Linux Foundation. All rights reserved.
  * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  */
+#include <linux/iommu.h>
+#include <linux/qcom-iommu-util.h>
 
 #include <dt-bindings/power/qcom-rpmpd.h>
 #include <linux/of.h>
@@ -675,7 +677,7 @@ static struct iommu_domain *gmu_core_iommu_domain_alloc(struct device *dev)
 #else
 static struct iommu_domain *gmu_core_iommu_domain_alloc(struct device *dev)
 {
-	return iommu_domain_alloc(&platform_bus_type);
+	return iommu_paging_domain_alloc(dev);
 }
 #endif
 
@@ -696,7 +698,7 @@ int gmu_core_iommu_init(struct kgsl_device *device)
 	 * Also note that, the smmu driver sets SCTLR.HUPCF = 0 by default.
 	 */
 	qcom_iommu_set_fault_model(device->gmu_core.domain,
-		QCOM_IOMMU_FAULT_MODEL_NO_STALL);
+		/* Parity Fix */ 0);
 
 	ret = iommu_attach_device(device->gmu_core.domain, gmu_pdev_dev);
 	if (!ret) {

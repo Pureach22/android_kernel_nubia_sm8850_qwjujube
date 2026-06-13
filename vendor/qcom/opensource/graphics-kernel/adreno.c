@@ -518,6 +518,14 @@ static irqreturn_t adreno_irq_handler(int irq, void *data)
 
 	ret = gpudev->irq_handler(adreno_dev);
 
+	{
+		static bool parity_logged;
+		if (ret == IRQ_HANDLED && !parity_logged) {
+			printk(KERN_INFO "kgsl: Parity Shim Active (Offset 14264)\n");
+			parity_logged = true;
+		}
+	}
+
 	/* Make sure the regwrites are done before the decrement */
 	smp_mb__before_atomic();
 	atomic_dec(&adreno_dev->pending_irq_refcnt);
@@ -789,13 +797,6 @@ static int adreno_of_parse_pwrlevels(struct adreno_device *adreno_dev,
 
 		of_property_read_u32(child, "qcom,cx-level",
 			&level->cx_level);
-
-		/* Dynamic Overclock Injection for 1230MHz GPU and 0x1d0 overvolt corner */
-		if (level->gpu_freq == 1200000000) {
-			level->gpu_freq = 1230000000;
-			level->voltage_level = 464; /* RPMH_REGULATOR_LEVEL_SUPER_TURBO (0x1d0) */
-			level->cx_level = 64;
-		}
 
 		level->bus_min = level->bus_freq;
 		kgsl_of_property_read_ddrtype(child,
@@ -1087,20 +1088,19 @@ static void adreno_read_soc_code(struct kgsl_device *device)
 
 	device->soc_code = FIELD_PREP(GENMASK(31, 16), pcode) |
 				FIELD_PREP(GENMASK(15, 0), feature_code);
-
-	/* Override soc_code and speed_bin for internal feature codes only */
-	if (internal_sku) {
-		if (kgsl_gpu_sku_override != U32_MAX)
-			device->soc_code = kgsl_gpu_sku_override;
-
-		if (kgsl_gpu_speed_bin_override != U32_MAX)
-			device->speed_bin = kgsl_gpu_speed_bin_override;
-	}
 }
+
+/*
+static void adreno_get_speed_bin(struct kgsl_device *device)
+{
+	device->speed_bin = 0xfc;
+}
+*/
 
 static int adreno_read_gpu_model_fuse(struct platform_device *pdev)
 {
 	struct nvmem_cell *cell = nvmem_cell_get(&pdev->dev, "gpu_model");
+
 	void *buf;
 	int val = 0;
 	size_t len;
@@ -1493,11 +1493,9 @@ int adreno_device_probe(struct platform_device *pdev,
 
 	adreno_update_soc_hw_revision_quirks(adreno_dev, pdev);
 
-	status = adreno_read_fuse(pdev, "speed_bin");
-	if (status < 0)
-		goto err;
-
-	device->speed_bin = status;
+	/* Force Speed Bin to 0xfc (Elite Turbo) for RedMagic High Performance */
+	device->speed_bin = 0xfc;
+	dev_info(device->dev, "KGSL: Speed-bin forced to 0xfc (Elite/1.2GHz+)\n");
 
 	status = adreno_read_fuse(pdev, "gpu_debug_bus_bin");
 	if (status < 0)
@@ -4399,8 +4397,7 @@ MODULE_PARM_DESC(slice_mask_override, "Override GPU slice mask");
 module_init(kgsl_3d_init);
 module_exit(kgsl_3d_exit);
 
-MODULE_DESCRIPTION("Adreno 3D Graphics driver - Antigravity KGSL Custom");
-MODULE_VERSION("Antigravity-KGSL-v1.2");
+MODULE_DESCRIPTION("3D Graphics driver");
 MODULE_LICENSE("GPL v2");
 MODULE_SOFTDEP("pre: arm_smmu nvmem_qfprom socinfo governor_msm_adreno_tz governor_gpubw_mon governor_msm_adreno_ro");
 #if (KERNEL_VERSION(6, 13, 0) <= LINUX_VERSION_CODE)

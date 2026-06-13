@@ -13,13 +13,9 @@
 #include "dp_aux.h"
 #include "dp_display.h"
 #include "dp_pll.h"
-#include <linux/ipc_logging.h>
+// #include <linux/ipc_logging.h>
 
-#define DP_IPC_LOG(fmt, ...) \
-	do {  \
-		void *ipc_logging_context = get_ipc_log_context(); \
-		ipc_log_string(ipc_logging_context, fmt, ##__VA_ARGS__); \
-	} while (0)
+#define DP_IPC_LOG(fmt, ...) do { } while (0)
 
 #define DP_DEBUG(fmt, ...)                                                   \
 	do {                                                                 \

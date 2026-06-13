@@ -556,59 +556,12 @@ int gen8_hfi_process_queue(struct gen8_gmu_device *gmu,
 
 int gen8_hfi_send_bcl_feature_ctrl(struct adreno_device *adreno_dev)
 {
-	if (!adreno_dev->bcl_enabled)
-		return 0;
-
-	/*
-	 * BCL data is expected by gmu in below format
-	 * BIT[0] - response type
-	 * BIT[1:7] - Throttle level 1 (optional)
-	 * BIT[8:14] - Throttle level 2 (optional)
-	 * BIT[15:21] - Throttle level 3 (optional)
-	 */
-	return gen8_hfi_send_feature_ctrl(adreno_dev, HFI_FEATURE_BCL, 1, adreno_dev->bcl_data);
+	return 0;
 }
 
 int gen8_hfi_send_iff_pclx_feature_ctrl(struct adreno_device *adreno_dev)
 {
-	const struct adreno_gen8_core *gen8_core = to_gen8_core(adreno_dev);
-	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
-	static struct hfi_table_cmd *tbl_cmd;
-	struct hfi_table_entry *entry;
-	u32 hdr_size, len;
-	int ret;
-
-	if (!gen8_core->limits_mit_cfg)
-		return 0;
-
-	len = gen8_core->limits_mit_cfg->len;
-	hdr_size = sizeof(*tbl_cmd) + sizeof(*entry) + (len * sizeof(struct hfi_limits_mit_tbl));
-
-	if (!tbl_cmd) {
-		tbl_cmd = devm_kzalloc(&device->pdev->dev, hdr_size, GFP_KERNEL);
-		if (!tbl_cmd)
-			return -ENOMEM;
-	}
-
-	ret = gen8_hfi_send_feature_ctrl(adreno_dev, HFI_FEATURE_IFF_PCLX, 1, 0);
-	if (ret)
-		return ret;
-
-	if (tbl_cmd->hdr)
-		return gen8_hfi_send_generic_req(adreno_dev, tbl_cmd, hdr_size);
-
-	tbl_cmd->hdr = CREATE_MSG_HDR(H2F_MSG_TABLE, HFI_MSG_CMD);
-	tbl_cmd->version = 0;
-	tbl_cmd->type = HFI_TABLE_LIMITS_MITIGATION;
-
-	entry = tbl_cmd->entry;
-	entry->count = len;
-	entry->stride = sizeof(struct hfi_limits_mit_tbl) >> 2;
-
-	memcpy(entry->data, gen8_core->limits_mit_cfg->limits_mit_tbl,
-		entry->count * (entry->stride << 2));
-
-	return gen8_hfi_send_generic_req(adreno_dev, tbl_cmd, hdr_size);
+	return 0;
 }
 
 int gen8_hfi_send_minbw_feature_ctrl(struct adreno_device *adreno_dev)
@@ -662,24 +615,6 @@ int gen8_hfi_send_clx_feature_ctrl(struct adreno_device *adreno_dev)
 
 int gen8_hfi_send_acd_feature_ctrl(struct adreno_device *adreno_dev)
 {
-	struct gen8_gmu_device *gmu = to_gen8_gmu(adreno_dev);
-	int ret = 0;
-
-	if (adreno_dev->acd_enabled) {
-		ret = gen8_hfi_send_feature_ctrl(adreno_dev,
-			HFI_FEATURE_ACD, 1, 0);
-		if (ret)
-			return ret;
-
-		ret = gen8_hfi_send_generic_req(adreno_dev,
-				&gmu->hfi.acd_table, sizeof(gmu->hfi.acd_table));
-		if (ret)
-			return ret;
-
-		gen8_hfi_send_set_value(adreno_dev, HFI_VALUE_LOG_EVENT_ON,
-				EVENT_PWR_ACD_THROTTLE_PROF, 0);
-	}
-
 	return 0;
 }
 

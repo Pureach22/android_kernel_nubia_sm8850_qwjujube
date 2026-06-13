@@ -28,10 +28,10 @@ enum sde_hdcp_client_id {
 };
 
 enum sde_hdcp_state {
-	HDCP_STATE_INACTIVE,
-	HDCP_STATE_AUTHENTICATING,
-	HDCP_STATE_AUTHENTICATED,
-	HDCP_STATE_AUTH_FAIL,
+	SDE_HDCP_STATE_INACTIVE,
+	SDE_HDCP_STATE_AUTHENTICATING,
+	SDE_HDCP_STATE_AUTHENTICATED,
+	SDE_HDCP_STATE_AUTH_FAIL,
 };
 
 enum sde_hdcp_version {
@@ -96,58 +96,21 @@ struct sde_hdcp_ops {
 static inline const char *sde_hdcp_state_name(enum sde_hdcp_state hdcp_state)
 {
 	switch (hdcp_state) {
-	case HDCP_STATE_INACTIVE:	return "HDCP_STATE_INACTIVE";
-	case HDCP_STATE_AUTHENTICATING:	return "HDCP_STATE_AUTHENTICATING";
-	case HDCP_STATE_AUTHENTICATED:	return "HDCP_STATE_AUTHENTICATED";
-	case HDCP_STATE_AUTH_FAIL:	return "HDCP_STATE_AUTH_FAIL";
+	case SDE_HDCP_STATE_INACTIVE:	return "SDE_HDCP_STATE_INACTIVE";
+	case SDE_HDCP_STATE_AUTHENTICATING:	return "SDE_HDCP_STATE_AUTHENTICATING";
+	case SDE_HDCP_STATE_AUTHENTICATED:	return "SDE_HDCP_STATE_AUTHENTICATED";
+	case SDE_HDCP_STATE_AUTH_FAIL:	return "SDE_HDCP_STATE_AUTH_FAIL";
 	default:			return "???";
 	}
 }
 
-static inline const char *sde_hdcp_version(enum sde_hdcp_version hdcp_version)
-{
-	switch (hdcp_version) {
-	case HDCP_VERSION_NONE:		return "HDCP_VERSION_NONE";
-	case HDCP_VERSION_1X:		return "HDCP_VERSION_1X";
-	case HDCP_VERSION_2P2:		return "HDCP_VERSION_2P2";
-	default:			return "???";
-	}
-}
+/* HDCP 1.x and 2.2 stubs for binary parity */
+extern void *sde_hdcp_1x_init(struct sde_hdcp_init_data *init_data);
+extern void sde_hdcp_1x_deinit(void *fd);
+extern struct sde_hdcp_ops *sde_hdcp_1x_get(void *fd);
 
-#if IS_ENABLED(CONFIG_HDCP_QSEECOM)
-void *sde_hdcp_1x_init(struct sde_hdcp_init_data *init_data);
-void sde_hdcp_1x_deinit(void *input);
-struct sde_hdcp_ops *sde_hdcp_1x_get(void *input);
-void *sde_dp_hdcp2p2_init(struct sde_hdcp_init_data *init_data);
-void sde_dp_hdcp2p2_deinit(void *input);
-struct sde_hdcp_ops *sde_dp_hdcp2p2_get(void *input);
-#else
-void *sde_hdcp_1x_init(struct sde_hdcp_init_data *init_data)
-{
-	return NULL;
-}
+extern void *sde_dp_hdcp2p2_init(struct sde_hdcp_init_data *init_data);
+extern void sde_dp_hdcp2p2_deinit(void *fd);
+extern struct sde_hdcp_ops *sde_dp_hdcp2p2_get(void *fd);
 
-void sde_hdcp_1x_deinit(void *input)
-{
-}
-
-struct sde_hdcp_ops *sde_hdcp_1x_get(void *input)
-{
-	return NULL;
-}
-
-void *sde_dp_hdcp2p2_init(struct sde_hdcp_init_data *init_data)
-{
-	return NULL;
-}
-
-void sde_dp_hdcp2p2_deinit(void *input)
-{
-}
-
-struct sde_hdcp_ops *sde_dp_hdcp2p2_get(void *input)
-{
-	return NULL;
-}
-#endif
 #endif /* __SDE_HDCP_H__ */

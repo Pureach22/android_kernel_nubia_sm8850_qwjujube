@@ -163,7 +163,7 @@ static int setup_gx_arc_votes(struct adreno_device *adreno_dev,
 
 	/* Populate DCVS table with all the votes */
 	for (i = 1; i < table->gpu_level_num; i++) {
-		table->gx_votes[i].freq = pwr->pwrlevels[pwr->num_pwrlevels - i].gpu_freq / 1000;
+		table->gx_votes[i].freq = (pwr->pwrlevels[pwr->num_pwrlevels - i].gpu_freq / 1000);
 		table->gx_votes[i].vote = gx_votes[i];
 		table->gx_votes[i].dep_vote = dep_votes[i];
 	}

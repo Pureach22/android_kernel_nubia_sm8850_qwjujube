@@ -6,7 +6,7 @@
 #ifndef __SDE_CESTA_H__
 #define __SDE_CESTA_H__
 
-#include <soc/qcom/crm.h>
+// #include <soc/qcom/crm.h>
 
 #include "sde_power_handle.h"
 
@@ -264,7 +264,7 @@ struct sde_cesta {
 	struct icc_path *bus_hdl_idle[MAX_SCC_BLOCK];
 	struct icc_path *sw_client_bus_hdl;
 	struct sde_cesta_sw_client_data sw_client;
-	const struct crm_dev *crm_dev;
+	const struct device *crm_dev;
 
 	struct sde_cesta_perf_cfg perf_cfg;
 	u32 debug_mode;

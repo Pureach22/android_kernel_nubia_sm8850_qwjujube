@@ -11,6 +11,9 @@
 #include <linux/delay.h>
 #include <linux/dma-buf.h>
 #include <linux/dma-map-ops.h>
+#include <linux/of_device.h>
+#include <linux/of_fdt.h>
+#include <linux/module.h>
 #include <linux/fdtable.h>
 #include <linux/io.h>
 #include <linux/mem-buf.h>
@@ -56,11 +59,10 @@
 #endif
 
 #if defined(CONFIG_ARM64) || defined(CONFIG_ARM_LPAE)
-#define KGSL_DMA_BIT_MASK	(~0ULL)
+#define KGSL_DMA_BIT_MASK	DMA_BIT_MASK(64)
 #else
 #define KGSL_DMA_BIT_MASK	DMA_BIT_MASK(32)
 #endif
-
 
 /* List of dmabufs mapped */
 static LIST_HEAD(kgsl_dmabuf_list);
@@ -5128,7 +5130,7 @@ static struct kobj_type kgsl_gpu_sysfs_ktype = {
 
 static int _register_device(struct kgsl_device *device)
 {
-	static u64 dma_mask = (~0ULL);
+	static u64 dma_mask = (u64)DMA_BIT_MASK(64);
 	static struct device_dma_parameters dma_parms;
 	int minor, ret;
 	dev_t dev;
@@ -5384,7 +5386,7 @@ void kgsl_core_exit(void)
 
 int __init kgsl_core_init(void)
 {
-	static u64 dma_mask = (~0ULL);
+	static u64 dma_mask = (u64)DMA_BIT_MASK(64);
 	static struct device_dma_parameters dma_parms;
 	int result = 0;
 

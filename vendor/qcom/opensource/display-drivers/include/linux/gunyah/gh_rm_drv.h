@@ -4,8 +4,6 @@
 #include <linux/types.h>
 #include <linux/version.h>
 
-struct notifier_block;
-
 typedef u32 gh_memparcel_handle_t;
 typedef u16 gh_vmid_t;
 
@@ -41,7 +39,6 @@ enum gh_rm_trans_type {
 };
 
 enum gh_rm_mem_type {
-    GH_RM_MEM_TYPE_NORMAL = 0,
     GH_RM_MEM_TYPE_IO = 1,
 };
 
@@ -96,7 +93,6 @@ static inline int ghd_rm_mem_reclaim(int handle, u32 flags) { return 0; }
 static inline int gh_rm_mem_notify(int handle, u32 event, u32 tag, void *flags) { return 0; }
 static inline struct gh_sgl_desc *gh_rm_mem_accept(int handle, u32 mem_type, u32 trans_type, u32 flags, u32 label, struct gh_acl_desc *acl, void *a, void *b, u32 c) { return NULL; }
 static inline int ghd_rm_mem_lend(u32 type, u32 a, u32 label, void *acl, void *sgl, void *b, u32 *handle) { return 0; }
-static inline int ghd_rm_mem_share(u32 type, u32 a, u32 label, void *acl, void *sgl, void *b, u32 *handle) { return 0; }
 static inline int ghd_rm_get_vmid(u32 type, u16 *vmid) { return 0; }
 static inline int gh_rm_get_vmid(u32 type, u16 *vmid) { return 0; }
 

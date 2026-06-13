@@ -17,9 +17,6 @@
 #include "adreno_trace.h"
 #include "kgsl_sysfs.h"
 
-int qcom_scm_kgsl_dcvs_tuning(u32 mingap, u32 penalty, u32 numbusy);
-
-
 static ssize_t _gpu_model_show(struct kgsl_device *device, char *buf)
 {
 	return scnprintf(buf, PAGE_SIZE, adreno_get_gpu_model(device));

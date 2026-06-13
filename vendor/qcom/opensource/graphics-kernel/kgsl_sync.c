@@ -204,7 +204,6 @@ static void destroy_all_hw_fences(void);
 
 static struct msm_hw_fence_descriptor {
 	/** @handle: Handle for hardware fences */
-
 	void *handle;
 	/** @descriptor: Memory descriptor for hardware fences */
 	struct msm_hw_fence_mem_addr mem_descriptor;
@@ -816,7 +815,6 @@ void kgsl_hw_fence_close(struct kgsl_device *device)
 	synx_uninitialize(kgsl_synx.handle);
 }
 #endif
-
 
 static void kgsl_count_hw_fences(struct kgsl_drawobj_sync_event *event, struct dma_fence *fence)
 {

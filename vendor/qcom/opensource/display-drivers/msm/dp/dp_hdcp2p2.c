@@ -101,7 +101,7 @@ static inline bool dp_hdcp2p2_is_valid_state(struct dp_hdcp2p2_ctrl *ctrl)
 			cmd == HDCP_TRANSPORT_CMD_AUTHENTICATE)
 		return true;
 
-	if (atomic_read(&ctrl->auth_state) != HDCP_STATE_INACTIVE)
+	if (atomic_read(&ctrl->auth_state) != SDE_HDCP_STATE_INACTIVE)
 		return true;
 
 	return false;
@@ -204,12 +204,12 @@ static int dp_hdcp2p2_wakeup(struct hdcp_transport_wakeup_data *data)
 	ctrl->polling = false;
 	switch (data->cmd) {
 	case HDCP_TRANSPORT_CMD_STATUS_SUCCESS:
-		atomic_set(&ctrl->auth_state, HDCP_STATE_AUTHENTICATED);
+		atomic_set(&ctrl->auth_state, SDE_HDCP_STATE_AUTHENTICATED);
 		kfifo_put(&ctrl->cmd_q, data->cmd);
 		wake_up(&ctrl->wait_q);
 		break;
 	case HDCP_TRANSPORT_CMD_STATUS_FAILED:
-		atomic_set(&ctrl->auth_state, HDCP_STATE_AUTH_FAIL);
+		atomic_set(&ctrl->auth_state, SDE_HDCP_STATE_AUTH_FAIL);
 		kfifo_put(&ctrl->cmd_q, data->cmd);
 		kthread_park(ctrl->thread);
 		break;
@@ -246,7 +246,7 @@ static void dp_hdcp2p2_reset(struct dp_hdcp2p2_ctrl *ctrl)
 	}
 
 	ctrl->sink_status = SINK_DISCONNECTED;
-	atomic_set(&ctrl->auth_state, HDCP_STATE_INACTIVE);
+	atomic_set(&ctrl->auth_state, SDE_HDCP_STATE_INACTIVE);
 }
 
 static int dp_hdcp2p2_register(void *input, bool mst_enabled)
@@ -322,7 +322,7 @@ static int dp_hdcp2p2_authenticate(void *input)
 	dp_hdcp2p2_set_interrupts(ctrl, true);
 
 	ctrl->sink_status = SINK_CONNECTED;
-	atomic_set(&ctrl->auth_state, HDCP_STATE_AUTHENTICATING);
+	atomic_set(&ctrl->auth_state, SDE_HDCP_STATE_AUTHENTICATING);
 
 	if (kthread_should_park())
 		kthread_park(ctrl->thread);
@@ -374,8 +374,8 @@ static int dp_hdcp2p2_aux_read_message(struct dp_hdcp2p2_ctrl *ctrl)
 	s64 diff_ms;
 	ktime_t start_read, finish_read;
 
-	if (atomic_read(&ctrl->auth_state) == HDCP_STATE_INACTIVE ||
-		atomic_read(&ctrl->auth_state) == HDCP_STATE_AUTH_FAIL) {
+	if (atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_INACTIVE ||
+		atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_AUTH_FAIL) {
 		DP_ERR("invalid hdcp state\n");
 		rc = -EINVAL;
 		goto exit;
@@ -502,7 +502,7 @@ static void dp_hdcp2p2_send_msg(struct dp_hdcp2p2_ctrl *ctrl)
 
 	cdata.context = ctrl->lib_ctx;
 
-	if (atomic_read(&ctrl->auth_state) == HDCP_STATE_INACTIVE) {
+	if (atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_INACTIVE) {
 		DP_ERR("hdcp is off\n");
 		goto exit;
 	}
@@ -580,7 +580,7 @@ static void dp_hdcp2p2_recv_msg(struct dp_hdcp2p2_ctrl *ctrl)
 
 	cdata.context = ctrl->lib_ctx;
 
-	if (atomic_read(&ctrl->auth_state) == HDCP_STATE_INACTIVE) {
+	if (atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_INACTIVE) {
 		DP_ERR("hdcp is off\n");
 		return;
 	}
@@ -601,8 +601,8 @@ static void dp_hdcp2p2_link_check(struct dp_hdcp2p2_ctrl *ctrl)
 		return;
 	}
 
-	if (atomic_read(&ctrl->auth_state) == HDCP_STATE_AUTH_FAIL ||
-		atomic_read(&ctrl->auth_state) == HDCP_STATE_INACTIVE) {
+	if (atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_AUTH_FAIL ||
+		atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_INACTIVE) {
 		DP_ERR("invalid hdcp state\n");
 		return;
 	}
@@ -622,7 +622,7 @@ static void dp_hdcp2p2_link_check(struct dp_hdcp2p2_ctrl *ctrl)
 		rc = -ENOLINK;
 
 		cdata.cmd = HDCP_2X_CMD_LINK_FAILED;
-		atomic_set(&ctrl->auth_state, HDCP_STATE_AUTH_FAIL);
+		atomic_set(&ctrl->auth_state, SDE_HDCP_STATE_AUTH_FAIL);
 		goto exit;
 	}
 
@@ -645,7 +645,7 @@ static void dp_hdcp2p2_start_auth(struct dp_hdcp2p2_ctrl *ctrl)
 	struct sde_hdcp_2x_wakeup_data cdata = {HDCP_2X_CMD_START_AUTH};
 	cdata.context = ctrl->lib_ctx;
 
-	if (atomic_read(&ctrl->auth_state) == HDCP_STATE_AUTHENTICATING)
+	if (atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_AUTHENTICATING)
 		dp_hdcp2p2_wakeup_lib(ctrl, &cdata);
 }
 
@@ -700,8 +700,8 @@ static int dp_hdcp2p2_cp_irq(void *input)
 	if (rc)
 		return rc;
 
-	if (atomic_read(&ctrl->auth_state) == HDCP_STATE_AUTH_FAIL ||
-		atomic_read(&ctrl->auth_state) == HDCP_STATE_INACTIVE) {
+	if (atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_AUTH_FAIL ||
+		atomic_read(&ctrl->auth_state) == SDE_HDCP_STATE_INACTIVE) {
 		DP_DEBUG("invalid hdcp state\n");
 		return -EINVAL;
 	}
@@ -874,7 +874,7 @@ void sde_dp_hdcp2p2_deinit(void *input)
 		return;
 	}
 
-	if (atomic_read(&ctrl->auth_state) != HDCP_STATE_AUTH_FAIL) {
+	if (atomic_read(&ctrl->auth_state) != SDE_HDCP_STATE_AUTH_FAIL) {
 		cdata.cmd = HDCP_2X_CMD_STOP;
 		cdata.context = ctrl->lib_ctx;
 		dp_hdcp2p2_wakeup_lib(ctrl, &cdata);
@@ -1021,7 +1021,7 @@ void *sde_dp_hdcp2p2_init(struct sde_hdcp_init_data *init_data)
 	INIT_KFIFO(ctrl->cmd_q);
 
 	init_waitqueue_head(&ctrl->wait_q);
-	atomic_set(&ctrl->auth_state, HDCP_STATE_INACTIVE);
+	atomic_set(&ctrl->auth_state, SDE_HDCP_STATE_INACTIVE);
 
 	ctrl->ops = &ops;
 	mutex_init(&ctrl->mutex);

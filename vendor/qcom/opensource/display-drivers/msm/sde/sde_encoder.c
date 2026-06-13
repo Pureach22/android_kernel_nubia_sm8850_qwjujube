@@ -2538,7 +2538,7 @@ static int sde_encoder_hw_fence_signal(struct sde_encoder_phys *phys_enc)
 	/* out of order hw fence error signal is needed for video panel. */
 	if (sde_encoder_check_curr_mode(phys_enc->parent, MSM_DISPLAY_VIDEO_MODE)) {
 		/* out of order hw fence error signal */
-		rc = msm_hw_fence_update_txq_error(hwfence_data->hw_fence_handle->client,
+		rc = msm_hw_fence_update_txq_error((void *)(uintptr_t)hwfence_data->hw_fence_handle->client,
 			phys_enc->sde_hw_fence_handle, phys_enc->sde_hw_fence_error_value,
 			MSM_HW_FENCE_UPDATE_ERROR_WITH_MOVE);
 		if (rc) {

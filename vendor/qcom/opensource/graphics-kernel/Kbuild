@@ -6,12 +6,7 @@ ifeq ($(KGSL_PATH),)
 KGSL_PATH=$(src)
 endif
 
-# If we're not GVM and not in an Android tree, select KGSL config
-ifeq ($(CONFIG_QTI_QUIN_GVM),)
-	ifeq ($(ANDROID_BUILD_TOP),)
-		CONFIG_QCOM_KGSL = m
-	endif
-endif
+# CONFIG_QCOM_KGSL is controlled by the kernel .config
 
 ifeq ($(CONFIG_ARCH_WAIPIO), y)
 	include $(KGSL_PATH)/config/gki_waipiodisp.conf
@@ -81,10 +76,11 @@ ifeq ($(CONFIG_ARCH_SM6150), y)
 	subdir-ccflags-y += $(LE_EXTRA_CFLAGS)
 endif
 
-ccflags-y += -I$(KGSL_PATH) -I$(KGSL_PATH)/include/linux -I$(KGSL_PATH)/include -I$(srctree)/drivers/devfreq \
-             -DCONFIG_QCOM_ADRENO_DEFAULT_GOVERNOR=\"msm-adreno-tz\" \
-             -DCONFIG_QCOM_KGSL_IDLE_TIMEOUT=80
-
+ccflags-y += -I$(KGSL_PATH) -I$(KGSL_PATH)/include/linux -I$(KGSL_PATH)/include -I$(srctree)/drivers/devfreq
+ccflags-y += -I$(KGSL_PATH)/../mm-drivers/hw_fence/include
+ccflags-y += -I$(srctree)/drivers/qcom_external/display/include
+ccflags-y += -DCONFIG_QCOM_ADRENO_DEFAULT_GOVERNOR=\"msm-adreno-tz\"
+ccflags-y += -DCONFIG_QCOM_KGSL_IDLE_TIMEOUT=80
 
 obj-$(CONFIG_QCOM_KGSL) += msm_kgsl.o
 
@@ -105,7 +101,8 @@ msm_kgsl-y = \
 	kgsl_timeline.o \
 	kgsl_trace.o \
 	kgsl_util.o \
-	kgsl_vbo.o
+	kgsl_vbo.o \
+	zte_kernel_parity.o
 
 msm_kgsl-$(CONFIG_COMPAT) += kgsl_compat.o
 msm_kgsl-$(CONFIG_DEBUG_FS) += kgsl_debugfs.o

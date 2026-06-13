@@ -19,22 +19,11 @@
 #else
 #include <linux/qcom_scm.h>
 #endif
-#include <linux/qtee_shmbridge.h>
 #include <linux/of.h>
+#include <linux/qtee_shmbridge.h>
 
 #include "governor.h"
 #include "msm_adreno_devfreq.h"
-
-int qcom_scm_io_reset(void);
-int qcom_scm_dcvs_reset(void);
-int qcom_scm_dcvs_update(u32 level, u32 total_time, u32 busy_time);
-int qcom_scm_dcvs_update_v2(u32 level, u32 total_time, u32 busy_time);
-int qcom_scm_dcvs_update_ca_v2(u32 level, u32 total_time, u32 busy_time, u32 ca);
-int qcom_scm_dcvs_init_ca_v2(u64 paddr, size_t size);
-bool qcom_scm_dcvs_core_available(void);
-int qcom_scm_dcvs_init_v2(u64 paddr, size_t size, u32 *version);
-bool qcom_scm_dcvs_ca_available(void);
-
 
 static DEFINE_SPINLOCK(tz_lock);
 static DEFINE_SPINLOCK(sample_lock);

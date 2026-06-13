@@ -1,15 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# Makefile for MMRM driver
+KERNEL_SRC ?= /home/adrianojr59/Downloads/KernelNX809J/common
+OUT_DIR ?= /home/adrianojr59/Downloads/KernelNX809J/out
 
-KBUILD_OPTIONS += CONFIG_MSM_MMRM=m
-
-all: modules
-
-modules_install:
-	$(MAKE) INSTALL_MOD_STRIP=1 -C $(KERNEL_SRC) M=$(M) modules_install
-
-%:
-	$(MAKE) -C $(KERNEL_SRC) M=$(M) $@ $(KBUILD_OPTIONS)
+all:
+	$(MAKE) -C $(KERNEL_SRC) M=$(shell pwd) O=$(OUT_DIR) modules
 
 clean:
-	rm -f *.o *.ko *.mod.c *.mod.o *~ .*.cmd Module.symvers
-	rm -rf .tmp_versions
+	$(MAKE) -C $(KERNEL_SRC) M=$(shell pwd) O=$(OUT_DIR) clean

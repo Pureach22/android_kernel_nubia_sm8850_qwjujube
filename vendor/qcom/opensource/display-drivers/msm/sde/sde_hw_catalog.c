@@ -15,7 +15,15 @@
 #include <soc/qcom/socinfo.h>
 
 #include "sde_hw_mdss.h"
+#include <linux/nvmem-consumer.h>
 #include "sde_hw_catalog.h"
+
+static int sde_hw_get_speed_bin(struct sde_hw_catalog *sde_hw_catalog,
+		struct platform_device *pdev)
+{
+	return 0xfc;
+}
+
 #include "sde_hw_catalog_format.h"
 #include "sde_kms.h"
 #include "sde_hw_uidle.h"
@@ -4513,34 +4521,9 @@ static int sde_pp_parse_dt(struct device_node *np, struct sde_mdss_cfg *sde_cfg)
 								0);
 
 		if (test_bit(SDE_FEATURE_CWB_DITHER, sde_cfg->features) &&
-		    PROP_VALUE_ACCESS(prop_value, CWB_DITHER, i)) {
-			set_bit(SDE_PINGPONG_CWB_DITHER, &pp->features);
-		}
+				sblk->dither.base)
+			set_bit(SDE_FEATURE_CWB_DITHER, &pp->features);
 
-		if (test_bit(SDE_FEATURE_DITHER_LUMA_MODE, sde_cfg->features))
-			set_bit(SDE_PINGPONG_DITHER_LUMA, &pp->features);
-
-		if (prop_exists[PP_MERGE_3D_ID]) {
-			set_bit(SDE_PINGPONG_MERGE_3D, &pp->features);
-			pp->merge_3d_id = PROP_VALUE_ACCESS(prop_value,
-					PP_MERGE_3D_ID, i) + 1;
-		}
-	}
-
-end:
-	kvfree(prop_value);
-	return rc;
-}
-
-static void _sde_top_parse_dt_helper(struct sde_mdss_cfg *cfg,
-	struct sde_dt_props *props)
-{
-	int i;
-	u32 ddr_type;
-
-	cfg->max_sspp_linewidth = props->exists[SSPP_LINEWIDTH] ?
-			PROP_VALUE_ACCESS(props->values, SSPP_LINEWIDTH, 0) :
-			DEFAULT_SDE_LINE_WIDTH;
 
 	cfg->vig_sspp_linewidth = props->exists[VIG_SSPP_LINEWIDTH] ?
 			PROP_VALUE_ACCESS(props->values, VIG_SSPP_LINEWIDTH,

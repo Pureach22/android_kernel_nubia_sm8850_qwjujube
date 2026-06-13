@@ -69,7 +69,9 @@
 #define MAX_HW_FENCES SDE_MULTIRECT_PLANE_MAX
 
 /* Wait for at most 2 vsync for spec fence bind */
+#ifndef SPEC_FENCE_TIMEOUT_MS
 #define SPEC_FENCE_TIMEOUT_MS 84
+#endif
 
 struct sde_crtc_custom_events {
 	u32 event;

@@ -7,6 +7,7 @@
 #include <dt-bindings/interconnect/qcom,icc.h>
 #include <linux/interconnect.h>
 #include <linux/of.h>
+#include <linux/of_fdt.h>
 #include <soc/qcom/of_common.h>
 
 #include "kgsl_bus.h"

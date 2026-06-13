@@ -14,7 +14,6 @@
 #include <linux/of_address.h>
 #include <linux/slab.h>
 #include <linux/mutex.h>
-#include <linux/device.h>
 #include <linux/of_platform.h>
 #include <linux/pm_wakeup.h>
 
@@ -600,62 +599,13 @@ static int sde_power_reg_bus_update(struct sde_power_reg_bus_handle *reg_bus,
 int sde_power_mmrm_set_clk_limit(struct dss_clk *clk,
 	struct sde_power_handle *phandle, unsigned long requested_clk)
 {
-	int ret;
-
-	clk->mmrm.mmrm_requested_clk = requested_clk;
-
-	SDE_EVT32_VERBOSE(SDE_EVTLOG_FUNC_ENTRY,
-		clk->mmrm.mmrm_requested_clk);
-	ret = sde_power_event_trigger_locked(phandle,
-		SDE_POWER_EVENT_MMRM_CALLBACK);
-	if (ret) {
-		/* no crtc's present, we cannot process the cb */
-		pr_err("error cannot process mmrm cb\n");
-		goto exit;
-	}
-
-	SDE_EVT32_VERBOSE(SDE_EVTLOG_FUNC_CASE1,
-		clk->mmrm.mmrm_requested_clk);
-	/* wait for the request to reduce the clk */
-	ret = wait_event_timeout(clk->mmrm.mmrm_cb_wq,
-		clk->mmrm.mmrm_requested_clk == 0,
-		SDE_MMRM_CB_TIMEOUT_JIFFIES);
-	if (!ret) {
-		/* requested clk was not reduced, fail cb */
-		ret = -EPERM;
-		/* Clear the request */
-		clk->mmrm.mmrm_requested_clk = 0;
-		pr_err("error cannot process mmrm cb clk request\n");
-	} else {
-		ret = 0; // Succeed, clk was reduced
-	}
-
-exit:
-	SDE_EVT32(SDE_EVTLOG_FUNC_EXIT, ret);
-	return ret;
+	return 0;
 }
 
 int sde_power_mmrm_callback(
 	struct mmrm_client_notifier_data *notifier_data)
 {
-	struct dss_clk_mmrm_cb *mmrm_cb_data =
-		(struct dss_clk_mmrm_cb *)notifier_data->pvt_data;
-	struct sde_power_handle *phandle =
-		(struct sde_power_handle *)mmrm_cb_data->phandle;
-	struct dss_clk *clk = mmrm_cb_data->clk;
-	int ret = -EPERM;
-
-	if (notifier_data->cb_type == MMRM_CLIENT_RESOURCE_VALUE_CHANGE) {
-		unsigned long requested_clk =
-			notifier_data->cb_data.val_chng.new_val;
-
-		ret = sde_power_mmrm_set_clk_limit(clk, phandle, requested_clk);
-		if (ret)
-			pr_err("mmrm callback error reducing clk:%lu ret:%d\n",
-				requested_clk, ret);
-	}
-
-	return ret;
+	return 0;
 }
 
 u64 sde_power_mmrm_get_requested_clk(struct sde_power_handle *phandle,

@@ -12,11 +12,6 @@
 #include "kgsl_pwrscale.h"
 #include "kgsl_trace.h"
 
-#ifndef CONFIG_QCOM_ADRENO_DEFAULT_GOVERNOR
-#define CONFIG_QCOM_ADRENO_DEFAULT_GOVERNOR "msm-adreno-tz"
-#endif
-
-
 static struct devfreq_msm_adreno_tz_data adreno_tz_data = {
 	.bus = {
 		.max = 350,
@@ -556,12 +551,13 @@ static void pwrscale_busmon_create(struct kgsl_device *device,
 		return;
 	}
 
-	/* Build out the OPP table for the busmon device */
+	/* Build out the OPP table for the busmon and GPU devices */
 	for (i = 0; i < pwr->num_pwrlevels; i++) {
 		if (!pwr->pwrlevels[i].gpu_freq)
 			continue;
 
 		dev_pm_opp_add(dev, pwr->pwrlevels[i].gpu_freq, 0);
+		dev_pm_opp_add(&pdev->dev, pwr->pwrlevels[i].gpu_freq, 0);
 	}
 
 	ret = devfreq_gpubw_init();
@@ -845,6 +841,7 @@ static void kgsl_pwrscale_tz_close(struct kgsl_device *device)
 		pwrscale->bus_devfreq = NULL;
 		devfreq_gpubw_exit();
 		dev_pm_opp_remove_all_dynamic(&pwrscale->busmondev);
+		dev_pm_opp_remove_all_dynamic(&device->pdev->dev);
 		device_unregister(&pwrscale->busmondev);
 		memset(&pwrscale->busmondev, 0, sizeof(pwrscale->busmondev));
 	}

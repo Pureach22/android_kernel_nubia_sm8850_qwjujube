@@ -256,8 +256,8 @@ static int sde_hdcp_1x_enable_hdcp_engine(void *input)
 		goto end;
 	}
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_INACTIVE) &&
-	    !sde_hdcp_1x_state(HDCP_STATE_AUTH_FAIL)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE) &&
+	    !sde_hdcp_1x_state(SDE_HDCP_STATE_AUTH_FAIL)) {
 		pr_err("%s: invalid state. returning\n",
 			SDE_HDCP_STATE_NAME);
 		rc = -EINVAL;
@@ -282,7 +282,7 @@ static int sde_hdcp_1x_enable_hdcp_engine(void *input)
 	/* enable hdcp engine */
 	DSS_REG_W(dp_ahb, reg_set->ctrl, 0x1);
 
-	hdcp->hdcp_state = HDCP_STATE_AUTHENTICATING;
+	hdcp->hdcp_state = SDE_HDCP_STATE_AUTHENTICATING;
 end:
 	return rc;
 }
@@ -373,7 +373,7 @@ static int sde_hdcp_1x_read_bcaps(struct sde_hdcp_1x *hdcp)
 	struct sde_hdcp_reg_set *reg_set = &hdcp->reg_set;
 	struct dss_io_data *hdcp_io = hdcp->init_data.hdcp_io;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -407,7 +407,7 @@ static int sde_hdcp_1x_wait_for_hw_ready(struct sde_hdcp_1x *hdcp)
 	struct dss_io_data *dp_ahb = hdcp->init_data.dp_ahb;
 	struct dss_io_data *dp_aux = hdcp->init_data.dp_aux;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -416,7 +416,7 @@ static int sde_hdcp_1x_wait_for_hw_ready(struct sde_hdcp_1x *hdcp)
 	rc = readl_poll_timeout(dp_ahb->base + reg_set->status, link0_status,
 				((link0_status >> reg_set->keys_offset) & 0x7)
 					== HDCP_KEYS_STATE_VALID ||
-				!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+				!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 				HDCP_POLL_SLEEP_US, HDCP_POLL_TIMEOUT_US);
 	if (rc) {
 		pr_err("key not ready\n");
@@ -432,7 +432,7 @@ static int sde_hdcp_1x_wait_for_hw_ready(struct sde_hdcp_1x *hdcp)
 	/* Wait for An0 and An1 bit to be ready */
 	rc = readl_poll_timeout(dp_ahb->base + reg_set->status, link0_status,
 				(link0_status & (BIT(8) | BIT(9))) ||
-				!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+				!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 				HDCP_POLL_SLEEP_US, HDCP_POLL_TIMEOUT_US);
 	if (rc) {
 		pr_err("An not ready\n");
@@ -442,7 +442,7 @@ static int sde_hdcp_1x_wait_for_hw_ready(struct sde_hdcp_1x *hdcp)
 	/* As per hardware recommendations, wait before reading An */
 	msleep(20);
 error:
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING))
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING))
 		rc = -EINVAL;
 
 	return rc;
@@ -453,7 +453,7 @@ static int sde_hdcp_1x_send_an_aksv_to_sink(struct sde_hdcp_1x *hdcp)
 	int rc;
 	u8 an[8], aksv[5];
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -501,7 +501,7 @@ static int sde_hdcp_1x_read_an_aksv_from_hw(struct sde_hdcp_1x *hdcp)
 	struct dss_io_data *dp_aux = hdcp->init_data.dp_aux;
 	struct sde_hdcp_reg_set *reg_set = &hdcp->reg_set;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -595,7 +595,7 @@ static int sde_hdcp_1x_verify_r0(struct sde_hdcp_1x *hdcp)
 	struct sde_hdcp_reg_set *reg_set = &hdcp->reg_set;
 	struct dss_io_data *io = hdcp->init_data.dp_ahb;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -603,7 +603,7 @@ static int sde_hdcp_1x_verify_r0(struct sde_hdcp_1x *hdcp)
 	/* Wait for HDCP R0 computation to be completed */
 	rc = readl_poll_timeout(io->base + reg_set->status, link0_status,
 				(link0_status & BIT(reg_set->r0_offset)) ||
-				!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+				!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 				HDCP_POLL_SLEEP_US, HDCP_POLL_TIMEOUT_US);
 	if (rc) {
 		pr_err("R0 not ready\n");
@@ -646,11 +646,11 @@ static int sde_hdcp_1x_verify_r0(struct sde_hdcp_1x *hdcp)
 
 		rc = readl_poll_timeout(io->base + reg_set->status,
 			link0_status, (link0_status & BIT(12)) ||
-			!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+			!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 			r0_read_delay_us, r0_read_timeout_us);
 	} while (rc && --r0_retry);
 error:
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING))
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING))
 		rc = -EINVAL;
 
 	return rc;
@@ -660,7 +660,7 @@ static int sde_hdcp_1x_authentication_part1(struct sde_hdcp_1x *hdcp)
 {
 	int rc;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -719,7 +719,7 @@ static int sde_hdcp_1x_transfer_v_h(struct sde_hdcp_1x *hdcp)
 	u8 buf[0xFF] = {0};
 	u32 i = 0, len = 0;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -758,7 +758,7 @@ static int sde_hdcp_1x_validate_downstream(struct sde_hdcp_1x *hdcp)
 	u16 bstatus;
 	struct sde_hdcp_reg_set *reg_set = &hdcp->reg_set;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -822,7 +822,7 @@ static int sde_hdcp_1x_read_ksv_fifo(struct sde_hdcp_1x *hdcp)
 	u32 ksv_read_retry = 20, ksv_bytes, rc = 0;
 	u8 *ksv_fifo = hdcp->current_tp.ksv_list;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -859,7 +859,7 @@ static int sde_hdcp_1x_write_ksv_fifo(struct sde_hdcp_1x *hdcp)
 	struct sde_hdcp_reg_set *reg_set = &hdcp->reg_set;
 	u32 sha_status = 0, status;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -879,7 +879,7 @@ static int sde_hdcp_1x_write_ksv_fifo(struct sde_hdcp_1x *hdcp)
 		if (i && !((i + 1) % 64)) {
 			rc = readl_poll_timeout(io->base + reg_set->sha_status,
 				sha_status, (sha_status & BIT(0)) ||
-				!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+				!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 				HDCP_POLL_SLEEP_US, HDCP_POLL_TIMEOUT_US);
 			if (rc) {
 				pr_err("block not done\n");
@@ -895,7 +895,7 @@ static int sde_hdcp_1x_write_ksv_fifo(struct sde_hdcp_1x *hdcp)
 	/* Now wait for HDCP_SHA_COMP_DONE */
 	rc = readl_poll_timeout(io->base + reg_set->sha_status, sha_status,
 				(sha_status & BIT(4)) ||
-				!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+				!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 				HDCP_POLL_SLEEP_US, HDCP_POLL_TIMEOUT_US);
 	if (rc) {
 		pr_err("V computation not done\n");
@@ -905,14 +905,14 @@ static int sde_hdcp_1x_write_ksv_fifo(struct sde_hdcp_1x *hdcp)
 	/* Wait for V_MATCHES */
 	rc = readl_poll_timeout(io->base + reg_set->status, status,
 				(status & BIT(reg_set->v_offset)) ||
-				!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING),
+				!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING),
 				HDCP_POLL_SLEEP_US, HDCP_POLL_TIMEOUT_US);
 	if (rc) {
 		pr_err("V mismatch\n");
 		rc = -EINVAL;
 	}
 error:
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING))
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING))
 		rc = -EINVAL;
 
 	return rc;
@@ -922,7 +922,7 @@ static int sde_hdcp_1x_wait_for_ksv_ready(struct sde_hdcp_1x *hdcp)
 {
 	int rc, timeout;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -946,7 +946,7 @@ static int sde_hdcp_1x_wait_for_ksv_ready(struct sde_hdcp_1x *hdcp)
 				&hdcp->sink_addr.bcaps,
 				&hdcp->bcaps, false);
 			if (rc ||
-			   !sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+			   !sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 				pr_err("error reading bcaps\n");
 				goto error;
 			}
@@ -974,7 +974,7 @@ static int sde_hdcp_1x_wait_for_ksv_ready(struct sde_hdcp_1x *hdcp)
 			}
 
 			if (hdcp->ksv_ready || hdcp->reauth ||
-			    !sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING))
+			    !sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING))
 				break;
 
 			/* re-read after a minimum delay */
@@ -983,7 +983,7 @@ static int sde_hdcp_1x_wait_for_ksv_ready(struct sde_hdcp_1x *hdcp)
 	}
 
 	if (!timeout || hdcp->reauth ||
-	    !sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	    !sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("DS KSV not ready\n");
 		rc = -EINVAL;
 	} else {
@@ -998,7 +998,7 @@ static void sde_hdcp_1x_authentication_ops_notify(struct sde_hdcp_1x *hdcp,
 {
 	struct hdcp1_topology *topology = hdcp->tz_ops;
 
-	if (state == HDCP_STATE_AUTHENTICATED) {
+	if (state == SDE_HDCP_STATE_AUTHENTICATED) {
 		topology->depth = hdcp->current_tp.depth;
 		topology->device_count = hdcp->current_tp.dev_count;
 		topology->max_devices_exceeded = hdcp->current_tp.max_dev_exceeded;
@@ -1047,7 +1047,7 @@ error:
 	if (rc) {
 		pr_err("%s: FAILED\n", SDE_HDCP_STATE_NAME);
 	} else {
-		hdcp->hdcp_state = HDCP_STATE_AUTHENTICATED;
+		hdcp->hdcp_state = SDE_HDCP_STATE_AUTHENTICATED;
 
 		pr_info("SUCCESSFUL\n");
 	}
@@ -1058,7 +1058,7 @@ error:
 static void sde_hdcp_1x_update_auth_status(struct sde_hdcp_1x *hdcp)
 {
 	if (IS_ENABLED(CONFIG_HDCP_QSEECOM) &&
-			sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATED)) {
+			sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATED)) {
 		msm_hdcp_cache_repeater_topology(hdcp->init_data.msm_hdcp_dev,
 						&hdcp->current_tp);
 		msm_hdcp_notify_topology(hdcp->init_data.msm_hdcp_dev);
@@ -1067,7 +1067,7 @@ static void sde_hdcp_1x_update_auth_status(struct sde_hdcp_1x *hdcp)
 	sde_hdcp_1x_authentication_ops_notify(hdcp, hdcp->hdcp_state);
 
 	if (hdcp->init_data.notify_status &&
-	    !sde_hdcp_1x_state(HDCP_STATE_INACTIVE)) {
+	    !sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE)) {
 		hdcp->init_data.notify_status(
 			hdcp->init_data.cb_data,
 			hdcp->hdcp_state);
@@ -1087,7 +1087,7 @@ static void sde_hdcp_1x_auth_work(struct work_struct *work)
 		return;
 	}
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 		pr_err("invalid state\n");
 		return;
 	}
@@ -1126,7 +1126,7 @@ static void sde_hdcp_1x_auth_work(struct work_struct *work)
 		if (rc)
 			goto end;
 	} else {
-		hdcp->hdcp_state = HDCP_STATE_AUTHENTICATED;
+		hdcp->hdcp_state = SDE_HDCP_STATE_AUTHENTICATED;
 		goto end;
 	}
 
@@ -1141,8 +1141,8 @@ static void sde_hdcp_1x_auth_work(struct work_struct *work)
 	 * there is no Arbitration between software and hardware for DDC
 	 */
 end:
-	if (rc && !sde_hdcp_1x_state(HDCP_STATE_INACTIVE))
-		hdcp->hdcp_state = HDCP_STATE_AUTH_FAIL;
+	if (rc && !sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE))
+		hdcp->hdcp_state = SDE_HDCP_STATE_AUTH_FAIL;
 
 	sde_hdcp_1x_update_auth_status(hdcp);
 }
@@ -1160,7 +1160,7 @@ static int sde_hdcp_1x_authenticate(void *input)
 
 	flush_delayed_work(&hdcp->hdcp_auth_work);
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_INACTIVE)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE)) {
 		pr_err("invalid state\n");
 		rc = -EINVAL;
 		goto error;
@@ -1177,7 +1177,7 @@ static int sde_hdcp_1x_authenticate(void *input)
 		queue_delayed_work(hdcp->workq,
 			&hdcp->hdcp_auth_work, HZ/2);
 	} else {
-		hdcp->hdcp_state = HDCP_STATE_AUTH_FAIL;
+		hdcp->hdcp_state = SDE_HDCP_STATE_AUTH_FAIL;
 		sde_hdcp_1x_update_auth_status(hdcp);
 	}
 
@@ -1202,7 +1202,7 @@ static int sde_hdcp_1x_reauthenticate(void *input)
 	reg_set = &hdcp->reg_set;
 	isr = &hdcp->int_set;
 
-	if (!sde_hdcp_1x_state(HDCP_STATE_AUTH_FAIL)) {
+	if (!sde_hdcp_1x_state(SDE_HDCP_STATE_AUTH_FAIL)) {
 		pr_err("invalid state\n");
 		return -EINVAL;
 	}
@@ -1218,7 +1218,7 @@ static int sde_hdcp_1x_reauthenticate(void *input)
 
 	DSS_REG_W(io, reg_set->reset, reg & ~reg_set->reset_bit);
 
-	hdcp->hdcp_state = HDCP_STATE_INACTIVE;
+	hdcp->hdcp_state = SDE_HDCP_STATE_INACTIVE;
 
 	return sde_hdcp_1x_authenticate(hdcp);
 } /* hdcp_1x_reauthenticate */
@@ -1241,7 +1241,7 @@ static void sde_hdcp_1x_off(void *input)
 	reg_set = &hdcp->reg_set;
 	isr = &hdcp->int_set;
 
-	if (sde_hdcp_1x_state(HDCP_STATE_INACTIVE)) {
+	if (sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE)) {
 		pr_err("invalid state\n");
 		return;
 	}
@@ -1253,7 +1253,7 @@ static void sde_hdcp_1x_off(void *input)
 	 */
 	DSS_REG_W(io, isr->int_reg,
 		DSS_REG_R(io, isr->int_reg) & ~HDCP_INT_EN);
-	hdcp->hdcp_state = HDCP_STATE_INACTIVE;
+	hdcp->hdcp_state = SDE_HDCP_STATE_INACTIVE;
 
 	/* complete any wait pending */
 	complete_all(&hdcp->sink_r0_available);
@@ -1311,7 +1311,7 @@ static int sde_hdcp_1x_isr(void *input)
 	hdcp_int_val = DSS_REG_R(io, isr->int_reg);
 
 	/* Ignore HDCP interrupts if HDCP is disabled */
-	if (sde_hdcp_1x_state(HDCP_STATE_INACTIVE)) {
+	if (sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE)) {
 		DSS_REG_W(io, isr->int_reg, hdcp_int_val | HDCP_INT_CLR);
 		return 0;
 	}
@@ -1322,7 +1322,7 @@ static int sde_hdcp_1x_isr(void *input)
 			(hdcp_int_val | isr->auth_success_ack));
 		pr_debug("%s: AUTH SUCCESS\n", SDE_HDCP_STATE_NAME);
 
-		if (sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING))
+		if (sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING))
 			complete_all(&hdcp->r0_checked);
 	}
 
@@ -1336,10 +1336,10 @@ static int sde_hdcp_1x_isr(void *input)
 		pr_debug("%s: AUTH FAIL, LINK0_STATUS=0x%08x\n",
 			SDE_HDCP_STATE_NAME, link_status);
 
-		if (sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATED)) {
-			hdcp->hdcp_state = HDCP_STATE_AUTH_FAIL;
+		if (sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATED)) {
+			hdcp->hdcp_state = SDE_HDCP_STATE_AUTH_FAIL;
 			sde_hdcp_1x_update_auth_status(hdcp);
-		} else if (sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING)) {
+		} else if (sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING)) {
 			complete_all(&hdcp->r0_checked);
 		}
 
@@ -1503,8 +1503,8 @@ static int sde_hdcp_1x_cp_irq(void *input)
 
 		hdcp->reauth = true;
 
-		if (!sde_hdcp_1x_state(HDCP_STATE_INACTIVE))
-			hdcp->hdcp_state = HDCP_STATE_AUTH_FAIL;
+		if (!sde_hdcp_1x_state(SDE_HDCP_STATE_INACTIVE))
+			hdcp->hdcp_state = SDE_HDCP_STATE_AUTH_FAIL;
 
 		complete_all(&hdcp->sink_r0_available);
 		sde_hdcp_1x_update_auth_status(hdcp);
@@ -1534,8 +1534,8 @@ static void sde_hdcp_1x_abort(void *data, bool abort)
 	atomic_set(&hdcp->abort, abort);
 	cancel_delayed_work_sync(&hdcp->hdcp_auth_work);
 	flush_workqueue(hdcp->workq);
-	if (sde_hdcp_1x_state(HDCP_STATE_AUTHENTICATING))
-		hdcp->hdcp_state = HDCP_STATE_AUTH_FAIL;
+	if (sde_hdcp_1x_state(SDE_HDCP_STATE_AUTHENTICATING))
+		hdcp->hdcp_state = SDE_HDCP_STATE_AUTH_FAIL;
 }
 
 void *sde_hdcp_1x_init(struct sde_hdcp_init_data *init_data)
@@ -1595,7 +1595,7 @@ void *sde_hdcp_1x_init(struct sde_hdcp_init_data *init_data)
 
 	INIT_DELAYED_WORK(&hdcp->hdcp_auth_work, sde_hdcp_1x_auth_work);
 
-	hdcp->hdcp_state = HDCP_STATE_INACTIVE;
+	hdcp->hdcp_state = SDE_HDCP_STATE_INACTIVE;
 	init_completion(&hdcp->r0_checked);
 	init_completion(&hdcp->sink_r0_available);
 	hdcp->force_encryption = false;

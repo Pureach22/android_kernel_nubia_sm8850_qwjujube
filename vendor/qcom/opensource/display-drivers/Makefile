@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
-DISPLAY_ROOT=$(ROOTDIR)display/vendor/qcom/opensource/display-drivers
+DISPLAY_ROOT=$(srctree)/../qcom/opensource/display-drivers
 CONFIG_DRM_MSM=$(MODULE_DRM_MSM)
 KBUILD_OPTIONS := DISPLAY_ROOT=$(DISPLAY_ROOT) CONFIG_DRM_MSM=$(CONFIG_DRM_MSM)
 
@@ -9,7 +9,9 @@ ifeq ($(TARGET_SUPPORT),genericarmv8)
 	KBUILD_OPTIONS += CONFIG_ARCH_CANOE=y
 endif
 
-obj-m += msm/
+KBUILD_OPTIONS += CONFIG_ARCH_SUN=y
+
+obj-$(CONFIG_DRM_MSM) += msm/
 
 all:
 	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS)

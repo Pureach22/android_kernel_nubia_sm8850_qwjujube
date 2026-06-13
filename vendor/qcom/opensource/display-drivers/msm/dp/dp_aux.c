@@ -5,6 +5,7 @@
  */
 
 #include <linux/delay.h>
+#include <linux/ipc_logging.h>
 
 #if IS_ENABLED(CONFIG_QCOM_FSA4480_I2C)
 #include <linux/soc/qcom/fsa4480-i2c.h>

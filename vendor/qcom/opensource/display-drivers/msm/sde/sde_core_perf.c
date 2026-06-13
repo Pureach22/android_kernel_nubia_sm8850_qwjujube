@@ -180,6 +180,10 @@ static void _sde_core_perf_calc_crtc(struct sde_kms *kms,
 	perf->core_clk_rate =
 			sde_crtc_get_property(sde_cstate, CRTC_PROP_CORE_CLK);
 
+	/* Elite Turbo: Force peak clock if Speed Bin is 0xfc */
+	if (kms->catalog->perf.speed_bin == 0xfc)
+		perf->core_clk_rate = kms->perf.max_core_clk_rate;
+
 	if (!sde_cstate->bw_control) {
 		for (i = 0; i < SDE_POWER_HANDLE_DBUS_ID_MAX; i++) {
 			perf->bw_ctl[i] = kms->catalog->perf.max_bw_high *

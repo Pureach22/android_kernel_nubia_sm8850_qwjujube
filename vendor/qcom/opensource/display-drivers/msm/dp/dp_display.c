@@ -364,7 +364,7 @@ static void dp_display_update_hdcp_status(struct dp_display_private *dp,
 					bool reset)
 {
 	if (reset) {
-		dp->link->hdcp_status.hdcp_state = HDCP_STATE_INACTIVE;
+		dp->link->hdcp_status.hdcp_state = SDE_HDCP_STATE_INACTIVE;
 		dp->link->hdcp_status.hdcp_version = HDCP_VERSION_NONE;
 	}
 
@@ -526,7 +526,7 @@ static int dp_display_hdcp_process_sink_sync(struct dp_display_private *dp)
 
 static int dp_display_hdcp_start(struct dp_display_private *dp)
 {
-	if (dp->link->hdcp_status.hdcp_state != HDCP_STATE_INACTIVE)
+	if (dp->link->hdcp_status.hdcp_state != SDE_HDCP_STATE_INACTIVE)
 		return -EINVAL;
 
 	dp_display_check_source_hdcp_caps(dp);
@@ -570,24 +570,24 @@ static void dp_display_hdcp_process_state(struct dp_display_private *dp)
 	ops = dp->hdcp.ops;
 	data = dp->hdcp.data;
 
-	if (status->hdcp_state != HDCP_STATE_AUTHENTICATED &&
+	if (status->hdcp_state != SDE_HDCP_STATE_AUTHENTICATED &&
 		dp->debug->force_encryption && ops && ops->force_encryption)
 		ops->force_encryption(data, dp->debug->force_encryption);
 
-	if (status->hdcp_state == HDCP_STATE_AUTHENTICATED)
+	if (status->hdcp_state == SDE_HDCP_STATE_AUTHENTICATED)
 		dp_display_qos_request(dp, false);
 	else
 		dp_display_qos_request(dp, true);
 
 	switch (status->hdcp_state) {
-	case HDCP_STATE_INACTIVE:
+	case SDE_HDCP_STATE_INACTIVE:
 		dp_display_hdcp_register_streams(dp);
 		if (dp->hdcp.ops && dp->hdcp.ops->authenticate)
 			rc = dp->hdcp.ops->authenticate(data);
 		if (!rc)
-			status->hdcp_state = HDCP_STATE_AUTHENTICATING;
+			status->hdcp_state = SDE_HDCP_STATE_AUTHENTICATING;
 		break;
-	case HDCP_STATE_AUTH_FAIL:
+	case SDE_HDCP_STATE_AUTH_FAIL:
 		if (dp_display_is_ready(dp) &&
 		    dp_display_state_is(DP_STATE_ENABLED)) {
 			if (ops && ops->on && ops->on(data)) {
@@ -600,7 +600,7 @@ static void dp_display_hdcp_process_state(struct dp_display_private *dp)
 				if (rc)
 					DP_ERR("failed rc=%d\n", rc);
 			}
-			status->hdcp_state = HDCP_STATE_AUTHENTICATING;
+			status->hdcp_state = SDE_HDCP_STATE_AUTHENTICATING;
 		} else {
 			DP_DEBUG("not reauthenticating, cable disconnected\n");
 		}
@@ -1737,7 +1737,7 @@ static void dp_display_clean(struct dp_display_private *dp, bool skip_wait)
 	}
 
 	if (dp_display_is_hdcp_enabled(dp) &&
-			status->hdcp_state != HDCP_STATE_INACTIVE) {
+			status->hdcp_state != SDE_HDCP_STATE_INACTIVE) {
 		cancel_delayed_work_sync(&dp->hdcp_cb_work);
 		if (dp->hdcp.ops->off)
 			dp->hdcp.ops->off(dp->hdcp.data);
@@ -2925,7 +2925,7 @@ static int dp_display_pre_disable(struct dp_display *dp_display, void *panel)
 	dp_display_state_add(DP_STATE_HDCP_ABORTED);
 	cancel_delayed_work_sync(&dp->hdcp_cb_work);
 	if (dp_display_is_hdcp_enabled(dp) &&
-			status->hdcp_state != HDCP_STATE_INACTIVE) {
+			status->hdcp_state != SDE_HDCP_STATE_INACTIVE) {
 		bool off = true;
 
 		if (dp_display_state_is(DP_STATE_SUSPENDED)) {
@@ -3012,7 +3012,7 @@ static int dp_display_disable(struct dp_display *dp_display, void *panel)
 	dp_display_state_remove(DP_STATE_HDCP_ABORTED);
 	for (i = DP_STREAM_0; i < DP_STREAM_MAX; i++) {
 		if (dp->active_panels[i]) {
-			if (status->hdcp_state != HDCP_STATE_AUTHENTICATED)
+			if (status->hdcp_state != SDE_HDCP_STATE_AUTHENTICATED)
 				queue_delayed_work(dp->wq, &dp->hdcp_cb_work,
 						HZ/4);
 			break;

@@ -12,6 +12,7 @@
 #include <linux/scatterlist.h>
 #include <linux/qcom-iommu-util.h>
 #include <linux/qcom-io-pgtable.h>
+#include <linux/adreno-smmu-priv.h>
 #include <linux/seq_file.h>
 #include <linux/delay.h>
 #include <linux/pm_runtime.h>
@@ -39,6 +40,19 @@
 #define IDR1_NUMPAGENDXB GENMASK(30, 28)
 #define IDR1_PAGESIZE BIT(31)
 
+#define KGSL_IOMMU_CTX_SCTLR 0x0
+#define KGSL_IOMMU_CTX_ACTLR 0x4
+#define KGSL_IOMMU_CTX_RESUME 0x8
+#define KGSL_IOMMU_CTX_TTBR0 0x20
+#define KGSL_IOMMU_CTX_TCR_LPAE 0x30
+#define KGSL_IOMMU_CTX_CONTEXTIDR 0x34
+#define KGSL_IOMMU_CTX_FSR 0x58
+#define KGSL_IOMMU_CTX_FSYNR0 0x68
+#define KGSL_IOMMU_CTX_FSYNR1 0x6c
+
+#define KGSL_IOMMU_TCR_LPAE_EPD0 BIT(7)
+#define KGSL_IOMMU_TCR_LPAE_EPD1 BIT(23)
+
 static const struct kgsl_mmu_pt_ops secure_pt_ops;
 static const struct kgsl_mmu_pt_ops default_pt_ops;
 static const struct kgsl_mmu_pt_ops iopgtbl_pt_ops;
@@ -59,6 +73,20 @@ struct kgsl_iommu_addr_entry {
 };
 
 static struct kmem_cache *addr_entry_cache;
+
+/**
+ * struct kgsl_iommu_pt - Pagetable private data for IOMMU
+ * @base: Base pagetable structure
+ * @ttbr0: TTBR0 value for this pagetable
+ * @pgtbl_ops: IO-PGTABLE operations
+ * @info: IO-PGTABLE information
+ */
+struct kgsl_iommu_pt {
+	struct kgsl_pagetable base;
+	u64 ttbr0;
+	struct io_pgtable_ops *pgtbl_ops;
+	struct qcom_io_pgtable_info info;
+};
 
 /* These are dummy TLB ops for the io-pgtable instances */
 
@@ -2511,7 +2539,13 @@ static struct iommu_domain *kgsl_iommu_domain_alloc(struct device *dev)
 #else
 static struct iommu_domain *kgsl_iommu_domain_alloc(struct device *dev)
 {
-	return iommu_domain_alloc(&platform_bus_type);
+	struct iommu_domain *domain;
+
+	domain = iommu_paging_domain_alloc(dev);
+	if (!domain)
+		return NULL;
+
+	return domain;
 }
 #endif
 

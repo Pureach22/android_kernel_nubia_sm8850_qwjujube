@@ -313,11 +313,13 @@ int dsi_display_set_backlight(struct drm_connector *connector,
 	if (bl_temp > panel->bl_config.bl_max_level)
 		bl_temp = panel->bl_config.bl_max_level;
 
+/*
 	if (strncmp(panel->name, "BF375_RM692H5_6P8_MAGIC_DSC_CMD", strlen("BF375_RM692H5_6P8_MAGIC_DSC_CMD")) == 0 ||
 		strncmp(panel->name, "BF375_RM692H5_6P8_DEV0_DSC_CMD", strlen("BF375_RM692H5_6P8_DEV0_DSC_CMD")) == 0) {
 		if (bl_temp > 8030)
 			bl_temp = 8030; //add by zte for temp -3.9v test
 	}
+*/
 
 	if (bl_temp && (bl_temp < panel->bl_config.bl_min_level))
 		bl_temp = panel->bl_config.bl_min_level;

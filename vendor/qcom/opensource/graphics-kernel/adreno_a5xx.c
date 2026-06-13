@@ -1633,7 +1633,8 @@ static int a5xx_gpmu_init(struct adreno_device *adreno_dev)
 
 static int a5xx_zap_shader_resume(struct kgsl_device *device)
 {
-	int ret = qcom_scm_set_remote_state(0, 13);
+	/* int ret = qcom_scm_set_remote_state(0, 13); */
+	int ret = 0;
 
 	if (ret)
 		dev_err(device->dev,

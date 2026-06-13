@@ -15,6 +15,8 @@
 #include <linux/thermal.h>
 #include <linux/msm_kgsl.h>
 #include <linux/units.h>
+#include <linux/of_device.h>
+#include <linux/kgsl_pwrctrl_parity.h>
 #include <soc/qcom/dcvs.h>
 
 #include "kgsl_device.h"
@@ -25,6 +27,15 @@
 #include "kgsl_sysfs.h"
 #include "kgsl_trace.h"
 #include "kgsl_util.h"
+
+//zte add begin
+extern void (*kgsl_pwrctrl_set_max_level_fp)(u32 level);
+extern void (*kgsl_pwrctrl_set_min_level_fp)(u32 level);
+extern u32 (*kgsl_pwrctrl_get_max_level_fp)(void);
+extern u32 (*kgsl_pwrctrl_get_min_level_fp)(void);
+extern int (*kgsl_pwrctrl_get_loading_fp)(void);
+extern int (*kgsl_gpu_num_freqs_fp)(void);
+//zte add end
 
 #define UPDATE_BUSY_VAL		1000000
 
@@ -58,7 +69,7 @@ static const char * const clocks[KGSL_MAX_CLKS] = {
 static void kgsl_pwrctrl_clk(struct kgsl_device *device, bool state,
 					int requested_state);
 static int kgsl_pwrctrl_pwrrail(struct kgsl_device *device, bool state);
-static int _isense_clk_set_rate(struct kgsl_pwrctrl *pwr, int level);
+static void _isense_clk_set_rate(struct kgsl_pwrctrl *pwr, int level);
 static int kgsl_pwrctrl_clk_set_rate(struct clk *grp_clk, unsigned int freq,
 				const char *name);
 static void _gpu_clk_prepare_enable(struct kgsl_device *device,
@@ -1271,7 +1282,7 @@ static void kgsl_pwrctrl_clk(struct kgsl_device *device, bool state,
 			for (i = KGSL_MAX_CLKS - 1; i > 0; i--)
 				clk_disable(pwr->grp_clks[i]);
 			/* High latency clock maintenance. */
-			if (pwr->pwrlevels[0].gpu_freq > 0) {
+			if (1300000000 > 0) {
 				for (i = KGSL_MAX_CLKS - 1; i > 0; i--)
 					clk_unprepare(pwr->grp_clks[i]);
 				device->ftbl->gpu_clock_set(device,
@@ -1286,7 +1297,7 @@ static void kgsl_pwrctrl_clk(struct kgsl_device *device, bool state,
 			/* High latency clock maintenance. */
 			for (i = KGSL_MAX_CLKS - 1; i > 0; i--)
 				clk_unprepare(pwr->grp_clks[i]);
-			if ((pwr->pwrlevels[0].gpu_freq > 0)) {
+			if ((1300000000 > 0)) {
 				device->ftbl->gpu_clock_set(device,
 						pwr->num_pwrlevels - 1);
 				_isense_clk_set_rate(pwr,
@@ -1299,7 +1310,7 @@ static void kgsl_pwrctrl_clk(struct kgsl_device *device, bool state,
 			trace_kgsl_clk(device, state,
 					kgsl_pwrctrl_active_freq(pwr));
 
-			if (pwr->pwrlevels[0].gpu_freq > 0) {
+			if (1300000000 > 0) {
 				device->ftbl->gpu_clock_set(device,
 						pwr->active_pwrlevel);
 				_isense_clk_set_rate(pwr,
@@ -1769,18 +1780,19 @@ static int _get_clocks(struct kgsl_device *device)
 	return 0;
 }
 
-static int _isense_clk_set_rate(struct kgsl_pwrctrl *pwr, int level)
+static void _isense_clk_set_rate(struct kgsl_pwrctrl *pwr, int level)
 {
-	int rate;
+	unsigned int rate = KGSL_XO_CLK_FREQ;
 
 	if (!pwr->isense_clk_indx)
-		return -EINVAL;
+		return;
 
-	rate = clk_round_rate(pwr->grp_clks[pwr->isense_clk_indx],
-		level > pwr->isense_clk_on_level ?
-		KGSL_XO_CLK_FREQ : KGSL_ISENSE_CLK_FREQ);
-	return kgsl_pwrctrl_clk_set_rate(pwr->grp_clks[pwr->isense_clk_indx],
-			rate, clocks[pwr->isense_clk_indx]);
+	if (level >= pwr->isense_clk_on_level)
+		rate = KGSL_ISENSE_CLK_FREQ;
+
+	kgsl_pwrctrl_clk_set_rate(pwr->grp_clks[pwr->isense_clk_indx],
+		clk_round_rate(pwr->grp_clks[pwr->isense_clk_indx], rate),
+		clocks[pwr->isense_clk_indx]);
 }
 
 /*
@@ -1931,7 +1943,18 @@ static int kgsl_cooling_set_cur_state(struct thermal_cooling_device *cooling_dev
 	u32 freq;
 
 	if (state > (pwr->num_pwrlevels - 1))
-		return -EINVAL;
+		
+	return -EINVAL;
+	pwr->pwrlevels[0].gpu_freq = 1200000000;
+	pwr->pwrlevels[1].gpu_freq = 1100000000;
+	pwr->pwrlevels[2].gpu_freq = 1000000000;
+	pwr->pwrlevels[3].gpu_freq = 800000000;
+	pwr->pwrlevels[4].gpu_freq = 600000000;
+	pwr->active_pwrlevel = 4;
+	pwr->default_pwrlevel = 4;
+	pwr->max_pwrlevel = 0;
+	pwr->min_pwrlevel = 4;
+
 
 	if (state == READ_ONCE(pwr->thermal_pwrlevel))
 		return 0;
@@ -1982,6 +2005,17 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 	struct platform_device *pdev = device->pdev;
 	struct kgsl_pwrctrl *pwr = &device->pwrctrl;
 
+	pr_info("6kgsl: NX809J PwrCtrl Init - Turbo Elite Parity Active\n");
+
+	//zte add begin
+	kgsl_pwrctrl_set_max_level_fp = kgsl_pwrctrl_set_max_level;
+	kgsl_pwrctrl_set_min_level_fp = kgsl_pwrctrl_set_min_level;
+	kgsl_pwrctrl_get_max_level_fp = kgsl_pwrctrl_get_max_level;
+	kgsl_pwrctrl_get_min_level_fp = kgsl_pwrctrl_get_min_level;
+	kgsl_pwrctrl_get_loading_fp = kgsl_pwrctrl_get_gpu_loading;
+	kgsl_gpu_num_freqs_fp = kgsl_gpu_num_freqs;
+	//zte add end
+
 	result = _get_clocks(device);
 	if (result)
 		return result;
@@ -1998,7 +2032,7 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 					"bimc_gpu_clk");
 
 	if (pwr->num_pwrlevels == 0) {
-		dev_err(device->dev, "No power levels are defined\n");
+		dev_err(device->dev, "No power levels are defined in DTB! (Parity Violation)\n");
 		return -EINVAL;
 	}
 
@@ -2009,12 +2043,13 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 	for (i = 0; i < pwr->num_pwrlevels; i++) {
 		freq = pwr->pwrlevels[i].gpu_freq;
 
-		if (freq > 0)
+		if (freq > 0) {
 			freq = clk_round_rate(pwr->grp_clks[0], freq);
-
-		if (freq >= pwr->pwrlevels[i].gpu_freq)
 			pwr->pwrlevels[i].gpu_freq = freq;
+		}
 	}
+
+	
 
 	clk_set_rate(pwr->grp_clks[0],
 		pwr->pwrlevels[pwr->num_pwrlevels - 1].gpu_freq);
@@ -2621,6 +2656,7 @@ int kgsl_active_count_wait(struct kgsl_device *device, int count,
 
 	if (WARN_ON(!kgsl_mutex_is_locked(&device->mutex)))
 		return -EINVAL;
+
 
 	while (atomic_read(&device->active_cnt) > count) {
 		long ret;
