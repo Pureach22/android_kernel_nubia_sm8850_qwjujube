@@ -68,25 +68,6 @@ jobs:
           make -C kernel_platform/common M=drivers/soc/qcom/zte/zte_tpd LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 modules
           cp kernel_platform/common/drivers/soc/qcom/zte/zte_tpd/zte_tpd.ko vendor/zte/zte_tpd/zte_tpd.ko
 
-      - name: Compile Adreno Overclock Module
-        run: |
-          export PATH="$HOME/.cargo/bin:$PATH"
-          export CLANG_DIR="$(pwd)/clang-r547379"
-          export PATH="$CLANG_DIR/bin:$PATH"
-          export ARCH=arm64
-          export SUBARCH=arm64
-          export CROSS_COMPILE=aarch64-linux-gnu-
-          export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
-          export CLANG_TRIPLE=aarch64-linux-gnu-
-          export CC=clang
-          
-          # Copy graphics headers locally into the module folder to bypass compiler sandbox restrictions
-          cp vendor/qcom/opensource/graphics-kernel/*.h vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/
-          mkdir -p vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/uapi/linux/
-          cp vendor/qcom/opensource/graphics-kernel/include/uapi/linux/msm_kgsl.h vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/uapi/linux/
-          
-          make -C kernel_platform/common M=../../vendor/qcom/opensource/zte-drivers/zte_adreno_overclock LLVM=1 LLVM_IAS=1 KBUILD_MODPOST_WARN=1 modules
-
       - name: Compile KGSL GPU Driver Module (msm_kgsl.ko)
         run: |
           export PATH="$HOME/.cargo/bin:$PATH"
@@ -127,12 +108,6 @@ jobs:
           name: zte_tpd_patched
           path: vendor/zte/zte_tpd/zte_tpd.ko
 
-      - name: Upload Adreno Overclock Module
-        uses: actions/upload-artifact@v4
-        with:
-          name: adreno_overclock_ko
-          path: vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/adreno_overclock.ko
-
       - name: Upload KGSL GPU Driver Module
         uses: actions/upload-artifact@v4
         with:
@@ -153,12 +128,6 @@ jobs:
           name: zte_custom_drivers_zip
           path: zte_custom_drivers.zip
 
-      - name: Upload Overclock Magisk Module Zip
-        uses: actions/upload-artifact@v4
-        with:
-          name: rm11pro_gpu_oc_1230_zip
-          path: rm11pro_gpu_oc_1230.zip
-
 
       - name: Create GitHub Release
         env:
@@ -170,10 +139,8 @@ jobs:
             dev_reverse_perfect.img \
             vendor/zte/zte_tpd/zte_tpd.ko \
             vendor/qcom/opensource/graphics-kernel/msm_kgsl.ko \
-            vendor/qcom/opensource/zte-drivers/zte_adreno_overclock/adreno_overclock.ko \
             zte_custom_drivers.zip \
-            rm11pro_gpu_oc_1230.zip \
             kernel_platform/common/System.map \
             kernel_platform/common/.config \
             --title "Build Run #${{ github.run_number }} (NX809J)" \
-            --notes "Automated build compiled on $(date). Contains signed kernel image, patched touchscreen module, compiled msm_kgsl.ko, compiled adreno_overclock.ko module, System.map, .config, and Magisk/KernelSU flashable modules."
+            --notes "Automated build compiled on $(date). Contains signed kernel image, patched touchscreen module, compiled msm_kgsl.ko, System.map, .config, and Magisk/KernelSU flashable modules."
