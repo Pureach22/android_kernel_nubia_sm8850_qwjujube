@@ -153,9 +153,9 @@ EOF
         touch ksu_oc_temp/META-INF/com/google/android/updater-script
         
         # Zip it
-        (cd ksu_oc_temp && zip -q -r ../rm11pro_gpu_oc_1230.zip .)
+        (cd ksu_oc_temp && zip -q -r ../rm11pro_gpu_oc_1250.zip .)
         rm -rf "ksu_oc_temp"
-        echo "✅ Generated flashable overclock module: rm11pro_gpu_oc_1230.zip"
+        echo "✅ Generated flashable overclock module: rm11pro_gpu_oc_1250.zip"
     else
         echo "⚠️ Note: adreno_overclock.ko not found, skipping Overclock Magisk/KernelSU module packaging."
     fi

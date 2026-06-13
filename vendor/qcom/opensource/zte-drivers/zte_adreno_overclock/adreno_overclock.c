@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * adreno_overclock.c - Red Magic 11 Pro Adreno 750 Overclock (1230MHz) & Blindagem Térmica
+ * adreno_overclock.c - Red Magic 11 Pro Adreno 750 Overclock (1250MHz) & Blindagem Térmica
  *
  * This module dynamically patches the GPU power table in-memory to overclock
- * the Adreno 750 GPU from 1200MHz to 1230MHz. It also installs a kprobe-based
+ * the Adreno 750 GPU from 1200MHz to 1250MHz. It also installs a kprobe-based
  * "Thermal Shield" on kgsl_pwrctrl_pwrlevel_change to prevent ZTE's thermal
  * daemons from throttling the GPU below the overclocked frequency.
  *
@@ -136,8 +136,8 @@ static int install_thermal_shield(void)
  */
 
 /* Overclock parameters */
-#define OC_FREQ_HZ      1230000000U
-#define OC_VOLT_LEVEL    0x1d0
+#define OC_FREQ_HZ      1250000000U
+#define OC_VOLT_LEVEL    0x1f0
 #define OC_CX_LEVEL      64
 #define STOCK_FREQ_HZ   1200000000U
 
@@ -155,7 +155,7 @@ static int __init adreno_overclock_init(void)
 	struct kgsl_pwrlevel_minimal *max_pwr;
 	int ret;
 
-	printk(KERN_INFO "\x06" "[REP] Inicializando modulo de Overclock da GPU Adreno (1230MHz + Overvolt)...\n");
+	printk(KERN_INFO "\x06" "[REP] Inicializando modulo de Overclock da GPU Adreno (1250MHz + Overvolt)...\n");
 
 	/* Step 1: Resolve kallsyms_lookup_name */
 	ret = resolve_kallsyms();
@@ -269,15 +269,15 @@ static int __init adreno_overclock_init(void)
 		if (kgsl_dev) {
 			struct dev_pm_opp_data opp_data = {
 				.freq = OC_FREQ_HZ,
-				.u_volt = 0, /* Voltage managed by PMIC/regulator */
+				.u_volt = 1075000, /* 1.075V - Overvolt for 1250MHz stabilization */
 				.level = OPP_LEVEL_UNSET,
 			};
 			ret = dev_pm_opp_add_dynamic(kgsl_dev, &opp_data);
-			printk(KERN_INFO "\x06" "[REP] dev_pm_opp_add para 1230MHz retornou: %d\n", ret);
+			printk(KERN_INFO "\x06" "[REP] dev_pm_opp_add para 1250MHz retornou: %d\n", ret);
 		}
 	}
 
-	printk(KERN_INFO "\x06" "[REP] Overclock de 1230MHz e Overvolt aplicados com sucesso na GPU Adreno!\n");
+	printk(KERN_INFO "\x06" "[REP] Overclock de 1250MHz e Overvolt aplicados com sucesso na GPU Adreno!\n");
 
 	/* Step 8: Install thermal shield */
 	install_thermal_shield();

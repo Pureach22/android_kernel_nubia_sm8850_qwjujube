@@ -4,9 +4,9 @@
 
 MODDIR=${0%/*}
 
-echo "[REP] Iniciando servico de Overclock da GPU Adreno (1230MHz + Overvolt)..." > /dev/kmsg
+echo "[REP] Iniciando servico de Overclock da GPU Adreno (1250MHz + Overvolt)..." > /dev/kmsg
 
-# 1. Carregar o módulo de kernel customizado para injeção da tabela de 1230MHz e Overvolt em memória
+# 1. Carregar o módulo de kernel customizado para injeção da tabela de 1250MHz e Overvolt em memória
 if [ -f "$MODDIR/adreno_overclock.ko" ]; then
     insmod "$MODDIR/adreno_overclock.ko"
     echo "[REP] Módulo adreno_overclock.ko carregado com sucesso." > /dev/kmsg
@@ -38,4 +38,4 @@ fi
 # 4. Travar as permissões do sysfs para impedir que daemons da ZTE modifiquem o valor
 chmod 444 "$KGSL_PATH/max_pwrlevel" 2>/dev/null
 
-echo "[REP] Overclock de 1230MHz e Overvolt aplicados com sucesso via KernelSU-Next." > /dev/kmsg
+echo "[REP] Overclock de 1250MHz e Overvolt aplicados com sucesso via KernelSU-Next." > /dev/kmsg
