@@ -1,2 +1,4 @@
 # Kbuild for adreno_overclock.ko
+# This module is self-contained and does NOT depend on graphics-kernel headers.
+# All kgsl symbols are resolved at runtime via kallsyms.
 obj-m += adreno_overclock.o
