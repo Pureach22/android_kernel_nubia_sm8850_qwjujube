@@ -4,7 +4,7 @@ MODULE_NAME := adreno_overclock
 obj-m := $(MODULE_NAME).o
 
 # Flags compatible with GKI LLVM compilation
-ccflags-y += -Wno-unused-function -Wno-unused-variable -I$(srctree)/$(src)/../../graphics-kernel
+ccflags-y += -Wno-unused-function -Wno-unused-variable
 
 all:
 	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules
