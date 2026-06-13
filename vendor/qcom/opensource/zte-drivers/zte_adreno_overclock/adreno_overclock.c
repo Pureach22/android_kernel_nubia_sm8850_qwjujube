@@ -153,8 +153,6 @@ static int __init adreno_overclock_init(void)
 	kgsl_get_device_t kgsl_get_device_fn;
 	struct kgsl_device_opaque *device;
 	struct kgsl_pwrlevel_minimal *max_pwr;
-	unsigned long pwrctrl_offset, pwrlevels_offset;
-	void *pwrctrl_ptr;
 	int ret;
 
 	printk(KERN_INFO "\x06" "[REP] Inicializando modulo de Overclock da GPU Adreno (1230MHz + Overvolt)...\n");
