@@ -6,8 +6,8 @@
 #include <linux/device.h>
 #include <linux/delay.h>
 
-#include "../../graphics-kernel/kgsl_device.h"
-#include "../../graphics-kernel/kgsl_pwrctrl.h"
+#include "kgsl_device.h"
+#include "kgsl_pwrctrl.h"
 
 typedef struct kgsl_device *(*kgsl_get_device_t)(int id);
 static kgsl_get_device_t local_kgsl_get_device = NULL;
