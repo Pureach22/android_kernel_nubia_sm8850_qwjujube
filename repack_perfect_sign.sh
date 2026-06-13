@@ -79,7 +79,11 @@ if [ $? -eq 0 ]; then
     if [ ! -z "$TPD_KO" ] || [ ! -z "$KGSL_KO" ]; then
         echo "📦 Packaging custom drivers into Magisk/KernelSU flashable zip..."
         rm -rf "ksu_module_temp" && mkdir -p "ksu_module_temp/vendor_dlkm/lib/modules"
-        cp module.prop "ksu_module_temp/"
+        if [ -f "vendor/qcom/opensource/zte-drivers/ksu_module/module.prop" ]; then
+            cp vendor/qcom/opensource/zte-drivers/ksu_module/module.prop "ksu_module_temp/"
+        elif [ -f "module.prop" ]; then
+            cp module.prop "ksu_module_temp/"
+        fi
         
         if [ ! -z "$TPD_KO" ]; then
             cp "$TPD_KO" "ksu_module_temp/vendor_dlkm/lib/modules/"
