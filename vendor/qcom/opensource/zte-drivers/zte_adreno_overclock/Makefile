@@ -5,9 +5,9 @@ obj-m := $(MODULE_NAME).o
 
 # Flags compatible with GKI LLVM compilation
 ccflags-y += -Wno-unused-function -Wno-unused-variable \
-             -I$(srctree)/$(src)/../../graphics-kernel \
-             -I$(srctree)/$(src)/../../graphics-kernel/include \
-             -I$(srctree)/$(src)/../../graphics-kernel/include/uapi
+             -I../../vendor/qcom/opensource/graphics-kernel \
+             -I../../vendor/qcom/opensource/graphics-kernel/include \
+             -I../../vendor/qcom/opensource/graphics-kernel/include/uapi
 
 all:
 	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules
