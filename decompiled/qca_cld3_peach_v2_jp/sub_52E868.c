@@ -1,0 +1,9 @@
+__int64 __fastcall sub_52E868(_DWORD *a1)
+{
+  int v1; // s11
+  int v2; // s19
+
+  *a1 = v2;
+  a1[1] = v1;
+  return wlan_cp_stats_pdev_cs_deinit(a1 + 24);
+}

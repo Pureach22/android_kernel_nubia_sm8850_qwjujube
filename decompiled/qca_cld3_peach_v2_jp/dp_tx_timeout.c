@@ -1,0 +1,146 @@
+__int64 __fastcall dp_tx_timeout(__int64 a1)
+{
+  __int64 result; // x0
+  double v3; // d0
+  double v4; // d1
+  double v5; // d2
+  double v6; // d3
+  double v7; // d4
+  double v8; // d5
+  double v9; // d6
+  double v10; // d7
+  __int64 v11; // x19
+  __int64 v12; // x8
+  __int64 (*v13)(void); // x8
+  unsigned int v14; // w8
+  double v15; // d0
+  double v16; // d1
+  double v17; // d2
+  double v18; // d3
+  double v19; // d4
+  double v20; // d5
+  double v21; // d6
+  double v22; // d7
+  __int64 v23; // x8
+  _DWORD *v24; // x8
+
+  result = _cds_get_context(71, "dp_tx_timeout");
+  v11 = result;
+  if ( result && *(_QWORD *)result )
+  {
+    v12 = *(_QWORD *)(*(_QWORD *)result + 112LL);
+    if ( v12 )
+    {
+      v13 = *(__int64 (**)(void))(v12 + 32);
+      if ( v13 )
+      {
+        if ( *((_DWORD *)v13 - 1) != -1106481425 )
+          __break(0x8228u);
+        result = v13();
+      }
+    }
+  }
+  else
+  {
+    result = qdf_trace_msg(
+               0x89u,
+               8u,
+               "%s: invalid instance",
+               v3,
+               v4,
+               v5,
+               v6,
+               v7,
+               v8,
+               v9,
+               v10,
+               "cdp_dump_flow_pool_info");
+  }
+  v14 = *(_DWORD *)(a1 + 2708) + 1;
+  ++*(_DWORD *)(a1 + 2704);
+  *(_DWORD *)(a1 + 2708) = v14;
+  if ( v14 <= 1 )
+  {
+    *(_QWORD *)(a1 + 2712) = jiffies;
+  }
+  else
+  {
+    if ( jiffies - *(_QWORD *)(a1 + 2712) >= 0x9C5u )
+    {
+      *(_DWORD *)(a1 + 2708) = 0;
+      result = qdf_trace_msg(
+                 0x45u,
+                 5u,
+                 "%s: Reset continuous tx timeout stat",
+                 v3,
+                 v4,
+                 v5,
+                 v6,
+                 v7,
+                 v8,
+                 v9,
+                 v10,
+                 "dp_tx_timeout");
+      v14 = *(_DWORD *)(a1 + 2708);
+    }
+    *(_QWORD *)(a1 + 2712) = jiffies;
+    if ( v14 >= 5 )
+    {
+      qdf_trace_msg(
+        0x45u,
+        2u,
+        "%s: Data stall due to continuous TX timeouts",
+        v3,
+        v4,
+        v5,
+        v6,
+        v7,
+        v8,
+        v9,
+        v10,
+        "dp_tx_timeout");
+      *(_DWORD *)(a1 + 2708) = 0;
+      result = dp_is_data_stall_event_enabled(0x10000);
+      if ( (result & 1) != 0 )
+      {
+        if ( v11 && *(_QWORD *)v11 )
+        {
+          v23 = *(_QWORD *)(*(_QWORD *)v11 + 64LL);
+          if ( v23 )
+          {
+            v24 = *(_DWORD **)(v23 + 88);
+            if ( v24 )
+            {
+              if ( *(v24 - 1) != -889045584 )
+                __break(0x8228u);
+              return ((__int64 (__fastcall *)(__int64, __int64, __int64, _QWORD, __int64, __int64))v24)(
+                       v11,
+                       1,
+                       256,
+                       0,
+                       255,
+                       2);
+            }
+          }
+        }
+        else
+        {
+          return qdf_trace_msg(
+                   0x45u,
+                   1u,
+                   "%s invalid instance",
+                   v15,
+                   v16,
+                   v17,
+                   v18,
+                   v19,
+                   v20,
+                   v21,
+                   v22,
+                   "cdp_post_data_stall_event");
+        }
+      }
+    }
+  }
+  return result;
+}

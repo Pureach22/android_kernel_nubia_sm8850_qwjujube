@@ -1,0 +1,16 @@
+__int64 __fastcall dot11f_unpack_ie_ts_delay(__int64 a1, const void *a2, unsigned __int8 a3, _BYTE *a4)
+{
+  if ( *a4 )
+    return 32;
+  *a4 = 1;
+  if ( a3 <= 3u )
+  {
+    *a4 = 0;
+    return 4;
+  }
+  else
+  {
+    qdf_mem_copy(a4 + 4, a2, 4u);
+    return 0;
+  }
+}

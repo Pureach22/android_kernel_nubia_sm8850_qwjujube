@@ -1,0 +1,4 @@
+__int64 __fastcall _bpf_trace_gh_hcall_vcpu_run(__int64 a1, unsigned int a2, unsigned __int16 a3, unsigned int a4)
+{
+  return bpf_trace_run6(a1, a2, a3, a4);
+}

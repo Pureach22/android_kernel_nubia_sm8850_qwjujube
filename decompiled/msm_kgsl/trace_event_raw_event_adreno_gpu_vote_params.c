@@ -1,0 +1,43 @@
+__int64 __fastcall trace_event_raw_event_adreno_gpu_vote_params(
+        __int64 a1,
+        int a2,
+        int a3,
+        int a4,
+        int a5,
+        int a6,
+        int a7,
+        int a8,
+        int a9,
+        int a10,
+        int a11,
+        __int64 a12)
+{
+  __int64 v19; // x9
+  __int64 result; // x0
+  _QWORD v21[7]; // [xsp+8h] [xbp-38h] BYREF
+
+  v21[6] = *(_QWORD *)(_ReadStatusReg(SP_EL0) + 1808);
+  v19 = *(_QWORD *)(a1 + 72);
+  memset(v21, 0, 48);
+  if ( (v19 & 0x2C0) == 0 || (v19 & 0x100) != 0 || (result = _trace_trigger_soft_disabled(a1), (result & 1) == 0) )
+  {
+    result = trace_event_buffer_reserve(v21);
+    if ( result )
+    {
+      *(_DWORD *)(result + 8) = a2;
+      *(_DWORD *)(result + 12) = a3;
+      *(_DWORD *)(result + 36) = a9;
+      *(_DWORD *)(result + 16) = a4;
+      *(_DWORD *)(result + 20) = a5;
+      *(_DWORD *)(result + 24) = a6;
+      *(_DWORD *)(result + 28) = a7;
+      *(_DWORD *)(result + 32) = a8;
+      *(_DWORD *)(result + 40) = a10;
+      *(_DWORD *)(result + 44) = a11;
+      *(_QWORD *)(result + 48) = a12;
+      result = trace_event_buffer_commit(v21);
+    }
+  }
+  _ReadStatusReg(SP_EL0);
+  return result;
+}

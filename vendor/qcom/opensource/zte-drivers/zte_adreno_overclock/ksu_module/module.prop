@@ -1,0 +1,6 @@
+id=rm11pro_gpu_oc_1250
+name=Red Magic 11 Pro GPU Overclock (1250MHz + Overvolt)
+version=v1.0-REP
+versionCode=100
+author=@idealcreative
+description=Módulo KernelSU-Next para destravamento e overclock da GPU Adreno 750 para 1250MHz com overvolt de estabilização (1.075V). Desativa o thermal throttling proprietário da ZTE (com.zte.thermald / perfservice) e injeta a nova tabela de clock em memória.

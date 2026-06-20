@@ -1,0 +1,9 @@
+__int64 __usercall sub_4579C@<X0>(__int64 a1@<X8>)
+{
+  __int64 v1; // x11
+  _QWORD *v2; // x29
+
+  *v2 = a1;
+  v2[1] = v1;
+  return ieee80211_get_regs_len();
+}

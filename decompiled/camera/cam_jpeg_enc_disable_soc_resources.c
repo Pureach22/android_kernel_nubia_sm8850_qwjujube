@@ -1,0 +1,20 @@
+__int64 __fastcall cam_jpeg_enc_disable_soc_resources(__int64 a1)
+{
+  unsigned int v1; // w19
+
+  v1 = ((__int64 (__fastcall *)(__int64, __int64, __int64, __int64))cam_soc_util_disable_platform_resource)(
+         a1,
+         0xFFFFFFFFLL,
+         1,
+         1);
+  if ( v1 )
+    ((void (*)(__int64, __int64, __int64, const char *, __int64, const char *, ...))cam_print_log)(
+      3,
+      512,
+      1,
+      "cam_jpeg_enc_disable_soc_resources",
+      90,
+      "disable platform failed %d",
+      v1);
+  return v1;
+}

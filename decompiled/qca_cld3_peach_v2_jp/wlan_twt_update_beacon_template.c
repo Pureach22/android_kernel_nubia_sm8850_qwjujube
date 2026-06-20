@@ -1,0 +1,41 @@
+__int64 wlan_twt_update_beacon_template()
+{
+  unsigned int v0; // w19
+  double v1; // d0
+  double v2; // d1
+  double v3; // d2
+  double v4; // d3
+  double v5; // d4
+  double v6; // d5
+  double v7; // d6
+  double v8; // d7
+  _QWORD v10[7]; // [xsp+8h] [xbp-38h] BYREF
+
+  v10[6] = *(_QWORD *)(_ReadStatusReg(SP_EL0) + 1808);
+  memset(&v10[1], 0, 40);
+  v10[0] = 5059;
+  v0 = scheduler_post_message_debug(
+         0x96u,
+         0x35u,
+         53,
+         (unsigned __int16 *)v10,
+         0x98Bu,
+         (__int64)"wlan_twt_update_beacon_template");
+  if ( v0 )
+    qdf_trace_msg(
+      0x96u,
+      2u,
+      "%s: scheduler_post_message failed, status = %u",
+      v1,
+      v2,
+      v3,
+      v4,
+      v5,
+      v6,
+      v7,
+      v8,
+      "wlan_twt_update_beacon_template",
+      v0);
+  _ReadStatusReg(SP_EL0);
+  return v0;
+}

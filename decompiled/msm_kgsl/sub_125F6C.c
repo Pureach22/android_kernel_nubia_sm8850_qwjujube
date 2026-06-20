@@ -1,0 +1,26 @@
+void sub_125F6C()
+{
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  JUMPOUT(0x125FC4);
+}

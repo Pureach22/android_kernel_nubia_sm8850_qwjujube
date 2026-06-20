@@ -1,0 +1,40 @@
+_QWORD *__fastcall dsi_phy_settings_deinit(_QWORD *result)
+{
+  result[110] = 0;
+  result[109] = 0;
+  result[108] = 0;
+  result[107] = 0;
+  result[106] = 0;
+  result[105] = 0;
+  result[104] = 0;
+  result[103] = 0;
+  result[102] = 0;
+  result[111] = 0;
+  result[112] = 0;
+  result[113] = 0;
+  result[114] = 0;
+  result[115] = 0;
+  result[116] = 0;
+  result[117] = 0;
+  result[118] = 0;
+  result[119] = 0;
+  result[128] = 0;
+  result[127] = 0;
+  result[126] = 0;
+  result[125] = 0;
+  result[124] = 0;
+  result[123] = 0;
+  result[122] = 0;
+  result[121] = 0;
+  result[120] = 0;
+  *(_QWORD *)((char *)result + 1092) = 0;
+  *(_QWORD *)((char *)result + 1100) = 0;
+  *(_QWORD *)((char *)result + 1076) = 0;
+  *(_QWORD *)((char *)result + 1084) = 0;
+  *(_QWORD *)((char *)result + 1060) = 0;
+  *(_QWORD *)((char *)result + 1068) = 0;
+  *(_QWORD *)((char *)result + 1044) = 0;
+  *(_QWORD *)((char *)result + 1052) = 0;
+  *(_QWORD *)((char *)result + 1036) = 0;
+  return result;
+}

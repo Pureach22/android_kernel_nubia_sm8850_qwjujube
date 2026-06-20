@@ -1,0 +1,5 @@
+__int64 sub_3646D0()
+{
+  __asm { FMLAL2          V22.2S, V20.2H, V13.H[6] }
+  return hdd_is_chan_switch_in_progress();
+}

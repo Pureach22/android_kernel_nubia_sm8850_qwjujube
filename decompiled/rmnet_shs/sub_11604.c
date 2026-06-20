@@ -1,0 +1,22 @@
+void __usercall sub_11604(__int64 a1@<X8>)
+{
+  unsigned __int8 v1; // w19
+  unsigned int v2; // w20
+  unsigned __int64 StatusReg; // x21
+  __int64 v4; // x0
+  __int64 v5; // x9
+
+  StatusReg = _ReadStatusReg(SP_EL0);
+  if ( ((*(_QWORD *)((char *)&_cpu_online_mask
+                   + (((unsigned __int64)*(unsigned int *)(StatusReg + 40) >> 3) & 0x1FFFFFF8)) >> *(_DWORD *)(StatusReg + 40))
+      & 1) != 0 )
+  {
+    ++*(_DWORD *)(StatusReg + 16);
+    v4 = _traceiter_rmnet_shs_wq_high(0, 6, 57, v2, v1, 3567, 3567, a1);
+    v5 = *(_QWORD *)(StatusReg + 16) - 1LL;
+    *(_DWORD *)(StatusReg + 16) = v5;
+    if ( !v5 || !*(_QWORD *)(StatusReg + 16) )
+      preempt_schedule_notrace(v4);
+  }
+  JUMPOUT(0x115C8);
+}

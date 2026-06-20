@@ -1,0 +1,36 @@
+__int64 __fastcall util_gen_link_probe_rsp(
+        char *a1,
+        unsigned __int64 a2,
+        unsigned int a3,
+        __int64 a4,
+        char *a5,
+        unsigned __int64 a6,
+        __int64 *a7,
+        double a8,
+        double a9,
+        double a10,
+        double a11,
+        double a12,
+        double a13,
+        double a14,
+        double a15)
+{
+  return util_gen_link_reqrsp_cmn(
+           a1,
+           a2,
+           5u,
+           a3,
+           a4 & 0xFFFFFFFFFFFFLL,
+           nullptr,
+           a5,
+           a6,
+           a8,
+           a9,
+           a10,
+           a11,
+           a12,
+           a13,
+           a14,
+           a15,
+           a7);
+}

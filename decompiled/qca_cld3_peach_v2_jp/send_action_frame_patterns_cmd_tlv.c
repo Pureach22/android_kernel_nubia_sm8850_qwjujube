@@ -1,0 +1,85 @@
+__int64 __fastcall send_action_frame_patterns_cmd_tlv(__int64 a1, _DWORD *a2)
+{
+  __int64 v4; // x0
+  _DWORD *v5; // x9
+  __int64 v6; // x19
+  __int64 v7; // x8
+  double v8; // d0
+  double v9; // d1
+  double v10; // d2
+  double v11; // d3
+  double v12; // d4
+  double v13; // d5
+  double v14; // d6
+  double v15; // d7
+  __int64 result; // x0
+  double v17; // d0
+  double v18; // d1
+  double v19; // d2
+  double v20; // d3
+  double v21; // d4
+  double v22; // d5
+  double v23; // d6
+  double v24; // d7
+
+  v4 = wmi_buf_alloc_fl(a1, 0x430u, "send_action_frame_patterns_cmd_tlv", 0x4C1u);
+  if ( !v4 )
+    return 2;
+  v5 = *(_DWORD **)(v4 + 224);
+  v6 = v4;
+  *v5 = 35192872;
+  v7 = 0;
+  v5[1] = *a2;
+  v5[2] = a2[1];
+  v5[3] = a2[2];
+  v5[4] = a2[3];
+  v5[5] = a2[4];
+  v5[6] = a2[5];
+  v5[7] = a2[6];
+  v5[8] = a2[7];
+  v5[9] = a2[8];
+  v5[10] = a2[9];
+  v5[11] = 1049600;
+  do
+  {
+    v5[v7 + 12] = a2[v7 + 10];
+    ++v7;
+  }
+  while ( v7 != 256 );
+  wmi_mtrace(0x13011u, v5[1], 0);
+  result = wmi_unified_cmd_send_fl(
+             a1,
+             v6,
+             0x430u,
+             0x13011u,
+             "send_action_frame_patterns_cmd_tlv",
+             0x4DDu,
+             v8,
+             v9,
+             v10,
+             v11,
+             v12,
+             v13,
+             v14,
+             v15);
+  if ( (_DWORD)result )
+  {
+    qdf_trace_msg(
+      0x31u,
+      2u,
+      "%s: Failed to send ap_ps_egap cmd %d",
+      v17,
+      v18,
+      v19,
+      v20,
+      v21,
+      v22,
+      v23,
+      v24,
+      "send_action_frame_patterns_cmd_tlv",
+      (unsigned int)result);
+    wmi_buf_free();
+    return 16;
+  }
+  return result;
+}

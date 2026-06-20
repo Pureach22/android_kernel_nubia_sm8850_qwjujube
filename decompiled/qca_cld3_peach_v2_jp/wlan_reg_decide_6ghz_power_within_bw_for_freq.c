@@ -1,0 +1,20 @@
+__int64 __fastcall wlan_reg_decide_6ghz_power_within_bw_for_freq(
+        __int64 a1,
+        __int64 a2,
+        __int64 a3,
+        __int64 a4,
+        _WORD *a5,
+        __int16 *a6,
+        _DWORD *a7,
+        unsigned int a8,
+        double a9,
+        double a10,
+        double a11,
+        double a12,
+        double a13,
+        double a14,
+        double a15,
+        double a16)
+{
+  return reg_decide_6ghz_power_within_bw_for_freq(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
+}

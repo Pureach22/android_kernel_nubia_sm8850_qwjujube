@@ -1,0 +1,4 @@
+__int64 __fastcall ucfg_twt_requestor_disable(__int64 a1, unsigned int *a2, __int64 a3)
+{
+  return wlan_twt_requestor_disable(a1, a2, a3);
+}

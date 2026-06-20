@@ -1,0 +1,170 @@
+__int64 __fastcall wlan_t2lm_update_peer_mapping_for_del_link(
+        __int64 a1,
+        double a2,
+        double a3,
+        double a4,
+        double a5,
+        double a6,
+        double a7,
+        double a8,
+        double a9)
+{
+  __int64 first_vdev_by_ml_peer; // x0
+  __int64 v11; // x19
+  __int64 bsspeer; // x0
+  double v13; // d0
+  double v14; // d1
+  double v15; // d2
+  double v16; // d3
+  double v17; // d4
+  double v18; // d5
+  double v19; // d6
+  double v20; // d7
+  __int64 v21; // x21
+  double v22; // d0
+  double v23; // d1
+  double v24; // d2
+  double v25; // d3
+  double v26; // d4
+  double v27; // d5
+  double v28; // d6
+  double v29; // d7
+  unsigned int v30; // w22
+  double v31; // d0
+  double v32; // d1
+  double v33; // d2
+  double v34; // d3
+  double v35; // d4
+  double v36; // d5
+  double v37; // d6
+  double v38; // d7
+  double v39; // d0
+  double v40; // d1
+  double v41; // d2
+  double v42; // d3
+  double v43; // d4
+  double v44; // d5
+  double v45; // d6
+  double v46; // d7
+  unsigned int *v47; // x8
+  double v48; // d0
+  double v49; // d1
+  double v50; // d2
+  double v51; // d3
+  double v52; // d4
+  double v53; // d5
+  double v54; // d6
+  double v55; // d7
+  const char *v56; // x2
+  __int64 result; // x0
+  __int64 v58; // [xsp+0h] [xbp-40h] BYREF
+  __int64 v59; // [xsp+8h] [xbp-38h]
+  __int64 v60; // [xsp+10h] [xbp-30h]
+  __int64 v61; // [xsp+18h] [xbp-28h]
+  __int64 v62; // [xsp+20h] [xbp-20h]
+  __int64 v63; // [xsp+28h] [xbp-18h]
+  __int64 v64; // [xsp+30h] [xbp-10h]
+  __int64 v65; // [xsp+38h] [xbp-8h]
+
+  v65 = *(_QWORD *)(_ReadStatusReg(SP_EL0) + 1808);
+  LODWORD(v64) = 0;
+  v62 = 0;
+  v63 = 0;
+  v60 = 0;
+  v61 = 0;
+  v58 = 0;
+  v59 = 0;
+  if ( !a1 )
+  {
+    v56 = "%s: ml peer is null";
+LABEL_9:
+    qdf_trace_msg(
+      0x99u,
+      2u,
+      v56,
+      a2,
+      a3,
+      a4,
+      a5,
+      a6,
+      a7,
+      a8,
+      a9,
+      "wlan_t2lm_update_peer_mapping_for_del_link",
+      v58,
+      v59,
+      v60,
+      v61,
+      v62,
+      v63,
+      v64,
+      v65);
+    result = 29;
+    goto LABEL_12;
+  }
+  first_vdev_by_ml_peer = mlo_get_first_vdev_by_ml_peer(a1);
+  if ( !first_vdev_by_ml_peer )
+  {
+    v56 = "%s: VDEV is null";
+    goto LABEL_9;
+  }
+  v11 = first_vdev_by_ml_peer;
+  bsspeer = wlan_objmgr_vdev_try_get_bsspeer(first_vdev_by_ml_peer, 0x5Au);
+  if ( bsspeer )
+  {
+    v21 = bsspeer;
+    wlan_t2lm_clear_peer_negotiation(bsspeer, v13, v14, v15, v16, v17, v18, v19, v20);
+    *(_WORD *)(a1 + 216) = 0;
+    LODWORD(v58) = 2;
+    BYTE4(v58) = 1;
+    BYTE1(v64) = 0;
+    qdf_mem_copy((void *)(a1 + 324), &v58, 0x34u);
+    v30 = wlan_send_tid_to_link_mapping(v11, a1 + 324, v22, v23, v24, v25, v26, v27, v28, v29);
+    if ( v30 )
+      qdf_trace_msg(
+        0x99u,
+        2u,
+        "%s: sending t2lm wmi failed",
+        v31,
+        v32,
+        v33,
+        v34,
+        v35,
+        v36,
+        v37,
+        v38,
+        "wlan_t2lm_update_peer_mapping_for_del_link");
+    wlan_mlo_dev_t2lm_notify_link_update(v11, a1 + 324, v31, v32, v33, v34, v35, v36, v37, v38);
+    wlan_objmgr_peer_release_ref(v21, 0x5Au, v39, v40, v41, v42, v43, v44, v45, v46);
+  }
+  else
+  {
+    qdf_trace_msg(
+      0x99u,
+      2u,
+      "%s: peer is null",
+      v13,
+      v14,
+      v15,
+      v16,
+      v17,
+      v18,
+      v19,
+      v20,
+      "wlan_t2lm_update_peer_mapping_for_del_link",
+      v58,
+      v59,
+      v60,
+      v61,
+      v62,
+      v63,
+      v64,
+      v65);
+    v30 = 29;
+  }
+  wlan_objmgr_vdev_release_ref(v11, 0x5Au, v47, v48, v49, v50, v51, v52, v53, v54, v55);
+  result = v30;
+LABEL_12:
+  _ReadStatusReg(SP_EL0);
+  return result;
+}

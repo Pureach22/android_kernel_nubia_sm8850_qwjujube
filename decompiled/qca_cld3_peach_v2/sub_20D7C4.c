@@ -1,0 +1,7 @@
+__int64 __fastcall sub_20D7C4(__int64 a1)
+{
+  __int64 v1; // x10
+  __int64 v2; // x13
+
+  return wlan_reg_get_fcc_constraint(a1, v2 + __ROR8__(v1, 46));
+}

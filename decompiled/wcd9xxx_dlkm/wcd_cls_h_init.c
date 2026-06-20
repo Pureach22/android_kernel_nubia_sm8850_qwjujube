@@ -1,0 +1,40 @@
+__int64 __fastcall wcd_cls_h_init(__int64 result)
+{
+  *(_BYTE *)result = 0;
+  clsh_state_fp[0] = (__int64)wcd_clsh_state_err;
+  qword_9238 = (__int64)wcd_clsh_state_ear;
+  qword_92B0 = (__int64)wcd_clsh_state_err;
+  qword_92B8 = (__int64)wcd_clsh_state_err;
+  qword_92C0 = (__int64)wcd_clsh_state_err;
+  qword_92C8 = (__int64)wcd_clsh_state_err;
+  qword_92D0 = (__int64)wcd_clsh_state_err;
+  qword_92D8 = (__int64)wcd_clsh_state_err;
+  qword_92E0 = (__int64)wcd_clsh_state_err;
+  qword_92E8 = (__int64)wcd_clsh_state_err;
+  qword_92F0 = (__int64)wcd_clsh_state_err;
+  qword_92F8 = (__int64)wcd_clsh_state_err;
+  qword_9300 = (__int64)wcd_clsh_state_err;
+  qword_9308 = (__int64)wcd_clsh_state_err;
+  qword_9310 = (__int64)wcd_clsh_state_err;
+  qword_9318 = (__int64)wcd_clsh_state_err;
+  qword_9320 = (__int64)wcd_clsh_state_err;
+  qword_9328 = (__int64)wcd_clsh_state_err;
+  qword_9280 = (__int64)wcd_clsh_state_hph_aux;
+  qword_9288 = (__int64)wcd_clsh_state_err;
+  qword_9290 = (__int64)wcd_clsh_state_hph_aux;
+  qword_9298 = (__int64)wcd_clsh_state_err;
+  qword_92A0 = (__int64)wcd_clsh_state_hph_aux;
+  qword_92A8 = (__int64)wcd_clsh_state_err;
+  qword_9270 = (__int64)wcd_clsh_state_aux;
+  qword_9278 = (__int64)wcd_clsh_state_ear_aux;
+  qword_9240 = (__int64)wcd_clsh_state_hph_l;
+  qword_9248 = (__int64)wcd_clsh_state_hph_ear;
+  qword_9250 = (__int64)wcd_clsh_state_hph_r;
+  qword_9258 = (__int64)wcd_clsh_state_hph_ear;
+  qword_9260 = (__int64)wcd_clsh_state_hph_st;
+  qword_9268 = (__int64)wcd_clsh_state_hph_ear;
+  *(_QWORD *)(result + 4) = 0;
+  *(_QWORD *)(result + 16) = 0x900000009LL;
+  *(_QWORD *)(result + 24) = 0x900000009LL;
+  return result;
+}

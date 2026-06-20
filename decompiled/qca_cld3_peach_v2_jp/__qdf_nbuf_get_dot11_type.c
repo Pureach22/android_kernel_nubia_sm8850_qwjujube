@@ -1,0 +1,17 @@
+__int64 __fastcall _qdf_nbuf_get_dot11_type(char *a1)
+{
+  int v1; // w8
+
+  if ( *a1 < 0 )
+  {
+    if ( a1[24] < 0 )
+      v1 = 40;
+    else
+      v1 = 26;
+  }
+  else
+  {
+    v1 = 24;
+  }
+  return *(unsigned __int16 *)&a1[(((unsigned __int8)a1[1] >> 5) & 4 | v1) + 6 + (((unsigned __int8)a1[1] >> 3) & 8)];
+}

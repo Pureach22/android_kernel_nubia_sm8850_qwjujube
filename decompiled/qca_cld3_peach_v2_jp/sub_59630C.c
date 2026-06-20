@@ -1,0 +1,8 @@
+__int64 __fastcall sub_59630C(__int64 a1, __int64 a2, __int64 a3, __int64 a4, __int64 a5)
+{
+  _QWORD *v5; // x16
+
+  *v5 = v5;
+  v5[1] = a5;
+  return wmi_send_apf_write_work_memory_cmd_tlv();
+}

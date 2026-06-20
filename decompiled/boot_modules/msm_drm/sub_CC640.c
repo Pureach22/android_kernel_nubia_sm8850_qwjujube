@@ -1,0 +1,18 @@
+void __fastcall sub_CC640(__int64 a1)
+{
+  __int64 v1; // x19
+  __int64 v3; // x0
+  __int64 v4; // x8
+
+  if ( ((*(_QWORD *)((char *)&_cpu_online_mask + (((unsigned __int64)*(unsigned int *)(v1 + 40) >> 3) & 0x1FFFFFF8)) >> *(_DWORD *)(v1 + 40))
+      & 1) != 0 )
+  {
+    ++*(_DWORD *)(v1 + 16);
+    v3 = _traceiter_tracing_mark_write(0, 66, v1, "signal_retire_fence", 0);
+    v4 = *(_QWORD *)(v1 + 16) - 1LL;
+    *(_DWORD *)(v1 + 16) = v4;
+    if ( !v4 || (v3 = a1, !*(_QWORD *)(v1 + 16)) )
+      preempt_schedule_notrace(v3);
+  }
+  JUMPOUT(0xCC1B0);
+}

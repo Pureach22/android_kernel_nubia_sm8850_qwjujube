@@ -1,0 +1,1 @@
+ int sde_connector_frame_handler(void *sde_encoder_virt);

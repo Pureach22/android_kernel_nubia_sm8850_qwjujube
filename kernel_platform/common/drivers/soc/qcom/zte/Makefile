@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-2.0-only
+obj-y += zte_misc/
+obj-y += zte_power_supply/
+obj-y += zte_imem_info/
+obj-y += zte_stats_info/
+obj-y += zte_sensor_sensitivity/
+obj-y += zte_ir/
+obj-y += zte_reboot_ext/
+obj-y += zte_ramdisk_reboot/
+obj-y += zte_led/
+obj-y += zte_fingerprint/
+obj-y += zte_charger_policy/
+obj-m += zte_tpd/

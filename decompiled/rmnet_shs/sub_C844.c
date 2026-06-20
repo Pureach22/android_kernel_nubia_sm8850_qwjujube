@@ -1,0 +1,20 @@
+void __fastcall sub_C844(__int64 a1, unsigned int a2, unsigned int a3, unsigned int a4, __int64 a5, __int64 a6)
+{
+  unsigned __int64 StatusReg; // x19
+  __int64 v7; // x0
+  __int64 v8; // x8
+
+  StatusReg = _ReadStatusReg(SP_EL0);
+  if ( ((*(_QWORD *)((char *)&_cpu_online_mask
+                   + (((unsigned __int64)*(unsigned int *)(StatusReg + 40) >> 3) & 0x1FFFFFF8)) >> *(_DWORD *)(StatusReg + 40))
+      & 1) != 0 )
+  {
+    ++*(_DWORD *)(StatusReg + 16);
+    v7 = _traceiter_print_icmp_rx(0, a1, a2, a3, a4, a5, a6);
+    v8 = *(_QWORD *)(StatusReg + 16) - 1LL;
+    *(_DWORD *)(StatusReg + 16) = v8;
+    if ( !v8 || !*(_QWORD *)(StatusReg + 16) )
+      preempt_schedule_notrace(v7);
+  }
+  JUMPOUT(0xC834);
+}

@@ -1,0 +1,4 @@
+obj-m += zte_charger_policy_custom.o
+zte_charger_policy_custom-y := zte_charger_policy.o
+obj-m += zte_cleanup.o
+

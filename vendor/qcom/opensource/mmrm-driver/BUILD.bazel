@@ -1,0 +1,64 @@
+load("//build/kernel/kleaf:kernel.bzl", "ddk_module", "ddk_headers")
+load("//build/bazel_common_rules/dist:dist.bzl", "copy_to_dist_dir")
+load("//vendor/qcom/opensource/mm-drivers:target_variants.bzl", "get_all_variants")
+
+package(
+    default_visibility = [
+        "//visibility:public",
+    ],
+)
+
+ddk_headers(
+    name = "mmrm_headers",
+    hdrs = [
+        "//kernel_platform/common:include/linux/soc/qcom/msm_mmrm.h",
+    ],
+    includes = ["."],
+)
+
+def _define_module(target, variant):
+    tv = "{}_{}".format(target, variant)
+
+    deps = select({
+        "//build/kernel/kleaf:socrepo_true": [
+            "//soc-repo:all_headers",
+        ],
+        "//build/kernel/kleaf:socrepo_false": [
+            "//msm-kernel:all_headers",
+        ],
+    })
+    kernel_build = select({
+        "//build/kernel/kleaf:socrepo_true": "//soc-repo:{}_base_kernel".format(tv),
+        "//build/kernel/kleaf:socrepo_false": "//msm-kernel:{}".format(tv),
+    })
+
+    if target in ["pineapple"]:
+        target_config = "defconfig"
+    else:
+        target_config = "{}_defconfig".format(target)
+
+    ddk_module(
+        name = "{}_mmrm_driver".format(tv),
+        srcs = [
+            "msm_mmrm.c",
+        ],
+        out = "msm-mmrm.ko",
+        defconfig = target_config,
+        kconfig = "Kconfig",
+        deps = deps,
+        kernel_build = kernel_build,
+    )
+
+    copy_to_dist_dir(
+        name = "{}_mmrm_driver_dist".format(tv),
+        data = [":{}_mmrm_driver".format(tv)],
+        dist_dir = "out/target/product/{}/dlkm/lib/modules".format(target),
+        flat = True,
+        wipe_dist_dir = False,
+        allow_duplicate_filenames = False,
+        mode_overrides = {"**/*": "644"},
+        log = "info",
+    )
+
+for (t, v) in get_all_variants():
+    _define_module(t, v)

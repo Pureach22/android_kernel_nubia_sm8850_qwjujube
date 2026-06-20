@@ -1,0 +1,6 @@
+id=zte_charger_policy_custom
+name=ZTE Charger Policy (Reconstructed)
+version=v1.0
+versionCode=1
+author=Antigravity Senior Systems Engineer
+description=Replaces the official zte_charger_policy.ko with a 1-to-1 reconstructed version from reverse engineering. Binary-level parity with CRC-patched symbol versions.

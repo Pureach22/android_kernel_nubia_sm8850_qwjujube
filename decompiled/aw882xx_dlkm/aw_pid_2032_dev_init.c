@@ -1,0 +1,41 @@
+__int64 __fastcall aw_pid_2032_dev_init(__int64 result)
+{
+  *(_DWORD *)(result + 28) = 126;
+  *(_DWORD *)(result + 520) = 1000;
+  *(_QWORD *)(result + 444) = 0xFFFFFC000000007ALL;
+  qmemcpy((void *)(result + 128), "aw882xx_pid_2032_monitor.bin", 28);
+  *(_DWORD *)(result + 56) = 48;
+  *(_QWORD *)(result + 468) = 0xFFFF03FFFFFFFDFFLL;
+  *(_QWORD *)(result + 1176) = aw_6_0P125_reg_val_to_db;
+  *(_QWORD *)(result + 1184) = aw_6_0P125_db_val_to_reg;
+  *(_QWORD *)(result + 480) = 0xFFFFFC0000000078LL;
+  *(_QWORD *)(result + 384) = 0xFFFFFFEF00000005LL;
+  *(_QWORD *)(result + 392) = 16;
+  *(_QWORD *)(result + 424) = 0xFFFFFFFE00000007LL;
+  *(_QWORD *)(result + 432) = 1;
+  *(_DWORD *)(result + 476) = 1;
+  *(_DWORD *)(result + 512) = 1;
+  *(_QWORD *)(result + 548) = 0xFFFFBFFF00000066LL;
+  *(_QWORD *)(result + 556) = 0x400000000000LL;
+  *(_DWORD *)(result + 564) = 18;
+  *(_DWORD *)(result + 576) = 19;
+  *(_QWORD *)(result + 588) = 0xFFFFFFF000000005LL;
+  *(_DWORD *)(result + 516) = 86;
+  *(_QWORD *)(result + 376) = "btn 2032 hmute";
+  *(_QWORD *)(result + 596) = 0xFFFF003F00000005LL;
+  *(_DWORD *)(result + 604) = 6;
+  *(_DWORD *)(result + 524) = 0x2000;
+  *(_QWORD *)(result + 612) = 720;
+  *(_QWORD *)(result + 1008) = 0x2000;
+  *(_DWORD *)(result + 408) = 255;
+  *(_DWORD *)(result + 456) = 255;
+  *(_DWORD *)(result + 492) = 255;
+  *(_DWORD *)(result + 976) = 255;
+  *(_QWORD *)(result + 992) = "btn 2032 dither";
+  *(_DWORD *)(result + 1024) = 255;
+  *(_QWORD *)(result + 504) = 0xFFFF03FFFFFFFDFFLL;
+  *(_QWORD *)(result + 1000) = 0xFFFFDFFF00000020LL;
+  *(_QWORD *)(result + 216) = 0x7800000001LL;
+  *(_QWORD *)(result + 224) = 0x8000FFFF7FFFLL;
+  return result;
+}

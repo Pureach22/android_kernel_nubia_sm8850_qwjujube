@@ -1,0 +1,65 @@
+__int64 __fastcall dsi_phy_hw_v7_2_dyn_refresh_helper(__int64 result, int a2)
+{
+  __int64 v2; // x19
+  char v3; // w20
+  int v4; // w0
+  int v5; // w0
+  int v6; // w0
+  int v7; // w0
+  int v8; // w0
+  int v9; // w0
+
+  v2 = result;
+  if ( !a2 )
+  {
+    v4 = readl_relaxed_15(*(unsigned int **)(result + 16));
+    result = writel_relaxed_12(v4 & 0xFFFCDEFE, *(unsigned int **)(v2 + 16));
+    __dsb(0xEu);
+    return result;
+  }
+  v3 = a2;
+  if ( (a2 & 2) != 0 )
+  {
+    v5 = readl_relaxed_15(*(unsigned int **)(result + 16));
+    result = writel_relaxed_12(v5 | 0x2000u, *(unsigned int **)(v2 + 16));
+    if ( (v3 & 4) == 0 )
+    {
+LABEL_4:
+      if ( (v3 & 0x10) == 0 )
+        goto LABEL_5;
+      goto LABEL_11;
+    }
+  }
+  else if ( (a2 & 4) == 0 )
+  {
+    goto LABEL_4;
+  }
+  v6 = readl_relaxed_15(*(unsigned int **)(v2 + 16));
+  result = writel_relaxed_12(v6 | 0x10000u, *(unsigned int **)(v2 + 16));
+  if ( (v3 & 0x10) == 0 )
+  {
+LABEL_5:
+    if ( (v3 & 0x20) == 0 )
+      goto LABEL_6;
+LABEL_12:
+    v8 = readl_relaxed_15(*(unsigned int **)(v2 + 16));
+    result = writel_relaxed_12(v8 | 0x3000000u, *(unsigned int **)(v2 + 16));
+    if ( (v3 & 8) == 0 )
+      return result;
+    goto LABEL_13;
+  }
+LABEL_11:
+  v7 = readl_relaxed_15(*(unsigned int **)(v2 + 16));
+  result = writel_relaxed_12(v7 | 1u, *(unsigned int **)(v2 + 16));
+  if ( (v3 & 0x20) != 0 )
+    goto LABEL_12;
+LABEL_6:
+  if ( (v3 & 8) != 0 )
+  {
+LABEL_13:
+    v9 = readl_relaxed_15(*(unsigned int **)(v2 + 16));
+    result = writel_relaxed_12(v9 | 0x100u, *(unsigned int **)(v2 + 16));
+    __dsb(0xEu);
+  }
+  return result;
+}

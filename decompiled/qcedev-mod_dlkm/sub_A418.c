@@ -1,0 +1,14 @@
+void sub_A418()
+{
+  unsigned __int64 StatusReg; // x10
+  unsigned __int64 v6; // x11
+
+  StatusReg = _ReadStatusReg(DAIF);
+  __asm { MSR             DAIFSet, #3 }
+  v6 = _ReadStatusReg(TTBR1_EL1) & 0xFFFFFFFFFFFFLL;
+  _WriteStatusReg(TTBR0_EL1, v6 - 4096);
+  _WriteStatusReg(TTBR1_EL1, v6);
+  __isb(0xFu);
+  _WriteStatusReg(DAIF, StatusReg);
+  JUMPOUT(0x9AE0);
+}

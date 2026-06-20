@@ -1,0 +1,27 @@
+__int64 __fastcall aw8693x_trig1_param_config(_BYTE *a1)
+{
+  unsigned int v2; // w9
+  __int64 v3; // x3
+  __int64 result; // x0
+  _BYTE v5[4]; // [xsp+4h] [xbp-Ch] BYREF
+  __int64 v6; // [xsp+8h] [xbp-8h]
+
+  v6 = *(_QWORD *)(_ReadStatusReg(SP_EL0) + 1808);
+  if ( a1[1512] )
+    v2 = ((a1[1511] != 0) << 6) | 0xFFFFFF80;
+  else
+    v2 = (a1[1511] != 0) << 6;
+  if ( a1[1509] )
+    v2 |= 0x20u;
+  if ( a1[1510] )
+    v3 = v2 | 0x10;
+  else
+    v3 = v2;
+  i2c_w_bits(a1, 57, 4294967055LL, v3);
+  v5[0] = a1[1515] | ((a1[1513] != 0) << 7);
+  i2c_w_bytes(a1, 51, v5, 1);
+  v5[0] = a1[1516] | ((a1[1514] != 0) << 7);
+  result = i2c_w_bytes(a1, 54, v5, 1);
+  _ReadStatusReg(SP_EL0);
+  return result;
+}

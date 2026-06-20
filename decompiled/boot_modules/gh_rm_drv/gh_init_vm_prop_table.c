@@ -1,0 +1,42 @@
+__int64 gh_init_vm_prop_table()
+{
+  raw_spin_lock(&gh_vm_table_lock);
+  gh_vm_table = 0;
+  word_13A50 = -1;
+  qword_13A58 = 0;
+  qword_13A60 = 0;
+  qword_13A68 = 0;
+  qword_13A70 = 0;
+  dword_13A78 = 0;
+  _init_swait_queue_head(&unk_13A80, "&x->wait", &init_completion___key);
+  dword_13A98 = 0;
+  _init_swait_queue_head(&unk_13AA0, "&x->wait", &init_completion___key);
+  word_13AB8 = -1;
+  qword_13AC0 = 0;
+  qword_13AC8 = 0;
+  qword_13AD0 = 0;
+  qword_13AD8 = 0;
+  dword_13AE0 = 0;
+  _init_swait_queue_head(&unk_13AE8, "&x->wait", &init_completion___key);
+  dword_13B00 = 0;
+  _init_swait_queue_head(&unk_13B08, "&x->wait", &init_completion___key);
+  word_13B20 = -1;
+  qword_13B28 = 0;
+  qword_13B30 = 0;
+  qword_13B38 = 0;
+  qword_13B40 = 0;
+  dword_13B48 = 0;
+  _init_swait_queue_head(&unk_13B50, "&x->wait", &init_completion___key);
+  dword_13B68 = 0;
+  _init_swait_queue_head(&unk_13B70, "&x->wait", &init_completion___key);
+  word_13B88 = -1;
+  qword_13B90 = 0;
+  qword_13B98 = 0;
+  qword_13BA0 = 0;
+  qword_13BA8 = 0;
+  dword_13BB0 = 0;
+  _init_swait_queue_head(&unk_13BB8, "&x->wait", &init_completion___key);
+  dword_13BD0 = 0;
+  _init_swait_queue_head(&unk_13BD8, "&x->wait", &init_completion___key);
+  return raw_spin_unlock(&gh_vm_table_lock);
+}

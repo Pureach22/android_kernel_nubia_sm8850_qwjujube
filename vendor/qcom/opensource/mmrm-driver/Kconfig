@@ -1,0 +1,6 @@
+config MSM_MMRM
+	tristate "Qualcomm Multi-Media Resource Manager (MMRM) Support"
+	help
+	  This option enables support for the Qualcomm Multi-Media Resource Manager
+	  driver, which coordinates and scales resources for camera, display, and
+	  video subsystems.

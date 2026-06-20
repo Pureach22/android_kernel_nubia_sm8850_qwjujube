@@ -1,0 +1,48 @@
+__int64 __fastcall icnss_force_wake_request(__int64 a1)
+{
+  __int64 v1; // x19
+  unsigned int v3; // w8
+  unsigned int v10; // w12
+
+  if ( !a1 )
+    return 4294967277LL;
+  v1 = *(_QWORD *)(a1 + 152);
+  if ( !v1 )
+  {
+    printk("%sicnss2: Platform driver not initialized\n", byte_130B32);
+    ipc_log_string(icnss_ipc_log_context, "%sicnss2: Platform driver not initialized\n");
+    return 4294967274LL;
+  }
+  if ( (*(_QWORD *)(v1 + 1832) & 0x2000) != 0 || (*(_QWORD *)(v1 + 1832) & 4) == 0 )
+  {
+    ipc_log_string(icnss_ipc_soc_wake_context, "icnss2: FW down, ignoring SOC Wake request state: 0x%lx\n");
+    return 4294967274LL;
+  }
+  v3 = *(_DWORD *)(v1 + 5488);
+  while ( v3 )
+  {
+    _X14 = (unsigned int *)(v1 + 5488);
+    __asm { PRFM            #0x11, [X14] }
+    while ( 1 )
+    {
+      v10 = __ldxr(_X14);
+      if ( v10 != v3 )
+        break;
+      if ( !__stlxr(v3 + 1, _X14) )
+      {
+        __dmb(0xBu);
+        break;
+      }
+    }
+    _ZF = v10 == v3;
+    v3 = v10;
+    if ( _ZF )
+    {
+      ipc_log_string(icnss_ipc_soc_wake_context, "icnss2: SOC already awake, Ref count: %d", *(_DWORD *)(v1 + 5488));
+      return 0;
+    }
+  }
+  ipc_log_string(icnss_ipc_soc_wake_context, "icnss2: Calling SOC Wake request, Ref_count: %d", *(_DWORD *)(v1 + 5488));
+  icnss_soc_wake_event_post(v1, 0, 0, 0);
+  return 0;
+}

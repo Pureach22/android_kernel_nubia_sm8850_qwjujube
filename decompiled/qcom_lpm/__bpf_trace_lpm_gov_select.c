@@ -1,0 +1,4 @@
+__int64 __fastcall _bpf_trace_lpm_gov_select(__int64 a1, unsigned int a2, __int64 a3, __int64 a4, __int64 a5)
+{
+  return bpf_trace_run4(a1, a2, a3, a4, a5);
+}

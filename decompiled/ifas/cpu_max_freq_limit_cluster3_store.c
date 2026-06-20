@@ -1,0 +1,5 @@
+__int64 __fastcall cpu_max_freq_limit_cluster3_store(__int64 a1, __int64 a2, const char *a3, __int64 a4)
+{
+  cpu_max_freq_limit_update(3u, a3, a4);
+  return a4;
+}

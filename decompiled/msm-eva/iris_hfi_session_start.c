@@ -1,0 +1,25 @@
+__int64 __fastcall iris_hfi_session_start(__int64 a1, __int64 a2)
+{
+  __int64 v2; // x21
+  __int64 result; // x0
+  unsigned __int64 StatusReg; // x8
+
+  if ( a1 && (v2 = *(_QWORD *)(a1 + 32)) != 0 )
+  {
+    mutex_lock(v2 + 80);
+    LODWORD(a2) = _send_session_cmd_ktid(a1, 18878469, a2);
+    mutex_unlock(v2 + 80);
+    return (unsigned int)a2;
+  }
+  else
+  {
+    result = 4294967274LL;
+    if ( (msm_cvp_debug & 1) != 0 && !msm_cvp_debug_out )
+    {
+      StatusReg = _ReadStatusReg(SP_EL0);
+      printk(&unk_9434F, *(unsigned int *)(StatusReg + 1800), *(unsigned int *)(StatusReg + 1804), &unk_8E7CE);
+      return 4294967274LL;
+    }
+  }
+  return result;
+}

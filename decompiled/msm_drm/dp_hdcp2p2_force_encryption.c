@@ -1,0 +1,42 @@
+__int64 __fastcall dp_hdcp2p2_force_encryption(__int64 a1)
+{
+  __int64 result; // x0
+  __int64 v3; // x8
+  __int64 (*v4)(void); // x8
+  __int64 ipc_log_context; // x0
+  void *v6; // x0
+  __int64 v7; // x0
+  __int64 v8; // x0
+
+  if ( !a1 )
+  {
+    ipc_log_context = get_ipc_log_context(0);
+    ipc_log_string(ipc_log_context, "[e][%-4d]invalid input\n", *(_DWORD *)(_ReadStatusReg(SP_EL0) + 1800));
+    v6 = &unk_275B6D;
+    return printk(v6, "dp_hdcp2p2_valid_handle");
+  }
+  result = *(_QWORD *)(a1 + 344);
+  if ( !result )
+  {
+    v7 = get_ipc_log_context(0);
+    ipc_log_string(v7, "[e][%-4d]HDCP library needs to be acquired\n", *(_DWORD *)(_ReadStatusReg(SP_EL0) + 1800));
+    v6 = &unk_233A43;
+    return printk(v6, "dp_hdcp2p2_valid_handle");
+  }
+  v3 = *(_QWORD *)(a1 + 352);
+  if ( !v3 )
+  {
+    v8 = get_ipc_log_context(result);
+    ipc_log_string(v8, "[e][%-4d]invalid lib ops data\n", *(_DWORD *)(_ReadStatusReg(SP_EL0) + 1800));
+    v6 = &unk_260BD9;
+    return printk(v6, "dp_hdcp2p2_valid_handle");
+  }
+  v4 = *(__int64 (**)(void))(v3 + 16);
+  if ( v4 )
+  {
+    if ( *((_DWORD *)v4 - 1) != -538254584 )
+      __break(0x8228u);
+    return v4();
+  }
+  return result;
+}

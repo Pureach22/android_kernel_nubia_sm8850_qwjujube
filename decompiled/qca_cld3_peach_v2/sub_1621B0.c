@@ -1,0 +1,5 @@
+__int64 __fastcall sub_1621B0(__int64 a1, __int64 a2, __int64 _X2)
+{
+  __asm { STZG            X2, [X22,#-0x8C0]! }
+  return cfg_uint_item_handler();
+}

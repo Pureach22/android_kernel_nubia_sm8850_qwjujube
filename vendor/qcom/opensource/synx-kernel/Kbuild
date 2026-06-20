@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+SYNX_ROOT := $(srctree)/vendor/qcom/opensource/synx-kernel
+
+ccflags-y += -I$(src)/msm/synx \
+             -I$(src)/include/uapi/synx/media
+
+obj-m += synx_driver.o
+
+synx_driver-y := msm/synx/msm_synx.o

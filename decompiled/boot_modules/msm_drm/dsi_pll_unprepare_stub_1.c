@@ -1,0 +1,4 @@
+void dsi_pll_unprepare_stub_1()
+{
+  ;
+}

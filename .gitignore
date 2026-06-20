@@ -1,0 +1,33 @@
+# Compiladores e dependências externas pesadas
+/clang-r536225/
+
+# Arquivos gerados por compilação do Kernel
+*.o
+*.ko
+!/stock_rom_modules/modules/zte_tpd.ko
+*.cmd
+*.mod
+*.mod.c
+*.order
+*.symvers
+*.a
+/kernel_platform/common/arch/arm64/boot/Image
+/kernel_platform/common/vmlinux
+/repack_perfect_work/
+
+# Imagens de boot e backups
+*.img
+
+# Logs e diagnósticos locais
+console-ramoops*
+ramoops*
+new-console-ramoops*
+*.log
+*.txt
+!/kernel_platform/**/*.txt
+!/vendor/**/*.txt
+
+# IDEs e configurações locais
+.vscode/
+.gemini/
+.antigravityignore

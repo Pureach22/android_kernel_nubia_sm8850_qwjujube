@@ -1,0 +1,4 @@
+void nop_write()
+{
+  ;
+}

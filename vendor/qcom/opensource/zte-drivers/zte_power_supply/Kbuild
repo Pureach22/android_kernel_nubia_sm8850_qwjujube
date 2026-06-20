@@ -1,0 +1,1 @@
+obj-m += zte_power_supply.o

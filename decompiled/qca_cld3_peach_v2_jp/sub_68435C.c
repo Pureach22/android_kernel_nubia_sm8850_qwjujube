@@ -1,0 +1,4 @@
+__int64 __fastcall sub_68435C(__int64 a1, __int64 a2)
+{
+  return wmi_unified_set_arp_stats_req(a1, a2);
+}

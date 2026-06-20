@@ -1,0 +1,4 @@
+void smem_remove()
+{
+  ;
+}

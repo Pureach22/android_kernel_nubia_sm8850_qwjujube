@@ -1,0 +1,21 @@
+void sub_8C794()
+{
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  _ReadStatusReg(TPIDR_EL2);
+  JUMPOUT(0x6B99C);
+}

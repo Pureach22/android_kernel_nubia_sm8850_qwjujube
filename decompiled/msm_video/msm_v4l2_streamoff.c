@@ -1,0 +1,46 @@
+__int64 __fastcall msm_v4l2_streamoff(__int64 a1, __int64 a2, unsigned int a3)
+{
+  __int64 v4; // x8
+  __int64 *v5; // x1
+  __int64 *inst_ref; // x0
+  __int64 v7; // x19
+  __int64 v8; // x4
+  unsigned int v9; // w20
+  __int64 v10; // x1
+  __int64 v11; // x2
+  __int64 v12; // x3
+  __int64 v13; // x4
+
+  if ( a1 )
+  {
+    v4 = *(_QWORD *)(a1 + 32);
+    if ( v4 )
+      v5 = (__int64 *)(v4 - 1648);
+    else
+      v5 = nullptr;
+  }
+  else
+  {
+    v5 = nullptr;
+  }
+  inst_ref = get_inst_ref(g_core, v5);
+  if ( inst_ref )
+  {
+    v7 = (__int64)inst_ref;
+    client_lock((__int64)inst_ref);
+    inst_lock(v7);
+    v9 = msm_vidc_streamoff(v7, a3);
+    if ( v9 && (msm_vidc_debug & 1) != 0 )
+      printk(&unk_87964, "err ", v7 + 340, "msm_v4l2_streamoff", v8);
+    inst_unlock(v7);
+    client_unlock(v7);
+    put_inst(v7, v10, v11, v12, v13);
+  }
+  else
+  {
+    if ( (msm_vidc_debug & 1) != 0 )
+      printk(&unk_961DD, "err ", 0xFFFFFFFFLL, "codec", "msm_v4l2_streamoff");
+    return (unsigned int)-22;
+  }
+  return v9;
+}

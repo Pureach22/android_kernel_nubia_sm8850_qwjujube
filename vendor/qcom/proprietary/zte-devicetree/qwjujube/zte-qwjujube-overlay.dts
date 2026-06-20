@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include "zte-qwjujube-overlay.dtsi"
+#include "../zte-canoe-common-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Canoe MTP + ST54L + Kundu, zte board qwjujube";
+    compatible = "qcom,canoe-mtp", "qcom,canoe", "qcom,canoep-mtp", "qcom,canoep",
+               "qcom,mtp";
+    qcom,msm-id = <660 0x10000>, <660 0x20000>, <661 0x10000>, <661 0x20000>,
+              <0x1000294 0x10000>, <0x1000294 0x20000>,
+              <0x1000295 0x10000>, <0x1000295 0x20000>;
+    qcom,board-id = <8 0>;
+};

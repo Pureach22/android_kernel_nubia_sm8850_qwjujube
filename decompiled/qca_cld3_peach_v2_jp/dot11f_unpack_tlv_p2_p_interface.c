@@ -1,0 +1,14 @@
+__int64 __fastcall dot11f_unpack_tlv_p2_p_interface(__int64 a1, const void *a2, unsigned __int16 a3, _BYTE *a4)
+{
+  *a4 = 1;
+  if ( a3 <= 5u )
+  {
+    *a4 = 0;
+    return 4;
+  }
+  else
+  {
+    qdf_mem_copy(a4 + 1, a2, 6u);
+    return 0;
+  }
+}

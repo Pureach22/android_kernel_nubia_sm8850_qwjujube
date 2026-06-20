@@ -1,0 +1,116 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+/*
+ * Copyright (c) 2012, 2014-2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+ */
+
+#ifndef __SDE_HDCP_H__
+#define __SDE_HDCP_H__
+
+#include <linux/types.h>
+#include <linux/bitops.h>
+#include <linux/debugfs.h>
+#include <linux/of_device.h>
+#include <linux/i2c.h>
+#include <linux/list.h>
+#include <drm/drm_crtc.h>
+#include <drm/drm_edid.h>
+#if IS_ENABLED(CONFIG_HDCP_QSEECOM)
+#include <linux/hdcp_qseecom.h>
+#endif
+#include "sde_kms.h"
+
+#define MAX_STREAM_COUNT 2
+
+enum sde_hdcp_client_id {
+	HDCP_CLIENT_HDMI,
+	HDCP_CLIENT_DP,
+};
+
+enum sde_hdcp_state {
+	SDE_HDCP_STATE_INACTIVE,
+	SDE_HDCP_STATE_AUTHENTICATING,
+	SDE_HDCP_STATE_AUTHENTICATED,
+	SDE_HDCP_STATE_AUTH_FAIL,
+};
+
+enum sde_hdcp_version {
+	HDCP_VERSION_NONE,
+	HDCP_VERSION_1X = BIT(0),
+	HDCP_VERSION_2P2 = BIT(1),
+	HDCP_VERSION_MAX = BIT(2),
+};
+
+struct stream_info {
+	u8 stream_id;
+	u8 virtual_channel;
+};
+
+struct sde_hdcp_stream {
+	struct list_head list;
+	u8 stream_id;
+	u8 virtual_channel;
+	u32 stream_handle;
+	bool active;
+};
+
+struct sde_hdcp_init_data {
+	struct device *msm_hdcp_dev;
+	struct dss_io_data *core_io;
+	struct dss_io_data *dp_ahb;
+	struct dss_io_data *dp_aux;
+	struct dss_io_data *dp_link;
+	struct dss_io_data *dp_p0;
+	struct dss_io_data *qfprom_io;
+	struct dss_io_data *hdcp_io;
+	struct drm_dp_aux *drm_aux;
+	struct mutex *mutex;
+	struct workqueue_struct *workq;
+	void *cb_data;
+	void (*notify_status)(void *cb_data, enum sde_hdcp_state state);
+	u8 sink_rx_status;
+	unsigned char *revision;
+	u32 phy_addr;
+	bool sec_access;
+	enum sde_hdcp_client_id client_id;
+};
+
+struct sde_hdcp_ops {
+	int (*isr)(void *ptr);
+	int (*cp_irq)(void *ptr);
+	int (*reauthenticate)(void *input);
+	int (*authenticate)(void *hdcp_ctrl);
+	bool (*feature_supported)(void *input);
+	void (*force_encryption)(void *input, bool enable);
+	bool (*sink_support)(void *input);
+	void (*abort)(void *input, bool abort);
+	int (*set_mode)(void *input, bool mst_enabled);
+	int (*on)(void *input);
+	void (*off)(void *hdcp_ctrl);
+	int (*register_streams)(void *input, u8 num_streams,
+			struct stream_info *streams);
+	int (*deregister_streams)(void *input, u8 num_streams,
+			struct stream_info *streams);
+};
+
+static inline const char *sde_hdcp_state_name(enum sde_hdcp_state hdcp_state)
+{
+	switch (hdcp_state) {
+	case SDE_HDCP_STATE_INACTIVE:	return "SDE_HDCP_STATE_INACTIVE";
+	case SDE_HDCP_STATE_AUTHENTICATING:	return "SDE_HDCP_STATE_AUTHENTICATING";
+	case SDE_HDCP_STATE_AUTHENTICATED:	return "SDE_HDCP_STATE_AUTHENTICATED";
+	case SDE_HDCP_STATE_AUTH_FAIL:	return "SDE_HDCP_STATE_AUTH_FAIL";
+	default:			return "???";
+	}
+}
+
+/* HDCP 1.x and 2.2 stubs for binary parity */
+extern void *sde_hdcp_1x_init(struct sde_hdcp_init_data *init_data);
+extern void sde_hdcp_1x_deinit(void *fd);
+extern struct sde_hdcp_ops *sde_hdcp_1x_get(void *fd);
+
+extern void *sde_dp_hdcp2p2_init(struct sde_hdcp_init_data *init_data);
+extern void sde_dp_hdcp2p2_deinit(void *fd);
+extern struct sde_hdcp_ops *sde_dp_hdcp2p2_get(void *fd);
+
+#endif /* __SDE_HDCP_H__ */

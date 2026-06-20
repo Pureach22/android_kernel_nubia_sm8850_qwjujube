@@ -1,0 +1,44 @@
+__int64 __fastcall hal_hw_txrx_default_ops_attach_be(__int64 result)
+{
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1152LL) = hal_get_reo_qdesc_size_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1160LL) = hal_get_rx_max_ba_window_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1168LL) = hal_set_link_desc_addr_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1176LL) = hal_tx_init_data_ring_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1208LL) = hal_get_reo_reg_base_offset_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 32LL) = hal_reo_setup_generic_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1464LL) = hal_rx_reo_buf_paddr_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1448LL) = hal_rx_msdu_link_desc_set_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1456LL) = hal_rx_buf_cookie_rbm_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1440LL) = hal_rx_ret_buf_manager_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1472LL) = hal_rxdma_buff_addr_info_set_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1480LL) = hal_rx_msdu_flags_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1488LL) = hal_rx_get_reo_error_code_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 80LL) = hal_gen_reo_remap_val_generic_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 192LL) = hal_tx_comp_get_buffer_source_generic_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 160LL) = hal_tx_comp_get_release_reason_generic_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 168LL) = hal_get_wbm_internal_error_generic_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1504LL) = hal_rx_mpdu_desc_info_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1512LL) = hal_rx_err_status_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1520LL) = hal_rx_reo_buf_type_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1432LL) = hal_rx_wbm_err_src_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 448LL) = hal_rx_wbm_rel_buf_paddr_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1648LL) = hal_reo_send_cmd_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 72LL) = hal_reo_qdesc_setup_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1656LL) = hal_reo_status_update_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1664LL) = hal_get_tlv_hdr_size_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1344LL) = hal_rx_msdu_reo_dst_ind_get_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1672LL) = hal_get_idle_link_bm_id_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1184LL) = hal_rx_msdu_ext_desc_info_get_ptr_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1352LL) = hal_msdu_desc_info_set_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1360LL) = hal_mpdu_desc_info_set_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1320LL) = hal_rx_tlv_get_pn_num_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1632LL) = hal_set_reo_ent_desc_reo_dest_ind_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1608LL) = hal_get_reo_ent_desc_qdesc_addr_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1896LL) = hal_rx_en_mcast_fp_data_filter_generic_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1624LL) = hal_rx_get_phy_ppdu_id_size_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 304LL) = hal_rx_phy_legacy_get_rssi_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 1904LL) = &hal_rx_parse_eht_sig_hdr_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 320LL) = hal_rx_ru_info_details_be;
+  *(_QWORD *)(*(_QWORD *)(result + 74392) + 328LL) = hal_rx_proc_phyrx_all_sigb_tlv_be;
+  return result;
+}

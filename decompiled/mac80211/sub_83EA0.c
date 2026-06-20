@@ -1,0 +1,14 @@
+__int64 __fastcall sub_83EA0(
+        __int64 a1,
+        __int64 a2,
+        __int64 a3,
+        __int64 a4,
+        __int64 a5,
+        __int64 a6,
+        unsigned __int128 *a7)
+{
+  unsigned __int64 v7; // x23
+  unsigned __int64 v8; // x25
+
+  return ieee80211_tkip_add_iv(a1, a2, a3, a4, a5, a6, a7, __stxp(__PAIR128__(v8, v7), a7));
+}

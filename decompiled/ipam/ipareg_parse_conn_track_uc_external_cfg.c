@@ -1,0 +1,4 @@
+void __fastcall ipareg_parse_conn_track_uc_external_cfg(__int64 a1, _DWORD *a2, int a3)
+{
+  *a2 = a3;
+}

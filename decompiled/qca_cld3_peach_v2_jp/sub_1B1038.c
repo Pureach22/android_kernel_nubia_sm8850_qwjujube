@@ -1,0 +1,4 @@
+__int64 __fastcall sub_1B1038(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+{
+  return wlan_objmgr_get_peer(a1, a2, a3, a4);
+}

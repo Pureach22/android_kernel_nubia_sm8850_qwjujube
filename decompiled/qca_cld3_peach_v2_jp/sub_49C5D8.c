@@ -1,0 +1,7 @@
+__int64 sub_49C5D8()
+{
+  unsigned __int64 v0; // x27
+
+  _WriteStatusReg(ARM64_SYSREG(3, 2, 7, 10, 1), v0);
+  return os_if_dp_nud_netevent_cb();
+}

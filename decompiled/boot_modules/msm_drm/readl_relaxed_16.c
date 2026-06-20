@@ -1,0 +1,12 @@
+__int64 __fastcall readl_relaxed_16(unsigned int *a1)
+{
+  __int64 v1; // x30
+  __int64 v3; // x20
+  unsigned int v4; // w21
+
+  v3 = v1;
+  log_read_mmio(32, a1, readl_relaxed_16, v1);
+  v4 = *a1;
+  log_post_read_mmio(*a1, 32, a1, &loc_1C788C, v3);
+  return v4;
+}

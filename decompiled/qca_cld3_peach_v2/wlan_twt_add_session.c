@@ -1,0 +1,117 @@
+__int64 __fastcall wlan_twt_add_session(__int64 a1, unsigned __int8 *a2, unsigned __int8 a3, __int64 a4)
+{
+  unsigned __int8 *v6; // x22
+  _QWORD *peer_by_mac; // x0
+  double v8; // d0
+  double v9; // d1
+  double v10; // d2
+  double v11; // d3
+  double v12; // d4
+  double v13; // d5
+  double v14; // d6
+  double v15; // d7
+  __int64 v16; // x19
+  __int64 comp_private_obj; // x0
+  double v18; // d0
+  double v19; // d1
+  double v20; // d2
+  double v21; // d3
+  double v22; // d4
+  double v23; // d5
+  double v24; // d6
+  double v25; // d7
+  __int64 v26; // x4
+  __int64 v27; // x5
+  __int64 v28; // x6
+  __int64 v29; // x7
+  double v30; // d0
+  double v31; // d1
+  double v32; // d2
+  double v33; // d3
+  double v34; // d4
+  double v35; // d5
+  double v36; // d6
+  double v37; // d7
+  double v39; // d0
+  double v40; // d1
+  double v41; // d2
+  double v42; // d3
+  double v43; // d4
+  double v44; // d5
+  double v45; // d6
+  double v46; // d7
+
+  v6 = a2;
+  peer_by_mac = wlan_objmgr_get_peer_by_mac(a1, a2, 0x5Eu);
+  if ( peer_by_mac )
+  {
+    v16 = (__int64)peer_by_mac;
+    comp_private_obj = wlan_objmgr_peer_get_comp_private_obj((__int64)peer_by_mac, 0x2Cu);
+    if ( !comp_private_obj )
+    {
+      wlan_objmgr_peer_release_ref(v16, 0x5Eu, v18, v19, v20, v21, v22, v23, v24, v25);
+      return qdf_trace_msg(
+               0x96u,
+               2u,
+               "%s: peer twt component object is NULL",
+               v30,
+               v31,
+               v32,
+               v33,
+               v34,
+               v35,
+               v36,
+               v37,
+               "wlan_twt_add_session");
+    }
+    v6 = (unsigned __int8 *)comp_private_obj;
+    qdf_mutex_acquire(comp_private_obj);
+    if ( v6[65] )
+    {
+      if ( v6[72] == 255 )
+      {
+        v6[72] = a3;
+        *((_QWORD *)v6 + 10) = a4;
+      }
+      else if ( v6[65] != 1 )
+      {
+        __break(0x5512u);
+        goto LABEL_7;
+      }
+    }
+    qdf_mutex_release((__int64)v6);
+    return wlan_objmgr_peer_release_ref(v16, 0x5Eu, v39, v40, v41, v42, v43, v44, v45, v46);
+  }
+LABEL_7:
+  if ( v6 )
+  {
+    v26 = *v6;
+    v27 = v6[1];
+    v28 = v6[2];
+    v29 = v6[5];
+  }
+  else
+  {
+    v28 = 0;
+    v26 = 0;
+    v27 = 0;
+    v29 = 0;
+  }
+  return qdf_trace_msg(
+           0x96u,
+           2u,
+           "%s: Peer object not found %02x:%02x:%02x:**:**:%02x",
+           v8,
+           v9,
+           v10,
+           v11,
+           v12,
+           v13,
+           v14,
+           v15,
+           "wlan_twt_add_session",
+           v26,
+           v27,
+           v28,
+           v29);
+}

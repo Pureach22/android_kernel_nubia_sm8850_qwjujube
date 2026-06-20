@@ -1,0 +1,20 @@
+void __fastcall sub_4A63C(__int64 a1, unsigned int a2, unsigned int a3, __int64 a4)
+{
+  unsigned __int64 StatusReg; // x19
+  __int64 active; // x0
+  __int64 v6; // x8
+
+  StatusReg = _ReadStatusReg(SP_EL0);
+  if ( ((*(_QWORD *)((char *)&_cpu_online_mask
+                   + (((unsigned __int64)*(unsigned int *)(StatusReg + 40) >> 3) & 0x1FFFFFF8)) >> *(_DWORD *)(StatusReg + 40))
+      & 1) != 0 )
+  {
+    ++*(_DWORD *)(StatusReg + 16);
+    active = _traceiter_walt_active_load_balance(0, a1, a2, a3, a4);
+    v6 = *(_QWORD *)(StatusReg + 16) - 1LL;
+    *(_DWORD *)(StatusReg + 16) = v6;
+    if ( !v6 || !*(_QWORD *)(StatusReg + 16) )
+      preempt_schedule_notrace(active);
+  }
+  JUMPOUT(0x4A62C);
+}

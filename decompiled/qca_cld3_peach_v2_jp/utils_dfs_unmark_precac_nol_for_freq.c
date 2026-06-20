@@ -1,0 +1,4 @@
+__int64 __fastcall utils_dfs_unmark_precac_nol_for_freq(__int64 a1)
+{
+  return wlan_pdev_get_dfs_obj(a1);
+}

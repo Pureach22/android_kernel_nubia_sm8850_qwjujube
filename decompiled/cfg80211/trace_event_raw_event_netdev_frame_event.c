@@ -1,0 +1,27 @@
+__int64 __fastcall trace_event_raw_event_netdev_frame_event(__int64 a1, __int64 a2, const void *a3, int a4)
+{
+  __int64 v7; // x8
+  __int64 result; // x0
+  __int64 v9; // x8
+  _QWORD v10[7]; // [xsp+8h] [xbp-38h] BYREF
+
+  v10[6] = *(_QWORD *)(_ReadStatusReg(SP_EL0) + 1808);
+  v7 = *(_QWORD *)(a1 + 72);
+  memset(v10, 0, 48);
+  if ( (v7 & 0x2C0) == 0 || (v7 & 0x100) != 0 || (result = _trace_trigger_soft_disabled(a1), (result & 1) == 0) )
+  {
+    result = trace_event_buffer_reserve(v10);
+    if ( result )
+    {
+      *(_DWORD *)(result + 28) = (a4 << 16) | 0x20;
+      v9 = *(_QWORD *)(a2 + 304);
+      *(_QWORD *)(result + 8) = *(_QWORD *)(a2 + 296);
+      *(_QWORD *)(result + 16) = v9;
+      *(_DWORD *)(result + 24) = *(_DWORD *)(a2 + 224);
+      memcpy((void *)(result + 32), a3, a4);
+      result = trace_event_buffer_commit(v10);
+    }
+  }
+  _ReadStatusReg(SP_EL0);
+  return result;
+}

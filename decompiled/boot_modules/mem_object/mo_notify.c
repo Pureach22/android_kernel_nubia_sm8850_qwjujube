@@ -1,0 +1,4 @@
+void mo_notify()
+{
+  ;
+}

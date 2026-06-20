@@ -1,0 +1,20 @@
+void __fastcall sub_6A4FC(__int64 a1, __int64 a2, __int64 a3)
+{
+  unsigned __int64 StatusReg; // x19
+  __int64 v4; // x8
+
+  StatusReg = _ReadStatusReg(SP_EL0);
+  if ( ((*(_QWORD *)((char *)&_cpu_online_mask
+                   + (((unsigned __int64)*(unsigned int *)(StatusReg + 40) >> 3) & 0x1FFFFFF8)) >> *(_DWORD *)(StatusReg + 40))
+      & 1) != 0 )
+  {
+    ++*(_DWORD *)(StatusReg + 16);
+    _traceiter_msm_v4l2_vidc_open(0, (__int64)&unk_927FF, a3);
+    v4 = *(_QWORD *)(StatusReg + 16) - 1LL;
+    *(_DWORD *)(StatusReg + 16) = v4;
+    if ( !v4 || !*(_QWORD *)(StatusReg + 16) )
+      preempt_schedule_notrace(0);
+    JUMPOUT(0x6A450);
+  }
+  JUMPOUT(0x6A434);
+}
