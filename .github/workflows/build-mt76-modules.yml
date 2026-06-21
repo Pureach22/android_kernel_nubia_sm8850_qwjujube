@@ -33,107 +33,88 @@ jobs:
           cd ..
           rm -rf clang-bin
 
+      - name: Download Kernel Build Tools
+        run: |
+          git clone --depth 1 --sparse https://android.googlesource.com/platform/prebuilts/kernel-build-tools kernel-tools-bin
+          cd kernel-tools-bin
+          git sparse-checkout set linux-x86/bin
+          cd ..
+          export PREBUILTS_DIR="$(pwd)/kernel-tools-bin/linux-x86/bin"
+          echo "PREBUILTS_DIR=$PREBUILTS_DIR" >> $GITHUB_ENV
+          ls "$PREBUILTS_DIR/" | head -10
+
       - name: Enable MT76 Configs in Defconfig
         run: |
           DEFCONFIG="kernel_platform/common/arch/arm64/configs/nx809j_defconfig"
           cat >> "$DEFCONFIG" << 'EOF'
-
-          # ============================================
-          # Wireless base stack
-          # ============================================
-          CONFIG_CFG80211=m
-          CONFIG_CFG80211_DEFAULT_PS=y
-          CONFIG_CFG80211_WEXT=y
-          CONFIG_MAC80211=m
-
-          # ============================================
-          # MediaTek MT76 - Vendor + Core
-          # ============================================
-          CONFIG_WLAN_VENDOR_MEDIATEK=y
-          CONFIG_MT76_CORE=m
-          CONFIG_MT76_USB=m
-          CONFIG_MT76_SDIO=m
-          CONFIG_MT76_LEDS=y
-          CONFIG_MT76x02_LIB=m
-          CONFIG_MT76x02_USB=m
-          CONFIG_MT76_CONNAC_LIB=m
-          CONFIG_MT792x_LIB=m
-          CONFIG_MT792x_USB=m
-
-          # MT7601U
-          CONFIG_MT7601U=m
-
-          # MT76x0 family
-          CONFIG_MT76x0_COMMON=m
-          CONFIG_MT76x0U=m
-          CONFIG_MT76x0E=m
-
-          # MT76x2 family
-          CONFIG_MT76x2_COMMON=m
-          CONFIG_MT76x2E=m
-          CONFIG_MT76x2U=m
-
-          # MT7603
-          CONFIG_MT7603E=m
-
-          # MT7615 family
-          CONFIG_MT7615_COMMON=m
-          CONFIG_MT7615E=m
-          CONFIG_MT7663_USB_SDIO_COMMON=m
-          CONFIG_MT7663U=m
-          CONFIG_MT7663S=m
-
-          # MT7915
-          CONFIG_MT7915E=m
-
-          # MT7921 family
-          CONFIG_MT7921_COMMON=m
-          CONFIG_MT7921E=m
-          CONFIG_MT7921S=m
-          CONFIG_MT7921U=m
-
-          # MT7925 family (Wi-Fi 7)
-          CONFIG_MT7925_COMMON=m
-          CONFIG_MT7925E=m
-          CONFIG_MT7925U=m
-
-          # MT7996 (Wi-Fi 7)
-          CONFIG_MT7996E=m
-
-          # ============================================
-          # Realtek - RTW88 (802.11ac)
-          # ============================================
-          CONFIG_RTW88=m
-          CONFIG_RTW88_CORE=m
-          CONFIG_RTW88_PCI=m
-          CONFIG_RTW88_SDIO=m
-          CONFIG_RTW88_USB=m
-          CONFIG_RTW88_8822B=m
-          CONFIG_RTW88_8822C=m
-          CONFIG_RTW88_8723X=m
-          CONFIG_RTW88_8703B=m
-          CONFIG_RTW88_8723D=m
-          CONFIG_RTW88_8821C=m
-          CONFIG_RTW88_8822BE=m
-          CONFIG_RTW88_8822BS=m
-          CONFIG_RTW88_8822BU=m
-          CONFIG_RTW88_8822CE=m
-          CONFIG_RTW88_8822CS=m
-          CONFIG_RTW88_8822CU=m
-          CONFIG_RTW88_8723DE=m
-          CONFIG_RTW88_8723DS=m
-          CONFIG_RTW88_8723CS=m
-          CONFIG_RTW88_8723DU=m
-          CONFIG_RTW88_8821CE=m
-          CONFIG_RTW88_8821CS=m
-          CONFIG_RTW88_8821CU=m
-          EOF
+CONFIG_CFG80211=m
+CONFIG_CFG80211_DEFAULT_PS=y
+CONFIG_CFG80211_WEXT=y
+CONFIG_MAC80211=m
+CONFIG_WLAN_VENDOR_MEDIATEK=y
+CONFIG_MT76_CORE=m
+CONFIG_MT76_USB=m
+CONFIG_MT76_SDIO=m
+CONFIG_MT76_LEDS=y
+CONFIG_MT76x02_LIB=m
+CONFIG_MT76x02_USB=m
+CONFIG_MT76_CONNAC_LIB=m
+CONFIG_MT792x_LIB=m
+CONFIG_MT792x_USB=m
+CONFIG_MT7601U=m
+CONFIG_MT76x0_COMMON=m
+CONFIG_MT76x0U=m
+CONFIG_MT76x0E=m
+CONFIG_MT76x2_COMMON=m
+CONFIG_MT76x2E=m
+CONFIG_MT76x2U=m
+CONFIG_MT7603E=m
+CONFIG_MT7615_COMMON=m
+CONFIG_MT7615E=m
+CONFIG_MT7663_USB_SDIO_COMMON=m
+CONFIG_MT7663U=m
+CONFIG_MT7663S=m
+CONFIG_MT7915E=m
+CONFIG_MT7921_COMMON=m
+CONFIG_MT7921E=m
+CONFIG_MT7921S=m
+CONFIG_MT7921U=m
+CONFIG_MT7925_COMMON=m
+CONFIG_MT7925E=m
+CONFIG_MT7925U=m
+CONFIG_MT7996E=m
+CONFIG_RTW88=m
+CONFIG_RTW88_CORE=m
+CONFIG_RTW88_PCI=m
+CONFIG_RTW88_SDIO=m
+CONFIG_RTW88_USB=m
+CONFIG_RTW88_8822B=m
+CONFIG_RTW88_8822C=m
+CONFIG_RTW88_8723X=m
+CONFIG_RTW88_8703B=m
+CONFIG_RTW88_8723D=m
+CONFIG_RTW88_8821C=m
+CONFIG_RTW88_8822BE=m
+CONFIG_RTW88_8822BS=m
+CONFIG_RTW88_8822BU=m
+CONFIG_RTW88_8822CE=m
+CONFIG_RTW88_8822CS=m
+CONFIG_RTW88_8822CU=m
+CONFIG_RTW88_8723DE=m
+CONFIG_RTW88_8723DS=m
+CONFIG_RTW88_8723CS=m
+CONFIG_RTW88_8723DU=m
+CONFIG_RTW88_8821CE=m
+CONFIG_RTW88_8821CS=m
+CONFIG_RTW88_8821CU=m
+EOF
 
       - name: Compile Kernel + WiFi Modules
         run: |
           export PATH="$HOME/.cargo/bin:$PATH"
           export CLANG_DIR="$(pwd)/clang-r547379"
-          export PATH="$CLANG_DIR/bin:$PATH"
+          export PREBUILTS_DIR="$(pwd)/kernel-tools-bin/linux-x86/bin"
+          export PATH="$CLANG_DIR/bin:$PREBUILTS_DIR:$PATH"
           export ARCH=arm64
           export SUBARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
